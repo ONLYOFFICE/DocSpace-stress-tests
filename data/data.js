@@ -1,6 +1,6 @@
 import http from 'k6/http';
 import faker  from 'https://cdnjs.cloudflare.com/ajax/libs/Faker/3.1.0/faker.min.js';
-import { basePath, setParams } from '../config/index.js';
+import { basePath, setParams } from '../config/params.js';
 
 export function foldersAndFiles(countFolders, countFiles, typeFolder, auth){
     let params = setParams(auth);

@@ -1,5 +1,5 @@
 import http from 'k6/http';
-import { basePath, wizardData, authData, wizardComplete, authentication, setParams } from './index.js';
+import { basePath, wizardData, authData, wizardComplete, authentication, setParams } from './params.js';
 
 export function auth() {
     let url = `${basePath}settings?withPassword=true`;

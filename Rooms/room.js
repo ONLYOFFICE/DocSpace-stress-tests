@@ -2,7 +2,7 @@ import { auth } from '../config/auth.js';
 import { RoomCRUD, createRoom, getRoomInfo, renameRoom, removeRoom } from './CRUD.js';
 import { setScenarios } from '../config/scenarios.js';
 import { setMetrics } from '../config/metrics.js';
-import { setParams } from '../config/index.js';
+import { setParams } from '../config/params.js';
 
 export const options = { 
     scenarios: setScenarios(),

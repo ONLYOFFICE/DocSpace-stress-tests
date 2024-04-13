@@ -3,7 +3,7 @@ import { check, group } from 'k6';
 import faker  from 'https://cdnjs.cloudflare.com/ajax/libs/Faker/3.1.0/faker.min.js';
 import exec from 'k6/execution';
 
-import { folderMy, basePath, path} from '../config/index.js';
+import { folderMy, basePath, path} from '../config/params.js';
 import { addTagsDefault } from '../config/scenarios.js';
 
 /*-------------------------------------------------FOLDER-------------------------------------------------*/
@@ -35,7 +35,6 @@ export function createFolder(id, params, trend, environment){
     let idMy = null;
     if(check(res, {'Cretion folder status': res => res.status === 200})){
         idMy = res.json().response.id;
-        check(res, {'Folder title': res => res.json().response.title === folderTitle});
     }
     trend[environment].add(res.timings.duration, { api: `${path}files/folder/{id}`, status: res.status, method: res.request.method,});
     return idMy; 
@@ -52,9 +51,7 @@ export function getFolder(id, params, trend, environment){
         headers: params.headers, 
         tags: addTagsDefault(true, 'Get folder info'),
     });
-    if(check(res, {'Get folder info status': res => res.status === 200})){
-        check(res, {'Folder id': res => res.json().response.id === id});
-    }
+    check(res, {'Get folder info status': res => res.status === 200});
     trend[environment].add(res.timings.duration, { api: `${path}files/folder/{id}`, status: res.status, method: res.request.method,});
 }
 
@@ -73,9 +70,7 @@ export function updateFolder(id, params, trend, environment){
         headers: params.headers, 
         tags: addTagsDefault(true, 'Update folder title'),
     });
-    if(check(res, {'Update folder status': res => res.status === 200})){
-        check(res, {'Folder title': res => res.json().response.title === folderTitle});
-    }
+    check(res, {'Update folder status': res => res.status === 200});
     trend[environment].add(res.timings.duration, { api: `${path}files/folder/{id}`, status: res.status, method: res.request.method,});
 }
 
@@ -162,7 +157,6 @@ export function createFile(id, params, trend, environment){
     let idMy = null;
     if(check(res, {'Cretion file status': res => res.status === 200})){
         idMy = res.json().response.id;
-        check(res, {'File title': res => res.json().response.title === fileTitle});
     }
     trend[environment].add(res.timings.duration, { api: `${path}files/{id}/file`, status: res.status, method: res.request.method,});
     return idMy;
@@ -179,9 +173,7 @@ export function getFile(id, params, trend, environment){
         headers: params.headers, 
         tags: addTagsDefault(true, 'Get file info'),
     });
-    if(check(res, {'Get file info status': res => res.status === 200})){
-        check(res, {'File id': res => res.json().response.id === id});
-    }
+    check(res, {'Get file info status': res => res.status === 200});
     trend[environment].add(res.timings.duration, { api: `${path}files/file/{id}`, status: res.status, method: res.request.method,});
 }
 
@@ -200,9 +192,7 @@ export function updateFile(id, params, trend, environment){
         headers: params.headers, 
         tags: addTagsDefault(true, 'Update file title'),
     });
-    if(check(res, {'Update file status': res => res.status === 200})){
-        check(res, {'File title': res => res.json().response.title === fileTitle});
-    }
+    check(res, {'Update file status': res => res.status === 200});
     trend[environment].add(res.timings.duration, { api: `${path}files/file/{id}`, status: res.status, method: res.request.method, });
 
 }

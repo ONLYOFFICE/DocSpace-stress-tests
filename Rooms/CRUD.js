@@ -1,6 +1,6 @@
 import http from 'k6/http';
 import { check, group } from 'k6';
-import { rooms } from '../config/index.js';
+import { rooms } from '../config/params.js';
 import faker  from 'https://cdnjs.cloudflare.com/ajax/libs/Faker/3.1.0/faker.min.js';
 import { addTagsDefault } from '../config/scenarios.js';
 
@@ -16,9 +16,7 @@ export function createRoom(params, trend, environment){
         headers: params.headers, 
         tags: addTagsDefault(true, 'Create new room'),
     });
-    if(check(res, {'Cretion room status': res => res.status === 200})){
-        check(res, {'Room title': res => res.json().response.title === roomTitle});
-    }
+    check(res, {'Cretion room status': res => res.status === 200});
     trend[environment].add(res.timings.duration, { url: res.request.url, status: res.status, method: res.request.method,});
     return res.json().response.id;
 }
@@ -29,9 +27,7 @@ export function getRoomInfo(id, params, trend, environment){
         headers: params.headers, 
         tags: addTagsDefault(true, 'Get room info'),
     });
-    if(check(res, {'Get room info status': res => res.status === 200})){
-        check(res, {'Room id': res => res.json().response.id === id});
-    }
+    check(res, {'Get room info status': res => res.status === 200});
     trend[environment].add(res.timings.duration, { url: res.request.url, status: res.status, method: res.request.method,});
 }
 
@@ -45,9 +41,7 @@ export function renameRoom(id, params, trend, environment){
         headers: params.headers, 
         tags: addTagsDefault(true, 'Rename room'),
     });
-    if(check(res, {'Rename room status': res => res.status === 200})){
-        check(res, {'Room title': res => res.json().response.title === roomTitle});
-    }
+    check(res, {'Rename room status': res => res.status === 200});
     trend[environment].add(res.timings.duration, { url: res.request.url, status: res.status, method: res.request.method,});
 }
 

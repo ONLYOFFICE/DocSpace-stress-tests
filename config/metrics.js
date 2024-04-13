@@ -1,5 +1,5 @@
 import { Trend } from 'k6/metrics';
-import { thresholdsSet } from './index.js';
+import { thresholdsSet } from './params.js';
 
 let metrics = {};
 

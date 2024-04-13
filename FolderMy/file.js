@@ -2,7 +2,7 @@ import { auth } from '../config/auth.js';
 import { foldersAndFiles } from '../data/data.js';
 import { FileCRUD, createFile, getFile, updateFile, deleteFile, getFolderMyId } from './CRUD.js';
 import { setScenarios } from '../config/scenarios.js';
-import { folderMy, filesCountFolderMy, foldersCountFolderMy, setParams } from '../config/index.js';
+import { folderMy, filesCountFolderMy, foldersCountFolderMy, setParams } from '../config/params.js';
 import { setMetrics } from '../config/metrics.js';
 
 export const options = { 

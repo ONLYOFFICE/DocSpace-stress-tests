@@ -1,0 +1,73 @@
+{
+  "email": "test@onlyoffice.com",
+  "password": "1111111",
+  "filesMy": 10,
+  "foldersMy": 10,
+  "sharedIter": {
+    "enable": false,
+    "iterations": 10,
+    "vus": 10,
+    "maxDuration": null,
+    "startTime": "10s",
+    "gracefulStop": null
+  },
+  "pervuIter": {
+    "enable": false,
+    "iterations": 20,
+    "vus": 100,
+    "maxDuration": "5m",
+    "startTime": "30s",
+    "gracefulStop": null
+  },
+  "constVu": {
+    "enable": true,
+    "duration": "10s",
+    "vus": 10,
+    "startTime": null,
+    "gracefulStop": null
+  },
+  "constArrival": {
+    "enable": false,
+    "duration": "30s",
+    "preAllocatedVUs": 30,
+    "rate": 30,
+    "maxVus": null,
+    "timeUnit": "1s",
+    "startTime": null,
+    "gracefulStop": null
+  },
+  "rampArrival": {
+    "enable": false,
+    "preAllocatedVUs": 50,
+    "stages": [
+      {
+        "target": 300,
+        "duration": "1m"
+      },
+      {
+        "target": 600,
+        "duration": "2m"
+      },
+      {
+        "target": 600,
+        "duration": "4m"
+      },
+      {
+        "target": 60,
+        "duration": "2m"
+      }
+    ],
+    "maxVus": null,
+    "startRate": 300,
+    "timeUnit": "1m",
+    "startTime": null,
+    "gracefulStop": null
+  },
+  "extControl": {
+    "enable": false,
+    "duration": "3m",
+    "maxVus": 50,
+    "vus": 10,
+    "startTime": null
+  }
+}

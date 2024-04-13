@@ -1,75 +1,7 @@
 import exec from 'k6/execution';
 
 import { constVusScenarioSettings, sharedIterationScenarioSettings, perVuScenarioSettings, constArrivalRateScenarioSettings, rampArrivalRateScenarioSettings, extControlledScenarioSettings,
- sISIterations, sISVUs, sISmaxDuration, sISstartTime, sISgracefulStop,
- pVUIterations, pVUVUs, pVUmaxDuration, pVUstartTime,  pVUgracefulStop,
- cVUDuration, cVUVUs, cVUstartTime, cVUgracefulStop,
- cARDuration, cARmaxVUs, cARpreAllocatedVUs, cARrate, cARstartTime, cARtimeUnit, cARgracefulStop,
- rARmaxVUs, rARpreAllocatedVUs, rARstages, rARstartRate, rARstartTime, rARtimeUnit, rARgracefulStop,
- eCduration, eCmaxVUs, eCstartTime, eCvus 
-} from './index.js';
-
-const shared_iter_scenario = {
-    executor: 'shared-iterations',
-    vus: sISVUs,
-    iterations: sISIterations,
-    startTime: sISstartTime,
-    maxDuration: sISmaxDuration,
-    gracefulStop: sISgracefulStop,
-    env: { SCENARIO: 'shared-iterations' },
-};
-
-const per_vu_scenario = {
-    executor: 'per-vu-iterations',
-    vus: pVUVUs,
-    iterations: pVUIterations,
-    maxDuration: pVUmaxDuration,
-    startTime: pVUstartTime,
-    gracefulStop: pVUgracefulStop,
-    env: { SCENARIO: 'per-vu-iterations' },
-};
-
-const const_vus_scenario = {
-    executor: 'constant-vus', 
-    vus: cVUVUs,
-    duration: cVUDuration,
-    startTime: cVUstartTime,
-    gracefulStop: cVUgracefulStop,
-    env: { SCENARIO: 'constant-vus' },
-};
-
-const const_arrival_rate_scenario = {
-    executor: 'constant-arrival-rate',
-    duration: cARDuration,
-    rate: cARrate,
-    timeUnit: cARtimeUnit,
-    preAllocatedVUs: cARpreAllocatedVUs,
-    maxVUs: cARmaxVUs,
-    startTime: cARstartTime,
-    gracefulStop: cARgracefulStop,
-    env: { SCENARIO: 'constant-arrival-rate' },
-};
-
-const ramp_arrival_rate_scenario = {
-    executor: 'ramping-arrival-rate',
-    startRate: rARstartRate,
-    timeUnit: rARtimeUnit,
-    preAllocatedVUs: rARpreAllocatedVUs,
-    stages: rARstages,
-    maxVUs: rARmaxVUs,
-    startTime: rARstartTime,
-    gracefulStop: rARgracefulStop,
-    env: { SCENARIO: 'ramping-arrival-rate' },
-};
-
-const ext_controlled_scenario = {
-    executor: 'externally-controlled',
-    vus: eCvus,
-    maxVUs: eCmaxVUs,
-    duration: eCduration,
-    startTime: eCstartTime,
-    env: { SCENARIO: 'externally-controlled' },
-};
+ const_vus_scenario, shared_iter_scenario, per_vu_scenario, const_arrival_rate_scenario, ramp_arrival_rate_scenario, ext_controlled_scenario} from './params.js';
 
 export function setScenarios() {
     let scenarios = {
