@@ -13,7 +13,10 @@ Function get folder my id
 */
 export function getFolderMyId(params){
     const res = http.get(folderMy, {headers: params.headers, tags: { cutom_tag: `${JSON.stringify(exec.test.options.scenarios)}`}});
-    const id = res.json().response.current.id;
+    let id = null;
+    if(check(res, {'Get folderMy': res => res.status === 200})){
+        id = res.json().response.current.id;
+    }
     return id;
 }
 
@@ -169,12 +172,21 @@ params - headers
 */
 export function getFile(id, params, trend, environment){
     let URL = `${basePath}files/file/${id}`;
+    let tagsDelete = {};
+    if(trend)
+    {
+        tagsDelete = { tags: addTagsDefault(true, 'Get file info')};
+    }
     const res = http.get(URL, {
         headers: params.headers, 
-        tags: addTagsDefault(true, 'Get file info'),
+        tags: tagsDelete.tags,
     });
     check(res, {'Get file info status': res => res.status === 200});
-    trend[environment].add(res.timings.duration, { api: `${path}files/file/{id}`, status: res.status, method: res.request.method,});
+    if(trend)
+    {
+        trend[environment].add(res.timings.duration, { api: `${path}files/file/{id}`,  status: res.status, method: res.request.method,});
+    }
+    return res;
 }
 
 /*
@@ -208,12 +220,20 @@ export function deleteFile(id, params, trend, environment){
         Immediately: true,
     });
     let URL = `${basePath}files/file/${id}`;
+    let tagsDelete = {};
+    if(trend)
+    {
+        tagsDelete = { tags: addTagsDefault(true, 'Delete file')};
+    }
     const res = http.del(URL, payload, { 
         headers: params.headers, 
-        tags: addTagsDefault(true, 'Delete file'),
+        tags: tagsDelete.tags,
     });
     check(res, { 'File delete status': res => res.status === 200 });
-    trend[environment].add(res.timings.duration, { api: `${path}files/file/{id}`,  status: res.status, method: res.request.method,});
+    if(trend)
+    {
+        trend[environment].add(res.timings.duration, { api: `${path}files/file/{id}`,  status: res.status, method: res.request.method,});
+    }
 }
 
 export function FileCRUD(idMy, params, trend, environment){
@@ -235,4 +255,12 @@ export function FileCRUD(idMy, params, trend, environment){
         deleteFile(fileid, params, trend, environment);
     });
 
+}
+
+export function emptyTrash(params){
+    let URL = `${basePath}files/fileops/emptytrash`;
+    const res = http.put(URL, {
+        headers: params.headers,
+    });
+    check(res, { 'Empty trash status': res => res.status === 200});
 }

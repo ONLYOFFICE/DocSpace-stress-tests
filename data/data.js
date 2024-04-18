@@ -7,6 +7,8 @@ export function foldersAndFiles(countFolders, countFiles, typeFolder, auth){
     
     const res = http.get(typeFolder, params);
     const id = res.json().response.current.id;
+    let arrayFiles =[];
+    let arrayFolders = [];
     if(countFolders){
         for(let i = 0; i < countFolders; i++)
         {
@@ -16,6 +18,7 @@ export function foldersAndFiles(countFolders, countFiles, typeFolder, auth){
             });
             let URL = `${basePath}files/folder/${id}`;
             const res = http.post(URL, payload, params);
+            arrayFolders.push(res.json().response.id);
         }
     }
     if(countFiles){
@@ -28,6 +31,9 @@ export function foldersAndFiles(countFolders, countFiles, typeFolder, auth){
             });
             let URL = `${basePath}files/${id}/file`;
             const res = http.post(URL, payload, params);
+            arrayFiles.push(res.json().response.id);
         }
     }
+    return { arrayFiles, arrayFolders };
 };
+

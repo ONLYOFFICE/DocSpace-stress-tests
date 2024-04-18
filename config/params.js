@@ -9,7 +9,8 @@ export const wizardData = { Email : `${email1}`, PasswordHash : `${password}`,}
 
 /*--------------------------------------------------------Base URL's--------------------------------------------------------*/
 export const path = 'api/2.0/'
-export const basePath = `http://localhost:8092/api/2.0/`;
+export const url = `${data.url}`;
+export const basePath = `${url}/${path}`;
 
 export const folderMy = `${basePath}files/@my`;
 export const folderCommon = `${basePath}files/@common`;
@@ -22,11 +23,10 @@ export const wizardComplete = `${basePath}settings/wizard/complete`;
 export const authentication = `${basePath}authentication`;
 export const rooms = `${basePath}files/rooms`;
 
-
 /*------------------------------------------------Starting data for the test------------------------------------------------*/
 export const filesCountFolderMy = data.filesMy;
 export const foldersCountFolderMy = data.foldersMy;
-
+export const filehandlerDownloadFilesCount = data.filehandlerFiles;
 
 /*-------------------------------------------------------TEST SETTINGS-------------------------------------------------------*/
 export function setParams(authToken){

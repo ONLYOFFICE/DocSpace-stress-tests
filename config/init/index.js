@@ -15,6 +15,8 @@ saveArguments();
 function saveArguments(){
     nconf.set("email", nconf.get('email'));
     nconf.set("password", nconf.get('password'));
+    nconf.set("url", nconf.get('url'));
+    nconf.set("filehandlerFiles", nconf.get('filehandlerFiles'));
     nconf.set("filesMy", nconf.get('filesMy'));
     nconf.set("foldersMy", nconf.get('foldersMy'));
     nconf.set("sharedIter", nconf.get('sharedIter'));
