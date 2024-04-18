@@ -1,8 +1,10 @@
 {
   "email": "test@onlyoffice.com",
   "password": "1111111",
+  "url": "http://localhost:8092",
   "filesMy": 10,
   "foldersMy": 10,
+  "filehandlerFiles": 1000,
   "sharedIter": {
     "enable": false,
     "iterations": 10,
@@ -20,7 +22,7 @@
     "gracefulStop": null
   },
   "constVu": {
-    "enable": true,
+    "enable": false,
     "duration": "10s",
     "vus": 10,
     "startTime": null,
