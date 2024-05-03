@@ -3,11 +3,11 @@ import exec from 'k6/execution';
 import { auth } from '../config/auth.js';
 import { foldersAndFiles } from '../data/data.js';
 import { setScenarios } from '../config/scenarios.js';
-import { folderMy, setParams, filehandlerDownloadFilesCount} from '../config/params.js';
+import { folderMy, setParams, filehandlerDownloadFilesCount} from '../config/params.js';  
 import { setMetrics } from '../config/metrics.js';
 import { downloadAndConvert } from './filehandler.js';
 import { deleteFile, emptyTrash } from './CRUD.js';
-
+import { basePath } from '../config/params.js';
 
 export const options = { 
     scenarios: setScenarios(),
@@ -16,7 +16,7 @@ export const options = {
 };
 
 export function setup() {
-    var authToken = auth();
+    var authToken = auth(basePath);
     let {arrayFiles, arrayFolders} = foldersAndFiles(0, filehandlerDownloadFilesCount, folderMy, authToken);
     let params = setParams(authToken);
     return {params, arrayFiles};
@@ -30,7 +30,7 @@ export default function ({params, arrayFiles}) {
 
 export function teardown({params, arrayFiles}) {
     for(var i in arrayFiles){
-        deleteFile(arrayFiles[i], params, null, null);
+        deleteFile(arrayFiles[i], params, null, null, basePath);
     }
-    emptyTrash(params);
+    emptyTrash(params, basePath);
 }
