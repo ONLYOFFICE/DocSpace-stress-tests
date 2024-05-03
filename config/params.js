@@ -1,10 +1,12 @@
 const data = JSON.parse(open("../config/init/config.json"));
+export const instances = JSON.parse(open("../config/init/instances.json"));
+export const parallel = instances.parallel;
 /*------------------------------------------------------AUTH settings------------------------------------------------------*/
-const email1 = data.email;
+const email = data.email;
 const password = data.password;
 
-export const authData = { UserName : `${email1}`, Password: `${password}`,};
-export const wizardData = { Email : `${email1}`, PasswordHash : `${password}`,}
+export const authData = { UserName : `${email}`, Password: `${password}`,};
+export const wizardData = { Email : `${email}`, PasswordHash : `${password}`,}
 
 
 /*--------------------------------------------------------Base URL's--------------------------------------------------------*/
@@ -12,16 +14,52 @@ export const path = 'api/2.0/'
 export const url = `${data.url}`;
 export const basePath = `${url}/${path}`;
 
-export const folderMy = `${basePath}files/@my`;
-export const folderCommon = `${basePath}files/@common`;
-export const folderRecent = `${basePath}files/@recent`;
-export const folderTrash = `${basePath}files/@trash`;
-export const privateRoom = `${basePath}files/@privacy`;
-export const folderTemplates = `${basePath}files/@templates`;
-export const folderShared = `${basePath}files/@share`;
-export const wizardComplete = `${basePath}settings/wizard/complete`;
-export const authentication = `${basePath}authentication`;
-export const rooms = `${basePath}files/rooms`;
+export function instPath(basePath)
+{
+    const instUrl = `${basePath}/${path}`;
+    return instUrl;
+}
+
+export function  folderMy(basePath){
+    const folderMy = `${basePath}files/@my`;
+    return folderMy;
+}
+export function folderCommon(basePath){
+    const folderCommon = `${basePath}files/@common`;
+    return folderCommon;
+}
+export function folderRecent(basePath){
+    const folderRecent = `${basePath}files/@recent`;
+    return folderRecent;
+}
+export function folderTrash(basePath){
+    const folderTrash = `${basePath}files/@trash`;
+    return folderTrash;
+}
+export function privateRoom(basePath){
+    const privateRoom = `${basePath}files/@privacy`;
+    return privateRoom;
+}
+export function folderTemplates(basePath){
+    const folderTemplates = `${basePath}files/@templates`;
+    return folderTemplates;
+}
+export function folderShared(basePath){
+    const folderShared = `${basePath}files/@share`;
+    return folderShared;
+}
+export function wizardComplete(basePath){
+    const wizardComplete = `${basePath}settings/wizard/complete`;
+    return wizardComplete;
+}
+export function authentication(basePath){
+    const authentication = `${basePath}authentication`;
+    return authentication;
+}
+export function rooms(basePath){
+    const rooms = `${basePath}files/rooms`;
+    return rooms;
+}
 
 /*------------------------------------------------Starting data for the test------------------------------------------------*/
 export const filesCountFolderMy = data.filesMy;
@@ -36,7 +74,7 @@ export function setParams(authToken){
         params = {
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `${authToken}`,
+                'Authorization': `${(authToken)}`,
             }
         }
         return params;
@@ -58,7 +96,7 @@ export const thresholdsSet = 'avg < 2000';
 /*------------SHARED ITERATIONS SCENARIO------------*/
 
 //Enable scenario true or false
-export const sharedIterationScenarioSettings = data.sharedIter.enable;
+export const sharedIterationScenarioSettings = parallel ? instances.scenarios.sharedIter : data.sharedIter.enable;
 
 export const shared_iter_scenario = {
     executor: 'shared-iterations',
@@ -74,7 +112,7 @@ export const shared_iter_scenario = {
 /*----------------PER VU ITERATIONS----------------*/
 
 //Enable scenario true or false
-export const perVuScenarioSettings = data.pervuIter.enable;
+export const perVuScenarioSettings = parallel ? instances.scenarios.pervuIter : data.pervuIter.enable;
 
 export const per_vu_scenario = {
     executor: 'per-vu-iterations',
@@ -90,7 +128,7 @@ export const per_vu_scenario = {
 /*------------------CONSTANT VUs------------------*/
 
 //Enable scenario true or false
-export const constVusScenarioSettings = data.constVu.enable;
+export const constVusScenarioSettings = parallel ? instances.scenarios.constVu : data.constVu.enable;
 
 export const const_vus_scenario = {
     executor: 'constant-vus', 
@@ -105,7 +143,7 @@ export const const_vus_scenario = {
 /*-------------CONSTANT ARRIVAL RATE-------------*/
 
 //Enable scenario true or false
-export const constArrivalRateScenarioSettings = data.constArrival.enable;
+export const constArrivalRateScenarioSettings = parallel ? instances.scenarios.constArrival : data.constArrival.enable;
 
 export const const_arrival_rate_scenario = {
     executor: 'constant-arrival-rate',
@@ -123,7 +161,7 @@ export const const_arrival_rate_scenario = {
 /*-------------RAMPING ARRIVAL RATE-------------*/
 
 //Enable scenario true or false
-export const rampArrivalRateScenarioSettings = data.rampArrival.enable;
+export const rampArrivalRateScenarioSettings = parallel ? instances.scenarios.rampArrival : data.rampArrival.enable;
 
 export const ramp_arrival_rate_scenario = {
     executor: 'ramping-arrival-rate',
@@ -141,7 +179,7 @@ export const ramp_arrival_rate_scenario = {
 /*-------------EXTERNALLY CONTROLLED-------------*/
 
 //Enable scenario true or false
-export const extControlledScenarioSettings = data.extControl.enable;
+export const extControlledScenarioSettings = parallel ? instances.scenarios.extControl : data.extControl.enable;
 
 export const ext_controlled_scenario = {
     executor: 'externally-controlled',

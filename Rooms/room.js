@@ -1,8 +1,8 @@
-import { auth } from '../config/auth.js';
-import { RoomCRUD, createRoom, getRoomInfo, renameRoom, removeRoom } from './CRUD.js';
+import { RoomCRUD, setupFunc } from './CRUD.js';
 import { setScenarios } from '../config/scenarios.js';
 import { setMetrics } from '../config/metrics.js';
-import { setParams } from '../config/params.js';
+import { basePath, parallel } from '../config/params.js';
+import exec from 'k6/execution';
 
 export const options = { 
     scenarios: setScenarios(),
@@ -12,11 +12,23 @@ export const options = {
 let customMetrics = setMetrics(options);
 
 export function setup() {
-    var authToken = auth();
-    let params = setParams(authToken);
-    return params;
+    let data = setupFunc();
+    return data;
 };
 
-export default function (params) {
-    RoomCRUD(params, customMetrics, __ENV.MY_SCENARIO);
+export default function (data) {
+    if(parallel)
+    {
+        for(var i in data.instances)
+        {
+            if(exec.scenario.name === data.instances[i].tag){
+                group(data.instances[i].tag, () => {
+                    RoomCRUD(data.instances[i].params, customMetrics, __ENV.MY_SCENARIO, data.instances[i].url);
+                })
+            }
+        }
+    }
+    else{
+        RoomCRUD(data.params, customMetrics, __ENV.MY_SCENARIO, basePath);
+    }
 }

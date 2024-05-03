@@ -2,8 +2,9 @@ var nconf=require('nconf');
 var fs=require('fs');
 const path = require('path');
 var conf_defaults = require(path.join(__dirname, 'config_default.json'));
-
+var instances = path.join(__dirname, 'instances.json');
 var conf_file = path.join(__dirname, 'config.json');
+
 if( ! fs.existsSync(conf_file) ) {
     fs.writeFileSync(conf_file, JSON.stringify(conf_defaults, null, 2) );
 }
@@ -26,5 +27,13 @@ function saveArguments(){
     nconf.set("rampArrival", nconf.get('rampArrival'));
     nconf.set("extControl", nconf.get('extControl'));
     nconf.save();
+
+    nconf.file("config", instances);
+    nconf.set("parallel", nconf.get('parallel'));
+    nconf.set("scenarios", nconf.get('scenarios'));
+    nconf.set('instances', nconf.get('instances'));
+    console.log(nconf.get('instances'));
+    nconf.save();
+
 }
 

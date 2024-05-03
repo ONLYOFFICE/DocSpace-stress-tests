@@ -1,0 +1,19 @@
+{
+  "parallel": false,
+  "scenarios": {
+    "constVu": true,
+    "pervuIter": false,
+    "sharedIter": false,
+    "constArrival": false,
+    "rampArrival": false,
+    "extControl": false
+  },
+  "instances": [
+    {
+      "tag": "local",
+      "url": "url",
+      "startTime": null,
+      "port": null
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 import http from 'k6/http';
-import { basePath, wizardData, authData, wizardComplete, authentication, setParams } from './params.js';
+import { wizardData, authData, wizardComplete, authentication, setParams } from './params.js';
 
-export function auth() {
+export function auth(basePath) {
     let url = `${basePath}settings?withPassword=true`;
     let params = {
       headers: {
@@ -15,9 +15,8 @@ export function auth() {
     if(res.status === 200) {
       response = res.json().response;
     }
-  
     if(response.wizardToken) {
-      url = wizardComplete;
+      url = wizardComplete(basePath);
       params = {
         headers: {
           'Content-Type': 'application/json',
@@ -30,7 +29,7 @@ export function auth() {
       return res.cookies.asc_auth_key[0].value;
     }
   
-    url = authentication;
+    url = authentication(basePath);
     params = setParams(null);
     const payload = JSON.stringify(authData);
   

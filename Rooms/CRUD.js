@@ -1,17 +1,18 @@
 import http from 'k6/http';
 import { check, group } from 'k6';
-import { rooms } from '../config/params.js';
+import { rooms, instPath, instances, basePath, setParams } from '../config/params.js';
 import faker  from 'https://cdnjs.cloudflare.com/ajax/libs/Faker/3.1.0/faker.min.js';
 import { addTagsDefault } from '../config/scenarios.js';
+import { auth } from '../config/auth.js';
 
-export function createRoom(params, trend, environment){
+export function createRoom(params, trend, environment, url){
     const roomTitle = faker.random.words();
     const payload = JSON.stringify({
         Title: roomTitle,
         RoomType: 6,
     });
 
-    let URL = rooms;
+    let URL = rooms(url);
     const res = http.post(URL, payload, {
         headers: params.headers, 
         tags: addTagsDefault(true, 'Create new room'),
@@ -21,8 +22,8 @@ export function createRoom(params, trend, environment){
     return res.json().response.id;
 }
 
-export function getRoomInfo(id, params, trend, environment){
-    let URL = `${rooms}/${id}`;
+export function getRoomInfo(id, params, trend, environment, url){
+    let URL = `${rooms(url)}/${id}`;
     const res = http.get(URL, {
         headers: params.headers, 
         tags: addTagsDefault(true, 'Get room info'),
@@ -31,12 +32,12 @@ export function getRoomInfo(id, params, trend, environment){
     trend[environment].add(res.timings.duration, { url: res.request.url, status: res.status, method: res.request.method,});
 }
 
-export function renameRoom(id, params, trend, environment){
+export function renameRoom(id, params, trend, environment, url){
     const roomTitle = faker.random.words();
     const payload = JSON.stringify({
         Title: roomTitle,
     });
-    let URL = `${rooms}/${id}`;
+    let URL = `${rooms(url)}/${id}`;
     const res = http.put(URL, payload, {
         headers: params.headers, 
         tags: addTagsDefault(true, 'Rename room'),
@@ -45,11 +46,11 @@ export function renameRoom(id, params, trend, environment){
     trend[environment].add(res.timings.duration, { url: res.request.url, status: res.status, method: res.request.method,});
 }
 
-export function removeRoom(id, params, trend, environment){
+export function removeRoom(id, params, trend, environment, url){
     const payload = JSON.stringify({
         DeleteAfter: false,
     });
-    let URL = `${rooms}/${id}`;
+    let URL = `${rooms(url)}/${id}`;
     const res = http.del(URL, payload, {
         headers: params.headers, 
         tags: addTagsDefault(true, 'Remove room'),
@@ -58,11 +59,11 @@ export function removeRoom(id, params, trend, environment){
     trend[environment].add(res.timings.duration, { url: res.request.url, status: res.status, method: res.request.method,});
 }
 
-export function archiveRoom(id, params, trend, environment){
+export function archiveRoom(id, params, trend, environment, url){
     const payload = JSON.stringify({
         DeleteAfter: false,
     });
-    let URL = `${rooms}/${id}/archive`;
+    let URL = `${rooms(url)}/${id}/archive`;
     const res = http.put(URL, payload, {
         headers: params.headers, 
         tags: addTagsDefault(true, 'Archive room'),
@@ -71,11 +72,11 @@ export function archiveRoom(id, params, trend, environment){
     trend[environment].add(res.timings.duration, { url: res.request.url, status: res.status, method: res.request.method,});
 }
 
-export function unarchiveRoom(id, params, trend, environment){
+export function unarchiveRoom(id, params, trend, environment, url){
     const payload = JSON.stringify({
         DeleteAfter: false,
     });
-    let URL = `${rooms}/${id}/unarchive`;
+    let URL = `${rooms(url)}/${id}/unarchive`;
     const res = http.put(URL, payload, {
         headers: params.headers, 
         tags: addTagsDefault(true, 'Unarchive room'),
@@ -84,8 +85,8 @@ export function unarchiveRoom(id, params, trend, environment){
     trend[environment].add(res.timings.duration, { url: res.request.url, status: res.status, method: res.request.method,});
 }
 
-export function pinRoom(id, params, trend, environment){
-    let URL = `${rooms}/${id}/pin`;
+export function pinRoom(id, params, trend, environment, url){
+    let URL = `${rooms(url)}/${id}/pin`;
     const res = http.put(URL, {
         headers: params.headers, 
         tags: addTagsDefault(true, 'Pin room'),
@@ -94,8 +95,8 @@ export function pinRoom(id, params, trend, environment){
     trend[environment].add(res.timings.duration, { url: res.request.url, status: res.status, method: res.request.method,});
 }
 
-export function unpinRoom(id, params, trend, environment){
-    let URL = `${rooms}/${id}/unpin`;
+export function unpinRoom(id, params, trend, environment, url){
+    let URL = `${rooms(url)}/${id}/unpin`;
     const res = http.put(URL, {
         headers: params.headers, 
         tags: addTagsDefault(true, 'Unpin room'),
@@ -104,11 +105,11 @@ export function unpinRoom(id, params, trend, environment){
     trend[environment].add(res.timings.duration, { url: res.request.url, status: res.status, method: res.request.method,});
 }
 
-export function getRoomAcessRights(id, params, trend, environment){
+export function getRoomAcessRights(id, params, trend, environment, url){
     const payload = JSON.stringify({
         "filterType": null,
     });
-    let URL = `${rooms}/${id}/share`;
+    let URL = `${rooms(url)}/${id}/share`;
     const res = http.get(URL, payload, {
         headers: params.headers, 
         tags: addTagsDefault(true, 'Get room acess rights'),
@@ -117,31 +118,59 @@ export function getRoomAcessRights(id, params, trend, environment){
     trend[environment].add(res.timings.duration, { url: res.request.url, status: res.status, method: res.request.method,});
 }
 
-export function RoomCRUD(params, trend, environment) {
+export function RoomCRUD(params, trend, environment, url) {
     let folderId = null;
 
     group('Create new room', () => {
-        folderId = createRoom(params, trend, environment);
+        folderId = createRoom(params, trend, environment, url);
     });
 
     group('Get room info', () => {
-        getRoomInfo(folderId, params, trend, environment);
+        getRoomInfo(folderId, params, trend, environment, url);
     });
 
     group('Rename room', () => {
-        renameRoom(folderId, params, trend, environment);
+        renameRoom(folderId, params, trend, environment, url);
     });
 
     group('Archive room', () =>{
-        archiveRoom(folderId, params, trend, environment);
+        archiveRoom(folderId, params, trend, environment, url);
     })
 
     group('Unarchive room', () => {
-        unarchiveRoom(folderId, params, trend, environment);
+        unarchiveRoom(folderId, params, trend, environment, url);
     })
 
     group('Remove room', () => {
-        removeRoom(folderId, params, trend, environment);
+        removeRoom(folderId, params, trend, environment, url);
     });
 
 };
+
+export function setupFunc(){
+    let data = {};
+    if(instances.parallel) {
+        data = setupParallel();
+        return data;
+    }
+    else {
+        var authToken = auth(basePath);
+        data.params = setParams(authToken);
+        return data;
+    }
+}
+
+function setupParallel(){
+    for(var i in instances.instances){
+        let url = instPath(instances.instances[i].url);
+        let authToken = auth(url);
+        if(instances.instances[i].port) {
+            instances.instances[i].url = instPath(`${instances.instances[i].url}:${instances.instances[i].port}`)
+        }
+        else {
+        instances.instances[i].url = instPath(`${instances.instances[i].url}`);
+        }
+        instances.instances[i].params = setParams(authToken);
+    }
+    return instances;
+}

@@ -3,34 +3,41 @@ import exec from 'k6/execution';
 import { constVusScenarioSettings, sharedIterationScenarioSettings, perVuScenarioSettings, constArrivalRateScenarioSettings, rampArrivalRateScenarioSettings, extControlledScenarioSettings,
  const_vus_scenario, shared_iter_scenario, per_vu_scenario, const_arrival_rate_scenario, ramp_arrival_rate_scenario, ext_controlled_scenario} from './params.js';
 
-export function setScenarios() {
-    let scenarios = {
-        const_vus_scenario, 
-        shared_iter_scenario,
-        per_vu_scenario,
-        const_arrival_rate_scenario,
-        ramp_arrival_rate_scenario,
-        ext_controlled_scenario,
+export function setScenarios(instances) {
+    let scenarios = {};
+
+    if(constVusScenarioSettings === true){
+        scenarios.const_vus_scenario = const_vus_scenario;
     }
-    if(constVusScenarioSettings == false){
-        delete scenarios.const_vus_scenario;
+    if(sharedIterationScenarioSettings === true){
+        scenarios.shared_iter_scenario = shared_iter_scenario;
     }
-    if(sharedIterationScenarioSettings == false){
-        delete scenarios.shared_iter_scenario;
+    if(perVuScenarioSettings === true){
+        scenarios.per_vu_scenario = per_vu_scenario;
     }
-    if(perVuScenarioSettings == false){
-        delete scenarios.per_vu_scenario;
+    if(constArrivalRateScenarioSettings === true){
+        scenarios.const_arrival_rate_scenario = const_arrival_rate_scenario;
     }
-    if(constArrivalRateScenarioSettings == false){
-        delete scenarios.const_arrival_rate_scenario;
+    if(rampArrivalRateScenarioSettings === true){
+        scenarios.ramp_arrival_rate_scenario = ramp_arrival_rate_scenario;
     }
-    if(rampArrivalRateScenarioSettings == false){
-        delete scenarios.ramp_arrival_rate_scenario;
+    if(extControlledScenarioSettings === true){
+        scenarios.ext_controlled_scenario = ext_controlled_scenario;
     }
-    if(extControlledScenarioSettings == false){
-        delete scenarios.ext_controlled_scenario;
+
+    let scenariosParallel = {};
+    if(instances.parallel === true){
+        for(var inst in instances.instances)
+        {
+            for(var scen in scenarios)
+            {
+                let scenario = scenarios[scen];
+                scenario.startTime = instances.instances[inst].startTime;
+                scenariosParallel[`${instances.instances[inst].tag}`] = Object.assign({}, scenario);
+            }
+        }
     }
-    return scenarios;
+    return instances.parallel ? scenariosParallel : scenarios;
 }
 
 function getScenarioData()

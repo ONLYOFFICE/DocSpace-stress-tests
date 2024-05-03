@@ -83,6 +83,8 @@ def help():
     print("--extControl.maxVus                Set up extControl max vus (e.g: --extControl.maxVus=50)")
     print("--extControl.vus                   Set up vus (e.g: --extControl.vus=10)")
     print("--extControl.startTime             Set up start time (e.g: --extControl.startTime=null)")
+    print("--parallel                         Set up multiple url (e.g.: --parallel=true)")
+    print("--scenarios.constVu                Set up only one scenario to true for multiple url another set to false (e.g.: scenarios.constVu, scenarios.pervuIter, scenarios.sharedIter, scenarios.constArrival, scenarios.rampArrival, scenarios.extControl)")
     print("\nTypes of output: \n-o output-elasticsearch \n--out output-elasticsearch \n\n-o influxdb=http://localhost:8086/k6 \n--out influxdb=http://localhost:8086/k6 \n\n-o json=test_results.json \n--out json=test_results.json")
     
 myFunction()
