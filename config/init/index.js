@@ -26,6 +26,7 @@ function saveArguments(){
     nconf.set("constArrival", nconf.get('constArrival'));
     nconf.set("rampArrival", nconf.get('rampArrival'));
     nconf.set("extControl", nconf.get('extControl'));
+    nconf.set("rampVus", nconf.get('rampVus'));
     nconf.save();
 
     nconf.file("config", instances);
