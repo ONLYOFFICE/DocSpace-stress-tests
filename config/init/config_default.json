@@ -71,5 +71,21 @@
     "maxVus": 50,
     "vus": 10,
     "startTime": null
+  },
+  "rampVus": {
+    "enable": false,
+    "startVUs": 0,
+    "stages" : [
+    {
+      "target": 10,
+      "duration": "20s"
+    },
+    {
+      "target": 0,
+      "duration": "10s"
+    }
+    ],
+    "gracefulRampDown": "0s",
+    "startTime": null
   }
 }

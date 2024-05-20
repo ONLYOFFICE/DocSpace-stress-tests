@@ -189,3 +189,17 @@ export const ext_controlled_scenario = {
     startTime: data.extControl.startTime,
     env: { SCENARIO: 'externally-controlled' },
 };
+
+/*-------------RAMPING VUS-------------*/
+
+//Enable scenario true or false
+export const rampVusScenarioSettings = parallel ? instances.scenarios.rampVus : data.rampVus.enable;
+
+export const ramp_vus_scenario = {
+    executor: 'ramping-vus',
+    startVUs: data.rampVus.startVUs,
+    stages: data.rampVus.stages,
+    gracefulRampDown: data.rampVus.duration,
+    startTime: data.rampVus.startTime,
+    env: { SCENARIO: 'ramping-vus' },
+};

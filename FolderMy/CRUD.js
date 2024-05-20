@@ -269,6 +269,16 @@ export function emptyTrash(params, url){
     check(res, { 'Empty trash status': res => res.status === 200});
 }
 
+export function openEdit(id, params, trend, environment, url){
+    let URL = `${url}files/file/${id}/openedit`;
+    const res = http.get(URL, {
+        headers: params.headers, 
+        tags: addTagsDefault(true, 'Open and edit file'),
+    });
+    check(res, {'Open and edit file status': res => res.status === 200});
+    trend[environment].add(res.timings.duration, { api: `${path}files/file/{id}/openedit`, status: res.status, method: res.request.method, });
+}
+
 export function setupFunc(){
     let data = {};
     if(instances.parallel) {

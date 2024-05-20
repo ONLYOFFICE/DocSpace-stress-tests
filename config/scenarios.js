@@ -1,7 +1,7 @@
 import exec from 'k6/execution';
 
-import { constVusScenarioSettings, sharedIterationScenarioSettings, perVuScenarioSettings, constArrivalRateScenarioSettings, rampArrivalRateScenarioSettings, extControlledScenarioSettings,
- const_vus_scenario, shared_iter_scenario, per_vu_scenario, const_arrival_rate_scenario, ramp_arrival_rate_scenario, ext_controlled_scenario} from './params.js';
+import { constVusScenarioSettings, sharedIterationScenarioSettings, perVuScenarioSettings, constArrivalRateScenarioSettings, rampArrivalRateScenarioSettings, extControlledScenarioSettings, rampVusScenarioSettings,
+ const_vus_scenario, shared_iter_scenario, per_vu_scenario, const_arrival_rate_scenario, ramp_arrival_rate_scenario, ext_controlled_scenario, ramp_vus_scenario} from './params.js';
 
 export function setScenarios(instances) {
     let scenarios = {};
@@ -23,6 +23,9 @@ export function setScenarios(instances) {
     }
     if(extControlledScenarioSettings === true){
         scenarios.ext_controlled_scenario = ext_controlled_scenario;
+    }
+    if(rampVusScenarioSettings === true){
+        scenarios.ramp_vus_scenario = ramp_vus_scenario;
     }
 
     let scenariosParallel = {};

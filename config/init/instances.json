@@ -1,12 +1,13 @@
 {
   "parallel": false,
   "scenarios": {
-    "constVu": true,
+    "constVu": false,
     "pervuIter": false,
     "sharedIter": false,
     "constArrival": false,
     "rampArrival": false,
-    "extControl": false
+    "extControl": false,
+    "rampVus": false
   },
   "instances": [
     {
