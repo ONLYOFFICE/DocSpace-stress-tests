@@ -9,6 +9,7 @@ export const options = {
     scenarios: setScenarios(instances),
     summaryTrendStats: ['avg', 'min', 'med', 'max', 'p(90)', 'p(95)', 'p(99)', 'count'],
     thresholds: {},
+    timeout: '240000',
 };
 
 export function setup() {
@@ -23,15 +24,16 @@ export default function (data) {
     {
         for(var i in data.instances)
         {
-            if(exec.scenario.name === data.instances[i].tag){
+            var scenarioName = exec.scenario.name;
+            if(scenarioName === data.instances[i].tag){
                 group(data.instances[i].tag, () => {
-                FolderCRUD(data.instances[i].idMy, data.instances[i].params, customMetrics, __ENV.MY_SCENARIO, data.instances[i].url);
+                FolderCRUD(data.instances[i].idMy, data.instances[i].params, customMetrics, scenarioName, data.instances[i].url);
                 })
             }
         }
     }
     else{
-        FolderCRUD(data.idMy, data.params, customMetrics, __ENV.MY_SCENARIO, basePath);
+        FolderCRUD(data.idMy, data.params, customMetrics,exec.scenario.name, basePath);
     }
 }
 

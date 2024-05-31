@@ -5,8 +5,26 @@ export const parallel = instances.parallel;
 const email = data.email;
 const password = data.password;
 
-export const authData = { UserName : `${email}`, Password: `${password}`,};
-export const wizardData = { Email : `${email}`, PasswordHash : `${password}`,}
+export function authData(emailInst, passwordInst ){
+    var auth;
+    if(emailInst && passwordInst){
+        auth = { UserName : `${emailInst}`, Password: `${passwordInst}`,};
+    }
+    else{
+        auth = { UserName : `${email}`, Password: `${password}`,};
+    }
+    return auth;
+}
+
+export function wizardData(emailInst, passwordInst){
+    var wizard;
+    if(emailInst && passwordInst){
+        wizard = { Email : `${emailInst}`, PasswordHash : `${passwordInst}`, };
+    }
+    else{
+        wizard = { Email : `${email}`, PasswordHash : `${password}`, };
+    }
+}
 
 
 /*--------------------------------------------------------Base URL's--------------------------------------------------------*/

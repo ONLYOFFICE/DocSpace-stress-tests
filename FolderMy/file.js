@@ -24,15 +24,16 @@ export default function (data) {
     {
         for(var i in data.instances)
         {
-            if(exec.scenario.name === data.instances[i].tag){
+            var scenarioName = exec.scenario.name;
+            if(scenarioName === data.instances[i].tag){
                 group(data.instances[i].tag, () => {
-                    FileCRUD(data.instances[i].idMy, data.instances[i].params, customMetrics, __ENV.MY_SCENARIO, data.instances[i].url);
+                    FileCRUD(data.instances[i].idMy, data.instances[i].params, customMetrics, scenarioName, data.instances[i].url);
                 })
             }
         }
     }
     else{
-        FileCRUD(data.idMy, data.params, customMetrics, __ENV.MY_SCENARIO, basePath);
+        FileCRUD(data.idMy, data.params, customMetrics, exec.scenario.name, basePath);
     }
 };
 

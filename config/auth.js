@@ -1,7 +1,7 @@
 import http from 'k6/http';
-import { wizardData, authData, wizardComplete, authentication, setParams } from './params.js';
+import { wizardComplete, authentication, setParams } from './params.js';
 
-export function auth(basePath) {
+export function auth(basePath, wizardData, authData) {
     let url = `${basePath}settings?withPassword=true`;
     let params = {
       headers: {

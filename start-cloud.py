@@ -1,7 +1,12 @@
+#!/usr/bin/python
+
 import re
 import os
+import json
+import subprocess
+import shlex
 
-print("To start test set: filepath, output (if needed) and test params. \n\nExample: folderMy/file.js --out influxdb=http://localhost:8086/k6 --email=test@onlyofffice.com --password=11111111 --constVu.enable=true \n\nTo see types of output and arguments write: -h or --help")
+print("To start test set: filepath, output (if needed) and test params. \n\nExample: folderMy/file.js --out xk6-influxdb --email=test@onlyofffice.com --password=11111111 --k6_influxdb_organization=your-organization  --k6_influxdb_bucket=your-bucket  --k6_influxdb_token=your-token --k6_influxdb_addr=your-url-addr  \n\nTo see types of output and arguments write: -h or --help")
 
 
 def myFunction():
@@ -25,13 +30,20 @@ def myFunction():
             
 
 def startTests(output, path):
+    file = open('config/init/config.json', "r")
+    data = json.load(file)
     if output:
         if output.group(3) == "output-elasticsearch":
-            os.system(f'.\k6 run {path.group()} {output.group()}')
-        else:
-            os.system(f'k6 run {path.group()} {output.group()}')
+            command = f'$env:K6_ELASTICSEARCH_CLOUD_ID={data["k6_elasticsearch_cloud_id"]}; $env:K6_ELASTICSEARCH_USER={data["k6_elasticsearch_user"]}; $env:K6_ELASTICSEARCH_PASSWORD={data["k6_elasticsearch_password"]}; ./k6 run {path.group()} {output.group()}'
+            os.system(f'powershell.exe {command}')
+        elif output.group(3) == "xk6-influxdb":
+            command = f'$env:K6_INFLUXDB_ORGANIZATION=\\"{data["k6_influxdb_organization"]}\\"; $env:K6_INFLUXDB_BUCKET=\\"{data["k6_influxdb_bucket"]}\\"; $env:K6_INFLUXDB_TOKEN=\\"{data["k6_influxdb_token"]}\\"; $env:K6_INFLUXDB_ADDR=\\"{data["k6_influxdb_addr"]}\\"; ./k6 run {path.group()} {output.group()}'
+            os.system(f'powershell.exe {command}')
+        elif output.group(3) == "experimental-prometheus-rw":
+            command = f'$env:K6_PROMETHEUS_RW_SERVER_URL={data["k6_prometheus_rw_server_url"]}; $env:K6_PROMETHEUS_RW_USERNAME={data["k6_prometheus_rw_username"]}; $env:K6_PROMETHEUS_RW_PASSWORD={data["k6_prometheus_rw_password"]}; ./k6 run {path.group()} {output.group()}'
+            os.system(f'powershell.exe {command}')
     else:
-        os.system(f'k6 run {path.group()}')
+        print("Not cloud output")
 
 def initArg(argMatch):
     args = ''
@@ -40,6 +52,16 @@ def initArg(argMatch):
     os.system(f'node config/init/index.js {args}')
 
 def help():
+    print("--k6_influxdb_organization         Set up influxdb organization")
+    print("--k6_influxdb_bucket               Set up indluxdb bucket")
+    print("--k6_influxdb_token                Set up influxdb token")
+    print("--k6_influxdb_addr                 Set up influxdb url")
+    print("--k6_elasticsearch_cloud_id        set up elasticseardddch cloud id")
+    print("--k6_elasticsearch_user            Set up elastricsearch user")
+    print("--k6_elasticsearch_password        Set up elasticsearch password")
+    print("--k6_prometheus_rw_server_url      set up prometheus server url")
+    print("--k6_prometheus_rw_username        Set up prometheus username")
+    print("--k6_prometheus_rw_password        Set up prometheus password")
     print("--email                            Set up user email (e.g: --email=test@onlyuoffice.com)")
     print("--password                         Set up user password (e.g: --password=1111qw11)")
     print("--filesMy                          Set up files count in folder My (e.g: --filesMy=10)")
@@ -83,6 +105,6 @@ def help():
     print("--extControl.startTime             Set up start time (e.g: --extControl.startTime=null)")
     print("--parallel                         Set up multiple url (e.g.: --parallel=true)")
     print("--scenarios.constVu                Set up only one scenario to true for multiple url another set to false (e.g.: scenarios.constVu, scenarios.pervuIter, scenarios.sharedIter, scenarios.constArrival, scenarios.rampArrival, scenarios.extControl)")
-    print("\nTypes of output: \n-o output-elasticsearch \n--out output-elasticsearch \n\n-o influxdb=http://localhost:8086/k6 \n--out influxdb=http://localhost:8086/k6 \n\n-o json=test_results.json \n--out json=test_results.json")
+    print("\nTypes of output: \n-o output-elasticsearch \n--out output-elasticsearch \n\n-o xk6-influxdb \n--out xk6-influxdb \n\n-o experimental-prometheus-rw \n--out experimental-prometheus-rw")
     
 myFunction()

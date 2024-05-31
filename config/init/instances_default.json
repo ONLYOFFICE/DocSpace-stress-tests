@@ -14,7 +14,9 @@
       "tag": "local",
       "url": "url",
       "startTime": null,
-      "port": null
+      "port": null,
+      "email": "test@onlyoffice.com",
+      "password": "qwerty123"
     }
   ]
 }

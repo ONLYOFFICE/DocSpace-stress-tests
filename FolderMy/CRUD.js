@@ -3,7 +3,7 @@ import { check, group } from 'k6';
 import faker  from 'https://cdnjs.cloudflare.com/ajax/libs/Faker/3.1.0/faker.min.js';
 import exec from 'k6/execution';
 
-import { folderMy, path, instPath, instances, url, basePath, setParams, filesCountFolderMy, foldersCountFolderMy} from '../config/params.js';
+import { folderMy, path, instPath, instances, url, basePath, setParams, filesCountFolderMy, foldersCountFolderMy, wizardData, authData} from '../config/params.js';
 import { foldersAndFiles } from '../data/data.js';
 import { auth } from '../config/auth.js';
 import { addTagsDefault } from '../config/scenarios.js';
@@ -286,7 +286,9 @@ export function setupFunc(){
         return data;
     }
     else {
-        var authToken = auth(basePath);
+        var wizard = wizardData(null, null);
+        var authdata = authData(null, null);
+        var authToken = auth(basePath, wizard, authdata);
         foldersAndFiles(foldersCountFolderMy, filesCountFolderMy, folderMy(basePath), authToken);
         data.params = setParams(authToken);
         data.idMy = getFolderMyId(data.params, basePath);
@@ -297,13 +299,16 @@ export function setupFunc(){
 function setupParallel(){
     for(var i in instances.instances){
         let url = instPath(instances.instances[i].url);
-        let authToken = auth(url);
+        var wizard = wizardData(instances.instances[i].email, instances.instances[i].password);
+        var authdata = authData(instances.instances[i].email, instances.instances[i].password);
+        let authToken = auth(url, wizard, authdata);
         if(instances.instances[i].port) {
             instances.instances[i].url = instPath(`${instances.instances[i].url}:${instances.instances[i].port}`)
         }
         else {
         instances.instances[i].url = instPath(`${instances.instances[i].url}`);
         }
+        foldersAndFiles(foldersCountFolderMy, filesCountFolderMy, folderMy(instances.instances[i].url), authToken);
         instances.instances[i].params = setParams(authToken);
         instances.instances[i].idMy = getFolderMyId(instances.instances[i].params, instances.instances[i].url);
     }

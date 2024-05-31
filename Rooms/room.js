@@ -21,14 +21,15 @@ export default function (data) {
     {
         for(var i in data.instances)
         {
-            if(exec.scenario.name === data.instances[i].tag){
+            var scenarioName = exec.scenario.name;
+            if(scenarioName === data.instances[i].tag){
                 group(data.instances[i].tag, () => {
-                    RoomCRUD(data.instances[i].params, customMetrics, __ENV.MY_SCENARIO, data.instances[i].url);
+                    RoomCRUD(data.instances[i].params, customMetrics, scenarioName, data.instances[i].url);
                 })
             }
         }
     }
     else{
-        RoomCRUD(data.params, customMetrics, __ENV.MY_SCENARIO, basePath);
+        RoomCRUD(data.params, customMetrics, exec.scenario.name, basePath);
     }
 }

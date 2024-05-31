@@ -2,11 +2,18 @@ var nconf=require('nconf');
 var fs=require('fs');
 const path = require('path');
 var conf_defaults = require(path.join(__dirname, 'config_default.json'));
+var instances_defaults = path.join(__dirname, 'instances_default.json');
 var instances = path.join(__dirname, 'instances.json');
 var conf_file = path.join(__dirname, 'config.json');
 
 if( ! fs.existsSync(conf_file) ) {
     fs.writeFileSync(conf_file, JSON.stringify(conf_defaults, null, 2) );
+}
+
+if( ! fs.existsSync(instances) ) {
+    fs.copyFile(instances_defaults, instances, (err) => {
+        if (err) throw err;
+      });
 }
 
 nconf.argv().env().file("config", conf_file);
@@ -24,16 +31,73 @@ function saveArguments(){
     nconf.set("pervuIter", nconf.get('pervuIter'));
     nconf.set("constVu", nconf.get('constVu'));
     nconf.set("constArrival", nconf.get('constArrival'));
-    nconf.set("rampArrival", nconf.get('rampArrival'));
+
+    var rampArrival = nconf.get('rampArrival');
+    if (rampArrival.stages.hasOwnProperty('target')){
+        let ramp_stages = [];
+        for(var i in rampArrival.stages.target){
+            ramp_stages.push({target: rampArrival.stages.target[i], duration: rampArrival.stages.duration[i]});
+        }
+        rampArrival.stages = ramp_stages;
+        nconf.set("rampArrival", rampArrival);
+    }
+    else {
+        nconf.set("rampArrival", nconf.get('rampArrival'));
+    }
+
     nconf.set("extControl", nconf.get('extControl'));
-    nconf.set("rampVus", nconf.get('rampVus'));
+
+    var rampVus = nconf.get('rampVus');
+    if (rampVus.stages.hasOwnProperty('target')){
+        let ramp_stages = [];
+        for(var i in rampVus.stages.target){
+            ramp_stages.push({target: rampVus.stages.target[i], duration: rampVus.stages.duration[i]});
+        }
+        rampVus.stages = ramp_stages;
+        nconf.set("rampVus", rampVus);
+    }
+    else {
+        nconf.set("rampVus", nconf.get('rampVus'));
+    }
+
+    nconf.set("k6_influxdb_organization", nconf.get('k6_influxdb_organization'));
+    nconf.set("k6_influxdb_bucket", nconf.get('k6_influxdb_bucket'));
+    nconf.set("k6_influxdb_token", nconf.get('k6_influxdb_token'));
+    nconf.set("k6_influxdb_addr", nconf.get('k6_influxdb_addr'));
+    nconf.set("k6_elasticsearch_cloud_id", nconf.get('k6_elasticsearch_cloud_id'));
+    nconf.set("k6_elasticsearch_user", nconf.get('k6_elasticsearch_user'));
+    nconf.set("k6_elasticsearch_password", nconf.get('k6_elasticsearch_password'));
+    nconf.set("k6_prometheus_rw_server_url", nconf.get('k6_prometheus_rw_server_url'));
+    nconf.set("k6_prometheus_rw_username", nconf.get('k6_prometheus_rw_username'));
+    nconf.set("k6_prometheus_rw_password", nconf.get('k6_prometheus_rw_password'));
+
     nconf.save();
+    
 
     nconf.file("config", instances);
     nconf.set("parallel", nconf.get('parallel'));
     nconf.set("scenarios", nconf.get('scenarios'));
-    nconf.set('instances', nconf.get('instances'));
-    console.log(nconf.get('instances'));
+
+    var instances_set = nconf.get('instances');
+    if (instances_set.hasOwnProperty('tag')){
+        let instances_tag = [];
+        for(var i in instances_set.tag){
+            instances_tag.push({
+                tag: instances_set.tag[i], 
+                url: instances_set.url[i],
+                startTime: instances_set.hasOwnProperty('startTime') ? instances_set.startTime[i] : null,
+                port: instances_set.hasOwnProperty('port') ? instances_set.port[i] : null,
+                password: instances_set.hasOwnProperty('password') ? instances_set.password[i] : null,
+                email: instances_set.hasOwnProperty('email') ? instances_set.email[i] : null
+            });
+        }
+        instances_set = instances_tag;
+        nconf.set("instances", instances_set);
+    }
+    else {
+        nconf.set('instances', nconf.get('instances'));
+    }
+
     nconf.save();
 
 }

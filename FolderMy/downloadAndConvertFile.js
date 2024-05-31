@@ -25,7 +25,7 @@ export function setup() {
 let customMetrics = setMetrics(options);
 
 export default function ({params, arrayFiles}) {
-    downloadAndConvert(params, arrayFiles[exec.scenario.iterationInTest], customMetrics, __ENV.MY_SCENARIO);
+    downloadAndConvert(params, arrayFiles[exec.scenario.iterationInTest], customMetrics, exec.scenario.name);
 };
 
 export function teardown({params, arrayFiles}) {
