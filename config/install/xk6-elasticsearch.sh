@@ -1,3 +1,4 @@
+choco install k6
 cd ..
 cd ..
 go install go.k6.io/xk6/cmd/xk6@latest

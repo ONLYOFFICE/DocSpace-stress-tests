@@ -40,7 +40,7 @@ def initArg(argMatch):
     os.system(f'node config/init/index.js {args}')
 
 def help():
-    print("--email                            Set up user email (e.g: --email=test@onlyuoffice.com)")
+    print("--email                            Set up user email (e.g: --email=test@onlyoffice.com)")
     print("--password                         Set up user password (e.g: --password=1111qw11)")
     print("--filesMy                          Set up files count in folder My (e.g: --filesMy=10)")
     print("--foldersMy                        Set up folders count on folder My (e.g: --foldersMy=50)")
