@@ -17,7 +17,7 @@ def myFunction():
             testPathMatch = re.search(testPath, consoleInput)
             output = r'((--out|-o)\s+(\S+))'
             outputMatch = re.search(output, consoleInput)
-            arg = r'(--[^out|o](\w+|\w+[.]\w+)(=|\s+)\S+)'
+            arg = r'(--(?!out|o)(\w+|\w+[.]\w+)(=|\s+)\S+)'
             argMatch = re.finditer(arg, consoleInput)
             if argMatch:
                 initArg(argMatch)
