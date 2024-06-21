@@ -2,3 +2,4 @@
 /config/init/config.json
 /config/init/instances.json
 /.idea
+/config/init/node_modules
