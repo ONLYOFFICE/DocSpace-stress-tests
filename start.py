@@ -27,7 +27,7 @@ def myFunction():
 def startTests(output, path):
     if output:
         if output.group(3) == "output-elasticsearch":
-            os.system(f'.\k6 run {path.group()} {output.group()}')
+            os.system(f'.\\k6 run {path.group()} {output.group()}')
         else:
             os.system(f'k6 run {path.group()} {output.group()}')
     else:

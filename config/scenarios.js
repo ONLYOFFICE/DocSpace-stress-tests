@@ -6,25 +6,25 @@ import { constVusScenarioSettings, sharedIterationScenarioSettings, perVuScenari
 export function setScenarios(instances) {
     let scenarios = {};
 
-    if(constVusScenarioSettings === true){
+    if(constVusScenarioSettings === true || constVusScenarioSettings === "true"){
         scenarios.const_vus_scenario = const_vus_scenario;
     }
-    if(sharedIterationScenarioSettings === true){
+    if(sharedIterationScenarioSettings === true || sharedIterationScenarioSettings === "true"){
         scenarios.shared_iter_scenario = shared_iter_scenario;
     }
-    if(perVuScenarioSettings === true){
+    if(perVuScenarioSettings === true || perVuScenarioSettings === "true"){
         scenarios.per_vu_scenario = per_vu_scenario;
     }
-    if(constArrivalRateScenarioSettings === true){
+    if(constArrivalRateScenarioSettings === true || constArrivalRateScenarioSettings === "true"){
         scenarios.const_arrival_rate_scenario = const_arrival_rate_scenario;
     }
-    if(rampArrivalRateScenarioSettings === true){
+    if(rampArrivalRateScenarioSettings === true || rampArrivalRateScenarioSettings === "true"){
         scenarios.ramp_arrival_rate_scenario = ramp_arrival_rate_scenario;
     }
-    if(extControlledScenarioSettings === true){
+    if(extControlledScenarioSettings === true || extControlledScenarioSettings === "true"){
         scenarios.ext_controlled_scenario = ext_controlled_scenario;
     }
-    if(rampVusScenarioSettings === true){
+    if(rampVusScenarioSettings === true || rampVusScenarioSettings === "true"){
         scenarios.ramp_vus_scenario = ramp_vus_scenario;
     }
 
