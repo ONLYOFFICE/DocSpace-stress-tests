@@ -37,7 +37,8 @@ def initArg(argMatch):
     args = ''
     for m in argMatch:
         args = f'{args} {m.group()}'
-    os.system(f'node config/init/index.js {args}')
+    abs_path = os.getcwd()
+    os.system(f'node {abs_path}/config/init/index.js {args}')
 
 def help():
     print("--email                            Set up user email (e.g: --email=test@onlyoffice.com)")
