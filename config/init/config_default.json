@@ -2,8 +2,8 @@
   "email": "test@onlyoffice.com",
   "password": "1111111",
   "url": "http://localhost:8092",
-  "filesMy": 10,
-  "foldersMy": 10,
+  "filesMy": 0,
+  "foldersMy": 0,
   "filehandlerFiles": 1000,
   "k6_influxdb_organization": "influxdb-organization-name",
   "k6_influxdb_bucket": "influxdb-bucket-name",
@@ -20,7 +20,7 @@
     "iterations": 10,
     "vus": 10,
     "maxDuration": null,
-    "startTime": "10s",
+    "startTime": "0s",
     "gracefulStop": null
   },
   "pervuIter": {
@@ -28,7 +28,7 @@
     "iterations": 20,
     "vus": 100,
     "maxDuration": "5m",
-    "startTime": "30s",
+    "startTime": "0s",
     "gracefulStop": null
   },
   "constVu": {
