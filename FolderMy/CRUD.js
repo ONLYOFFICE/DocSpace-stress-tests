@@ -281,7 +281,7 @@ export function openEdit(id, params, trend, environment, url){
 
 export function setupFunc(){
     let data = {};
-    if(instances.parallel) {
+    if(instances.parallel || instances.parallel === "true") {
         data = setupParallel();
         return data;
     }

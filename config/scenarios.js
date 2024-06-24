@@ -29,7 +29,7 @@ export function setScenarios(instances) {
     }
 
     let scenariosParallel = {};
-    if(instances.parallel === true){
+    if(instances.parallel === true || instances.parallel === "true"){
         for(var inst in instances.instances)
         {
             for(var scen in scenarios)
@@ -40,7 +40,7 @@ export function setScenarios(instances) {
             }
         }
     }
-    return instances.parallel ? scenariosParallel : scenarios;
+    return (instances.parallel || instances.parallel === "true") ? scenariosParallel : scenarios;
 }
 
 function getScenarioData()
