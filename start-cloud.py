@@ -3,6 +3,7 @@
 import re
 import os
 import json
+import sys
 
 print("To start test set: filepath, output (if needed) and test params. \n\nExample: folderMy/file.js --out xk6-influxdb --email=test@onlyofffice.com --password=11111111 --k6_influxdb_organization=your-organization  --k6_influxdb_bucket=your-bucket  --k6_influxdb_token=your-token --k6_influxdb_addr=your-url-addr  \n\nTo see types of output and arguments write: -h or --help")
 
@@ -30,16 +31,28 @@ def myFunction():
 def startTests(output, path):
     file = open('config/init/config.json', "r")
     data = json.load(file)
+    is_windows = sys.platform.startswith('win')
     if output:
         if output.group(3) == "output-elasticsearch":
             k6_command = f'$env:K6_ELASTICSEARCH_CLOUD_ID={data["k6_elasticsearch_cloud_id"]}; $env:K6_ELASTICSEARCH_USER={data["k6_elasticsearch_user"]}; $env:K6_ELASTICSEARCH_PASSWORD={data["k6_elasticsearch_password"]}; ./k6 run {path.group()} {output.group()}'
-            os.system(f'powershell.exe {k6_command}')
+            if is_windows:
+                os.system(f'powershell.exe {k6_command}')
+            else:
+                os.system(f'pwsh {k6_command}')
         elif output.group(3) == "xk6-influxdb":
             k6_command = f'$env:K6_INFLUXDB_ORGANIZATION=\\"{data["k6_influxdb_organization"]}\\"; $env:K6_INFLUXDB_PUSH_INTERVAL=\\"2s\\"; $env:K6_INFLUXDB_BUCKET=\\"{data["k6_influxdb_bucket"]}\\"; $env:K6_INFLUXDB_TOKEN=\\"{data["k6_influxdb_token"]}\\"; $env:K6_INFLUXDB_ADDR=\\"{data["k6_influxdb_addr"]}\\"; ./k6 run {path.group()} {output.group()}'
             os.system(f'powershell.exe {k6_command}')
+            if is_windows:
+                os.system(f'powershell.exe {k6_command}')
+            else:
+                os.system(f'pwsh {k6_command}')
         elif output.group(3) == "experimental-prometheus-rw":
             k6_command = f'$env:K6_PROMETHEUS_RW_SERVER_URL={data["k6_prometheus_rw_server_url"]}; $env:K6_PROMETHEUS_RW_USERNAME={data["k6_prometheus_rw_username"]}; $env:K6_PROMETHEUS_RW_PASSWORD={data["k6_prometheus_rw_password"]}; ./k6 run {path.group()} {output.group()}'
             os.system(f'powershell.exe {k6_command}')
+            if is_windows:
+                os.system(f'powershell.exe {k6_command}')
+            else:
+                os.system(f'pwsh {k6_command}')
     else:
         print("Not cloud output")
 
