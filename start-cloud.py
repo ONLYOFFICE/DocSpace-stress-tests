@@ -40,11 +40,12 @@ def startTests(output, path):
             else:
                 os.system(f'pwsh {k6_command}')
         elif output.group(3) == "xk6-influxdb":
-            k6_command = f'$env:K6_INFLUXDB_ORGANIZATION=\\"{data["k6_influxdb_organization"]}\\"; $env:K6_INFLUXDB_PUSH_INTERVAL=\\"2s\\"; $env:K6_INFLUXDB_BUCKET=\\"{data["k6_influxdb_bucket"]}\\"; $env:K6_INFLUXDB_TOKEN=\\"{data["k6_influxdb_token"]}\\"; $env:K6_INFLUXDB_ADDR=\\"{data["k6_influxdb_addr"]}\\"; ./k6 run {path.group()} {output.group()}'
+            k6_command_win = f'$env:K6_INFLUXDB_ORGANIZATION=\\"{data["k6_influxdb_organization"]}\\"; $env:K6_INFLUXDB_PUSH_INTERVAL=\\"2s\\"; $env:K6_INFLUXDB_BUCKET=\\"{data["k6_influxdb_bucket"]}\\"; $env:K6_INFLUXDB_TOKEN=\\"{data["k6_influxdb_token"]}\\"; $env:K6_INFLUXDB_ADDR=\\"{data["k6_influxdb_addr"]}\\"; ./k6 run {path.group()} {output.group()}'
+            k6_command_ubuntu = f'$env:K6_INFLUXDB_ORGANIZATION="{data["k6_influxdb_organization"]}"; $env:K6_INFLUXDB_PUSH_INTERVAL="2s"; $env:K6_INFLUXDB_BUCKET="{data["k6_influxdb_bucket"]}"; $env:K6_INFLUXDB_TOKEN="{data["k6_influxdb_token"]}"; $env:K6_INFLUXDB_ADDR="{data["k6_influxdb_addr"]}"; ./k6 run {path.group()} {output.group()}'
             if is_windows:
-                os.system(f'powershell.exe {k6_command}')
+                os.system(f'powershell.exe {k6_command_win}')
             else:
-                os.system(f'pwsh {k6_command}')
+                os.system(f'pwsh -Command \'{k6_command_ubuntu}\'')
         elif output.group(3) == "experimental-prometheus-rw":
             k6_command = f'$env:K6_PROMETHEUS_RW_SERVER_URL={data["k6_prometheus_rw_server_url"]}; $env:K6_PROMETHEUS_RW_USERNAME={data["k6_prometheus_rw_username"]}; $env:K6_PROMETHEUS_RW_PASSWORD={data["k6_prometheus_rw_password"]}; ./k6 run {path.group()} {output.group()}'
             if is_windows:
