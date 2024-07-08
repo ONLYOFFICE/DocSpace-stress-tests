@@ -40,7 +40,7 @@ export function setScenarios(instances) {
             }
         }
     }
-    return (instances.parallel || instances.parallel === "true") ? scenariosParallel : scenarios;
+    return (instances.parallel === true || instances.parallel === "true") ? scenariosParallel : scenarios;
 }
 
 function getScenarioData()
