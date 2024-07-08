@@ -114,7 +114,7 @@ export const thresholdsSet = 'avg < 2000';
 /*------------SHARED ITERATIONS SCENARIO------------*/
 
 //Enable scenario true or false
-export const sharedIterationScenarioSettings = (parallel || parallel === "true") ? instances.scenarios.sharedIter : data.sharedIter.enable;
+export const sharedIterationScenarioSettings = (parallel === true|| parallel === "true") ? instances.scenarios.sharedIter : data.sharedIter.enable;
 
 export const shared_iter_scenario = {
     executor: 'shared-iterations',
@@ -130,7 +130,7 @@ export const shared_iter_scenario = {
 /*----------------PER VU ITERATIONS----------------*/
 
 //Enable scenario true or false
-export const perVuScenarioSettings = (parallel || parallel === "true") ? instances.scenarios.pervuIter : data.pervuIter.enable;
+export const perVuScenarioSettings = (parallel === true|| parallel === "true") ? instances.scenarios.pervuIter : data.pervuIter.enable;
 
 export const per_vu_scenario = {
     executor: 'per-vu-iterations',
@@ -146,7 +146,7 @@ export const per_vu_scenario = {
 /*------------------CONSTANT VUs------------------*/
 
 //Enable scenario true or false
-export const constVusScenarioSettings = (parallel || parallel === "true") ? instances.scenarios.constVu : data.constVu.enable;
+export const constVusScenarioSettings = (parallel === true|| parallel === "true") ? instances.scenarios.constVu : data.constVu.enable;
 
 export const const_vus_scenario = {
     executor: 'constant-vus', 
@@ -161,7 +161,7 @@ export const const_vus_scenario = {
 /*-------------CONSTANT ARRIVAL RATE-------------*/
 
 //Enable scenario true or false
-export const constArrivalRateScenarioSettings = (parallel || parallel === "true") ? instances.scenarios.constArrival : data.constArrival.enable;
+export const constArrivalRateScenarioSettings = (parallel === true|| parallel === "true") ? instances.scenarios.constArrival : data.constArrival.enable;
 
 export const const_arrival_rate_scenario = {
     executor: 'constant-arrival-rate',
@@ -179,7 +179,7 @@ export const const_arrival_rate_scenario = {
 /*-------------RAMPING ARRIVAL RATE-------------*/
 
 //Enable scenario true or false
-export const rampArrivalRateScenarioSettings = (parallel || parallel === "true") ? instances.scenarios.rampArrival : data.rampArrival.enable;
+export const rampArrivalRateScenarioSettings = (parallel === true|| parallel === "true") ? instances.scenarios.rampArrival : data.rampArrival.enable;
 
 export const ramp_arrival_rate_scenario = {
     executor: 'ramping-arrival-rate',
@@ -197,7 +197,7 @@ export const ramp_arrival_rate_scenario = {
 /*-------------EXTERNALLY CONTROLLED-------------*/
 
 //Enable scenario true or false
-export const extControlledScenarioSettings = (parallel || parallel === "true") ? instances.scenarios.extControl : data.extControl.enable;
+export const extControlledScenarioSettings = (parallel === true|| parallel === "true") ? instances.scenarios.extControl : data.extControl.enable;
 
 export const ext_controlled_scenario = {
     executor: 'externally-controlled',
@@ -211,7 +211,7 @@ export const ext_controlled_scenario = {
 /*-------------RAMPING VUS-------------*/
 
 //Enable scenario true or false
-export const rampVusScenarioSettings = (parallel || parallel === "true") ? instances.scenarios.rampVus : data.rampVus.enable;
+export const rampVusScenarioSettings = (parallel === true|| parallel === "true") ? instances.scenarios.rampVus : data.rampVus.enable;
 
 export const ramp_vus_scenario = {
     executor: 'ramping-vus',

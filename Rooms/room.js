@@ -17,7 +17,7 @@ export function setup() {
 };
 
 export default function (data) {
-    if(parallel)
+    if(parallel === true || parallel === "true")
     {
         for(var i in data.instances)
         {

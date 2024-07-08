@@ -20,7 +20,7 @@ export function setup() {
 let customMetrics = setMetrics(options);
 
 export default function (data) {
-    if(parallel)
+    if(parallel === true || parallel === "true")
     {
         for(var i in data.instances)
         {
@@ -38,7 +38,7 @@ export default function (data) {
 };
 
 export function teardown(data) {
-    if(parallel)
+    if(parallel === true || parallel === "true")
     {
         for(var i in data.instances){
             emptyTrash(data.instances[i].params, data.instances[i].url);

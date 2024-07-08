@@ -149,7 +149,7 @@ export function RoomCRUD(params, trend, environment, url) {
 
 export function setupFunc(){
     let data = {};
-    if(instances.parallel || instances.parallel === "true") {
+    if(instances.parallel === true|| instances.parallel === "true") {
         data = setupParallel();
         return data;
     }
