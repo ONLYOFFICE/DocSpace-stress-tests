@@ -15,6 +15,13 @@
   "k6_prometheus_rw_server_url": "your-server-url-here",
   "k6_prometheus_rw_username": "your-user-name-here",
   "k6_prometheus_rw_password": "your-password-here",
+  "shared_iter_scenario_thresholds": ["p(95)<1000"],
+  "per_vu_scenario_thresholds": ["p(95)<1000"],
+  "const_vus_scenario_thresholds": ["p(95)<1000"],
+  "const_arrival_rate_scenario_thresholds": ["p(95)<1000"],
+  "ramp_arrival_rate_scenario_thresholds": ["p(95)<1000"],
+  "ext_controlled_scenario_thresholds": ["p(95)<1000"],
+  "ramp_vus_scenario_thresholds": ["p(95)<1000"],
   "sharedIter": {
     "enable": false,
     "iterations": 10,

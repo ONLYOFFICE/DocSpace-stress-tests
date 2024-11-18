@@ -16,7 +16,8 @@
       "startTime": null,
       "port": null,
       "email": "test@onlyoffice.com",
-      "password": "qwerty123"
+      "password": "qwerty123",
+      "thresholds": ["p(95)<1000"]
     }
   ]
 }

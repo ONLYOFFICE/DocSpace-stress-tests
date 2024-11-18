@@ -1,25 +1,32 @@
 import { FileCRUD, emptyTrash, setupFunc } from './CRUD.js';
 import { setScenarios } from '../config/scenarios.js';
 import { parallel, instances, basePath } from '../config/params.js';
-import { setMetrics } from '../config/metrics.js';
-
+import { setMetrics, setScenarioData } from '../config/metrics.js';
 import exec from 'k6/execution';
-import { check, group } from 'k6';
+import { group } from 'k6';
+import { checkScenarioDescription, initializeScenarioFlags } from '../config/scenarios.js';
 
+const scenarios_data = setScenarios(instances)
 export const options = { 
-    scenarios: setScenarios(instances),
-    summaryTrendStats: ['avg', 'min', 'med', 'max', 'p(90)', 'p(95)', 'p(99)', 'count'],
-    thresholds: {},
-};
-
-export function setup() {
-    let data = setupFunc();
-    return data;
+    scenarios: scenarios_data,
+    thresholds: setThresholds(scenarios_data),
 };
 
 let customMetrics = setMetrics(options);
+let isMetricRecorded = {};
+let scenarioInfoMetric = setScenarioData(options, isMetricRecorded);
+
+export function setup() {
+    let data = setupFunc();
+    isMetricRecorded = {};
+    initializeScenarioFlags(options.scenarios, isMetricRecorded);
+    return data;
+};
 
 export default function (data) {
+    let scenario = exec.scenario.name;
+    checkScenarioDescription(exec.scenario.iterationInInstance, isMetricRecorded, scenario, scenarioInfoMetric);
+
     if(parallel === true || parallel === "true")
     {
         for(var i in data.instances)

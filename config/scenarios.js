@@ -68,7 +68,7 @@ function getScenarioData()
     return scenarioData;
 }
 
-export function addTagsDefault(def, property){
+export function addTagsDefault(def, property, api=null){
     let tags = {};
     let scenarioData = getScenarioData();
     if(def == true)
@@ -93,5 +93,26 @@ export function addTagsDefault(def, property){
             property: property,
         };
         return tags;
+    }
+    else{
+        tags = {
+            property: property,
+            api: api,
+        };
+        return tags;
+    }
+}
+
+export function initializeScenarioFlags(scenarios, metric) {
+    Object.keys(scenarios).forEach(scenarioName => {
+        metric[`${scenarioName}_description`] = false;
+    });
+}
+
+export function checkScenarioDescription(iteration, metric, scenario, trend) {
+    if (iteration === 0 && !metric[`${scenario}_description`]) {
+        let scenarioMetric = trend[`${scenario}_description`];
+        scenarioMetric.add(1, addTagsDefault(true, ''));
+        metric[`${scenario}_description`] = true;
     }
 }

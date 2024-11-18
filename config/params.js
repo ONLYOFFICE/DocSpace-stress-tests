@@ -221,3 +221,37 @@ export const ramp_vus_scenario = {
     startTime: data.rampVus.startTime,
     env: { SCENARIO: 'ramping-vus' },
 };
+
+
+export function setThresholds(scenarios) {
+    const thresholds = {};
+
+    Object.keys(scenarios).forEach((scenarioName) => {
+        const threshold = data[`${scenarioName}_thresholds`];
+        const scenario = scenarios[scenarioName];
+
+        if (threshold && scenario) {
+            if (!scenario.tags) {
+                scenario.tags = { scenario: scenarioName };
+            }
+            console.log(scenario.tags);
+            thresholds[`http_req_duration{scenario:${scenario.tags.scenario}}`] = threshold;
+        }
+        else if((parallel === "true" || parallel === true) && scenario)
+        {
+            for(var i in instances.instances)
+            {
+                if(scenarioName === instances.instances[i].tag)
+                {
+                    if (!scenario.tags) {
+                        scenario.tags = { scenario: scenarioName };
+                    }
+                    thresholds[`http_req_duration{scenario:${scenario.tags.scenario}}`] = instances.instances[i].thresholds;
+                }
+            }
+        }
+        
+    });
+
+    return thresholds;
+}

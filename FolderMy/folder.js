@@ -1,25 +1,33 @@
 import { FolderCRUD, emptyTrash, setupFunc } from "./CRUD.js";
 import { setScenarios } from '../config/scenarios.js';
-import { parallel, instances, basePath } from '../config/params.js';
-import { setMetrics } from '../config/metrics.js';
+import { parallel, instances, basePath, setThresholds } from '../config/params.js';
+import { setMetrics, setScenarioData } from '../config/metrics.js';
 import exec from 'k6/execution';
-import { check, group } from 'k6';
+import { group } from 'k6';
+import {checkScenarioDescription, initializeScenarioFlags } from '../config/scenarios.js';
 
+const scenarios_data = setScenarios(instances)
+const thresholds = setThresholds(scenarios_data);
 export const options = { 
-    scenarios: setScenarios(instances),
-    summaryTrendStats: ['avg', 'min', 'med', 'max', 'p(90)', 'p(95)', 'p(99)', 'count'],
-    thresholds: {},
-    timeout: '240000',
+    scenarios: scenarios_data,
+    thresholds: thresholds,
 };
+
+let customMetrics = 0;
+let isMetricRecorded = {};
+let scenarioInfoMetric = setScenarioData(options, isMetricRecorded);
 
 export function setup() {
     let data = setupFunc();
+    isMetricRecorded = {};
+    initializeScenarioFlags(options.scenarios, isMetricRecorded);
     return data;
 };
 
-let customMetrics = setMetrics(options);
-
 export default function (data) {
+    let scenario = exec.scenario.name;
+    checkScenarioDescription(exec.scenario.iterationInInstance, isMetricRecorded, scenario, scenarioInfoMetric);
+
     if(parallel === true || parallel === "true")
     {
         for(var i in data.instances)
@@ -33,7 +41,7 @@ export default function (data) {
         }
     }
     else{
-        FolderCRUD(data.idMy, data.params, customMetrics,exec.scenario.name, basePath);
+        FolderCRUD(data.idMy, data.params, customMetrics, scenario, basePath);
     }
 }
 

@@ -14,8 +14,8 @@ import { addTagsDefault } from '../config/scenarios.js';
 /*
 Function get folder my id
 */
-export function getFolderMyId(params, path){
-    const res = http.get(folderMy(path), {headers: params.headers, tags: { cutom_tag: `${JSON.stringify(exec.test.options.scenarios)}`}});
+export function getFolderMyId(params, pathMy){
+    const res = http.get(folderMy(pathMy), {headers: params.headers, tags: { property: 'Get folder my', api: `${path}files/@my`}});
     let id = null;
     if(check(res, {'Get folderMy': res => res.status === 200})){
         id = res.json().response.current.id;
@@ -36,13 +36,13 @@ export function createFolder(id, params, trend, environment, url){
     let URL = `${url}files/folder/${id}`;
     const res = http.post(URL, payload, {
         headers: params.headers, 
-        tags: addTagsDefault(true, 'Create folder'),
+        tags: addTagsDefault(false, 'Create folder', `${path}files/folder/{id}`),
     });
     let idMy = null;
     if(check(res, {'Cretion folder status': res => res.status === 200}, { property: 'Create folder' })){
         idMy = res.json().response.id;
     }
-    trend[environment].add(res.timings.duration, { api: `${path}files/folder/{id}`, status: res.status, method: res.request.method, property: 'Create folder' });
+   //trend[environment].add(res.timings.duration, { api: `${path}files/folder/{id}`, status: res.status, method: res.request.method, property: 'Create folder' });
     return idMy; 
 }
 
@@ -55,10 +55,10 @@ export function getFolder(id, params, trend, environment, url){
     let URL = `${url}files/folder/${id}`;
     const res = http.get(URL, {
         headers: params.headers, 
-        tags: addTagsDefault(true, 'Get folder info'),
+        tags: addTagsDefault(false, 'Get folder info', `${path}files/folder/{id}`),
     });
     check(res, {'Get folder info status': res => res.status === 200}, { property: 'Get folder info' });
-    trend[environment].add(res.timings.duration, { api: `${path}files/folder/{id}`, status: res.status, method: res.request.method, property: 'Get folder info' });
+   // trend[environment].add(res.timings.duration, { api: `${path}files/folder/{id}`, status: res.status, method: res.request.method, property: 'Get folder info' });
 }
 
 /*
@@ -74,10 +74,10 @@ export function updateFolder(id, params, trend, environment, url){
     let URL = `${url}files/folder/${id}`;
     const res = http.put(URL, payload, {
         headers: params.headers, 
-        tags: addTagsDefault(true, 'Update folder title'),
+        tags: addTagsDefault(false, 'Update folder title', `${path}files/folder/{id}`),
     });
     check(res, {'Update folder status': res => res.status === 200}, { property: 'Update folder title' });
-    trend[environment].add(res.timings.duration, { api: `${path}files/folder/{id}`, status: res.status, method: res.request.method, property: 'Update folder title'});
+    //trend[environment].add(res.timings.duration, { api: `${path}files/folder/{id}`, status: res.status, method: res.request.method, property: 'Update folder title'});
 }
 
 /*
@@ -92,10 +92,10 @@ export function deleteFolder(id, params, trend, environment, url){
     });
     let URL = `${url}files/folder/${id}`;
     const res = http.del(URL, payload, {headers: params.headers,
-        tags: addTagsDefault(true, 'Delete folder'),
+        tags: addTagsDefault(false, 'Delete folder', `${path}files/folder/{id}`),
     });
     check(res, { 'Folder delete status': res => res.status === 200 }, { property: 'Delete folder' });
-    trend[environment].add(res.timings.duration, { api: `${path}files/folder/{id}`, status: res.status, method: res.request.method, property: 'Delete folder'});
+    //trend[environment].add(res.timings.duration, { api: `${path}files/folder/{id}`, status: res.status, method: res.request.method, property: 'Delete folder'});
 }
 
 /*
@@ -113,10 +113,10 @@ export function insertFileInFolder(id, params, trend, environment, url){
     });
     let URL = `${url}files/folder/${id}/insert`;
     const res = http.post(URL, payload, {headers: params.headers,
-        tags: addTagsDefault(true, 'Insert file in specified folder'),
+        tags: addTagsDefault(false, 'Insert file in specified folder', res.request.url),
     });
     check(res, { 'Insertion file status': res => res.status === 200 });
-    trend[environment].add(res.timings.duration, { api: res.request.url, status: res.status, method: res.request.method,});
+    //trend[environment].add(res.timings.duration, { api: res.request.url, status: res.status, method: res.request.method,});
 }
 
 export function FolderCRUD(idMy, params, trend, environment, url) {
@@ -158,13 +158,13 @@ export function createFile(id, params, trend, environment, url){
     let URL = `${url}files/${id}/file`;
     const res = http.post(URL, payload, {
         headers: params.headers,
-        tags: addTagsDefault(true, 'Create file'),
+        tags: addTagsDefault(false, 'Create file', `${path}files/{id}/file`),
     });
     let idMy = null;
     if(check(res, {'Cretion file status': res => res.status === 200})){
         idMy = res.json().response.id;
     }
-    trend[environment].add(res.timings.duration, { api: `${path}files/{id}/file`, status: res.status, method: res.request.method,});
+    //trend[environment].add(res.timings.duration, { api: `${path}files/{id}/file`, status: res.status, method: res.request.method,});
     return idMy;
 }
 
@@ -178,17 +178,17 @@ export function getFile(id, params, trend, environment, url){
     let tagsDelete = {};
     if(trend)
     {
-        tagsDelete = { tags: addTagsDefault(true, 'Get file info')};
+        tagsDelete = { tags: addTagsDefault(false, 'Get file info', `${path}files/file/{id}`)};
     }
     const res = http.get(URL, {
         headers: params.headers, 
         tags: tagsDelete.tags,
     });
     check(res, {'Get file info status': res => res.status === 200});
-    if(trend)
-    {
-        trend[environment].add(res.timings.duration, { api: `${path}files/file/{id}`,  status: res.status, method: res.request.method,});
-    }
+    //if(trend)
+    //{
+      //  trend[environment].add(res.timings.duration, { api: `${path}files/file/{id}`,  status: res.status, method: res.request.method,});
+    //}
     return res;
 }
 
@@ -205,10 +205,10 @@ export function updateFile(id, params, trend, environment, url){
     let URL = `${url}files/file/${id}`;
     const res = http.put(URL, payload, {
         headers: params.headers, 
-        tags: addTagsDefault(true, 'Update file title'),
+        tags: addTagsDefault(false, 'Update file title', `${path}files/file/{id}`),
     });
     check(res, {'Update file status': res => res.status === 200});
-    trend[environment].add(res.timings.duration, { api: `${path}files/file/{id}`, status: res.status, method: res.request.method, });
+    //trend[environment].add(res.timings.duration, { api: `${path}files/file/{id}`, status: res.status, method: res.request.method, });
 
 }
 
@@ -226,17 +226,17 @@ export function deleteFile(id, params, trend, environment, url){
     let tagsDelete = {};
     if(trend)
     {
-        tagsDelete = { tags: addTagsDefault(true, 'Delete file')};
+        tagsDelete = { tags: addTagsDefault(false, 'Delete file', `${path}files/file/{id}`)};
     }
     const res = http.del(URL, payload, { 
         headers: params.headers, 
         tags: tagsDelete.tags,
     });
     check(res, { 'File delete status': res => res.status === 200 });
-    if(trend)
-    {
-        trend[environment].add(res.timings.duration, { api: `${path}files/file/{id}`,  status: res.status, method: res.request.method,});
-    }
+    //if(trend)
+    //{
+        //trend[environment].add(res.timings.duration, { api: `${path}files/file/{id}`,  status: res.status, method: res.request.method,});
+    //}
 }
 
 export function FileCRUD(idMy, params, trend, environment, url){
@@ -264,7 +264,7 @@ export function emptyTrash(params, url){
     let URL = `${url}files/fileops/emptytrash`;
     const payload = JSON.stringify({});
     const res = http.put(URL, payload, {
-        headers: params.headers, 
+        headers: params.headers, tags: { property: 'Empty trash folder', api: `${path}files/fileops/emptytrash`}
     });
     check(res, { 'Empty trash status': res => res.status === 200});
 }
@@ -273,10 +273,10 @@ export function openEdit(id, params, trend, environment, url){
     let URL = `${url}files/file/${id}/openedit`;
     const res = http.get(URL, {
         headers: params.headers, 
-        tags: addTagsDefault(true, 'Open and edit file'),
+        tags: addTagsDefault(false, 'Open and edit file', `${path}files/file/{id}/openedit`),
     });
     check(res, {'Open and edit file status': res => res.status === 200});
-    trend[environment].add(res.timings.duration, { api: `${path}files/file/{id}/openedit`, status: res.status, method: res.request.method, });
+    //trend[environment].add(res.timings.duration, { api: `${path}files/file/{id}/openedit`, status: res.status, method: res.request.method, });
 }
 
 export function setupFunc(){

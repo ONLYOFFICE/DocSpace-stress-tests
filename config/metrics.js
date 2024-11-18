@@ -1,4 +1,4 @@
-import { Trend } from 'k6/metrics';
+import { Trend, Gauge } from 'k6/metrics';
 import { thresholdsSet } from './params.js';
 
 let metrics = {};
@@ -13,6 +13,15 @@ export function setMetrics(options){
             options.thresholds[key] = [];
         }
         options.thresholds[key].push(thresholdsSet);
+    };
+    return metrics;
+}
+
+export function setScenarioData(options, isRecorded){
+    for (let key in options.scenarios) {
+        options.scenarios[key].env['MY_SCENARIO'] = key;
+        let metricName = `${key}_description`;
+        metrics[metricName] = new Gauge(metricName, true);
     };
     return metrics;
 }
