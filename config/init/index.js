@@ -71,6 +71,14 @@ function saveArguments(){
     nconf.set("k6_prometheus_rw_username", nconf.get('k6_prometheus_rw_username'));
     nconf.set("k6_prometheus_rw_password", nconf.get('k6_prometheus_rw_password'));
 
+    nconf.set("shared_iter_scenario_thresholds", nconf.get('shared_iter_scenario_thresholds'));
+    nconf.set("per_vu_scenario_thresholds", nconf.get('per_vu_scenario_thresholds'));
+    nconf.set("const_vus_scenario_thresholds", nconf.get('const_vus_scenario_thresholds'));
+    nconf.set("const_arrival_rate_scenario_thresholds", nconf.get('const_arrival_rate_scenario_thresholds'));
+    nconf.set("ramp_arrival_rate_scenario_thresholds", nconf.get('ramp_arrival_rate_scenario_thresholds'));
+    nconf.set("ext_controlled_scenario_thresholds", nconf.get('ext_controlled_scenario_thresholds'));
+    nconf.set("ramp_vus_scenario_thresholds", nconf.get('ramp_vus_scenario_thresholds'));
+
     nconf.save();
     
 
@@ -85,6 +93,7 @@ function saveArguments(){
             instances_tag.push({
                 tag: instances_set.tag[i], 
                 url: instances_set.url[i],
+                thresholds: instances_set.thresholds[i],
                 startTime: instances_set.hasOwnProperty('startTime') ? instances_set.startTime[i] : null,
                 port: instances_set.hasOwnProperty('port') ? instances_set.port[i] : null,
                 password: instances_set.hasOwnProperty('password') ? instances_set.password[i] : null,

@@ -1,6 +1,6 @@
 import http from 'k6/http';
 import { check, group } from 'k6';
-import { rooms, instPath, instances, basePath, setParams } from '../config/params.js';
+import { rooms, instPath, instances, basePath, setParams, path } from '../config/params.js';
 import faker  from 'https://cdnjs.cloudflare.com/ajax/libs/Faker/3.1.0/faker.min.js';
 import { addTagsDefault } from '../config/scenarios.js';
 import { auth } from '../config/auth.js';
@@ -15,7 +15,7 @@ export function createRoom(params, trend, environment, url){
     let URL = rooms(url);
     const res = http.post(URL, payload, {
         headers: params.headers, 
-        tags: addTagsDefault(false, 'Create new room'),
+        tags: addTagsDefault(false, 'Create new room', `${path}files/rooms`),
     });
     check(res, {'Cretion room status': res => res.status === 200});
     //trend[environment].add(res.timings.duration, { url: res.request.url, status: res.status, method: res.request.method,});
@@ -26,7 +26,7 @@ export function getRoomInfo(id, params, trend, environment, url){
     let URL = `${rooms(url)}/${id}`;
     const res = http.get(URL, {
         headers: params.headers, 
-        tags: addTagsDefault(false, 'Get room info'),
+        tags: addTagsDefault(false, 'Get room info', `${path}files/rooms/{id}`),
     });
     check(res, {'Get room info status': res => res.status === 200});
     //trend[environment].add(res.timings.duration, { url: res.request.url, status: res.status, method: res.request.method,});
@@ -40,7 +40,7 @@ export function renameRoom(id, params, trend, environment, url){
     let URL = `${rooms(url)}/${id}`;
     const res = http.put(URL, payload, {
         headers: params.headers, 
-        tags: addTagsDefault(false, 'Rename room'),
+        tags: addTagsDefault(false, 'Rename room', `${path}files/rooms/{id}`),
     });
     check(res, {'Rename room status': res => res.status === 200});
     //trend[environment].add(res.timings.duration, { url: res.request.url, status: res.status, method: res.request.method,});
@@ -53,7 +53,7 @@ export function removeRoom(id, params, trend, environment, url){
     let URL = `${rooms(url)}/${id}`;
     const res = http.del(URL, payload, {
         headers: params.headers, 
-        tags: addTagsDefault(false, 'Remove room'),
+        tags: addTagsDefault(false, 'Remove room', `${path}files/rooms/{id}`),
     });
     check(res, { 'Room delete status': res => res.status === 200 });
     //trend[environment].add(res.timings.duration, { url: res.request.url, status: res.status, method: res.request.method,});
@@ -66,7 +66,7 @@ export function archiveRoom(id, params, trend, environment, url){
     let URL = `${rooms(url)}/${id}/archive`;
     const res = http.put(URL, payload, {
         headers: params.headers, 
-        tags: addTagsDefault(false, 'Archive room'),
+        tags: addTagsDefault(false, 'Archive room', `${path}files/rooms/{id}/archive`),
     });
     check(res, { 'Room archive status': res => res.status === 200 });
     //trend[environment].add(res.timings.duration, { url: res.request.url, status: res.status, method: res.request.method,});
@@ -79,7 +79,7 @@ export function unarchiveRoom(id, params, trend, environment, url){
     let URL = `${rooms(url)}/${id}/unarchive`;
     const res = http.put(URL, payload, {
         headers: params.headers, 
-        tags: addTagsDefault(false, 'Unarchive room'),
+        tags: addTagsDefault(false, 'Unarchive room', `${path}files/rooms/{id}/unarchive`),
     });
     check(res, { 'Room unarchive status': res => res.status === 200 });
     //trend[environment].add(res.timings.duration, { url: res.request.url, status: res.status, method: res.request.method,});
@@ -89,7 +89,7 @@ export function pinRoom(id, params, trend, environment, url){
     let URL = `${rooms(url)}/${id}/pin`;
     const res = http.put(URL, {
         headers: params.headers, 
-        tags: addTagsDefault(false, 'Pin room'),
+        tags: addTagsDefault(false, 'Pin room', `${path}files/rooms/{id}/pin`),
     });
     check(res, { 'Room pin status': res => res.status === 200 });
     //trend[environment].add(res.timings.duration, { url: res.request.url, status: res.status, method: res.request.method,});
@@ -99,7 +99,7 @@ export function unpinRoom(id, params, trend, environment, url){
     let URL = `${rooms(url)}/${id}/unpin`;
     const res = http.put(URL, {
         headers: params.headers, 
-        tags: addTagsDefault(false, 'Unpin room'),
+        tags: addTagsDefault(false, 'Unpin room', `${path}files/rooms/{id}/unpin`),
     });
     check(res, { 'Room unpin status': res => res.status === 200 });
     //trend[environment].add(res.timings.duration, { url: res.request.url, status: res.status, method: res.request.method,});
@@ -112,7 +112,7 @@ export function getRoomAcessRights(id, params, trend, environment, url){
     let URL = `${rooms(url)}/${id}/share`;
     const res = http.get(URL, payload, {
         headers: params.headers, 
-        tags: addTagsDefault(false, 'Get room acess rights'),
+        tags: addTagsDefault(false, 'Get room acess rights', `${path}files/rooms/{id}/share`),
     });
     check(res, { 'Get room acess rights status': res => res.status === 200 });
     //trend[environment].add(res.timings.duration, { url: res.request.url, status: res.status, method: res.request.method,});
