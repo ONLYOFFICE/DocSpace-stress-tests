@@ -234,7 +234,6 @@ export function setThresholds(scenarios) {
             if (!scenario.tags) {
                 scenario.tags = { scenario: scenarioName };
             }
-            console.log(scenario.tags);
             thresholds[`http_req_duration{scenario:${scenario.tags.scenario}}`] = threshold;
         }
         else if((parallel === "true" || parallel === true) && scenario)

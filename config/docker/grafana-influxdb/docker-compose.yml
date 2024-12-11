@@ -6,7 +6,7 @@ networks:
 
 services:
   influxdb:
-    image: influxdb:1.8
+    image: influxdb:latest
     container_name: influxdb
     networks:
       - grafana
