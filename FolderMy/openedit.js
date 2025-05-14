@@ -40,10 +40,6 @@ export default function (data) {
         }
         openedit = openeditFile(data.params, fileId, basePath);
         callbackUrl = openedit.editorConfig.callbackUrl;
-        token = `Bearer ${openedit.token}`
-        if (!callbackUrl) {
-            throw new Error(`No callbackUrl for VU ${__VU}`);
-        }
     }
     const payload = JSON.stringify({
         key: openedit.document.key,
