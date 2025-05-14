@@ -1,7 +1,7 @@
 import http from 'k6/http';
 import { check, group } from 'k6';
 import { addTagsDefault } from '../config/scenarios.js';
-import { url } from "../config/params.js";
+import { url, basePath, path } from "../config/params.js";
 
 export function downloadAndConvert (params, id, trend, environment) {
     const URL = `${url}/filehandler?action=download&fileid=${id}&outputtype=.pdf`;
@@ -22,3 +22,12 @@ const URL = `${url}/filehandler?action=thumb&fileid=${id}`;
     check(res, {'Thumbnail file status': res => res.status === 200});
     //trend[environment].add(res.timings.duration, { api: `filehandler?action=thumb&fileid=${id}`, status: res.status, method: res.request.method,});
 };
+
+export function openeditFile (params, fileId, url){
+    const URL = `${url}files/file/${fileId}/openedit`;
+    const res = http.get(URL, {
+        headers: params.headers, 
+        tags: addTagsDefault(false, 'Open edit file', `${path}files/file/{id}`),
+    });
+    return res.json().response;
+}

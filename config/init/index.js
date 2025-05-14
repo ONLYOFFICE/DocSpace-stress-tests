@@ -1,5 +1,5 @@
-const { saveConfigArguments } = require('./indexConfig.js');
-const { saveInstancesArguments } = require('./indexInstances.js');
+import { saveConfigArguments } from './indexConfig.js';
+import { saveInstancesArguments } from './indexInstances.js';
 var nconf=require('nconf');
 
 nconf.argv().env();

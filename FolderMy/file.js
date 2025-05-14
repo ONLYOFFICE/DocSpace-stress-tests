@@ -1,6 +1,6 @@
 import { FileCRUD, emptyTrash, setupFunc } from './CRUD.js';
 import { setScenarios } from '../config/scenarios.js';
-import { parallel, instances, basePath } from '../config/params.js';
+import { parallel, instances, basePath, setThresholds } from '../config/params.js';
 import { setMetrics, setScenarioData } from '../config/metrics.js';
 import exec from 'k6/execution';
 import { group } from 'k6';
