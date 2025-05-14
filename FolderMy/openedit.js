@@ -56,7 +56,6 @@ export default function (data) {
         headers: data.params.headers
         }
     );
-    console.log(`${res.status}`);
     check(res, { 'Callback url status': res => res.status === 200});
     sleep(1); 
 };
