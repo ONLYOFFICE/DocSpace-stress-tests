@@ -3,7 +3,7 @@ import http from 'k6/http';
 import { sleep } from 'k6';
 import { openeditFile } from './filehandler.js';
 import { setScenarios } from '../config/scenarios.js';
-import { createFile, emptyTrash, setupFunc, deleteFile } from './CRUD.js';
+import { createFile, emptyTrash, setupFunc, deleteFile, getFile } from './CRUD.js';
 import { parallel, instances, basePath, setThresholds } from '../config/params.js';
 import { setMetrics, setScenarioData } from '../config/metrics.js';
 import { checkScenarioDescription, initializeScenarioFlags } from '../config/scenarios.js';
@@ -30,22 +30,35 @@ let callbackUrl;
 let createdFileIds = [];
 let token;
 let openedit;
+let fileId;
+
 export default function (data) {
     let scenario = exec.scenario.name;
     checkScenarioDescription(exec.scenario.iterationInInstance, isMetricRecorded, scenario, scenarioInfoMetric);
+    
+    /*
+    Created a file, called openedit and received callbackUrl 
+    */
     if (__ITER === 0) {
-        const fileId = createFile(data.idMy, data.params, customMetrics, exec.scenario.name, basePath);
+        fileId = createFile(data.idMy, data.params, customMetrics, exec.scenario.name, basePath);
         if (fileId) {
             createdFileIds.push(fileId);
         }
         openedit = openeditFile(data.params, fileId, basePath);
         callbackUrl = openedit.editorConfig.callbackUrl;
     }
+
+    /*
+    Received file status before callbackUrl and after minute
+    */
+    const getFileAfterMinute = getFile(fileId, data.params, customMetrics, exec.scenario.name, basePath);
+    check(getFileAfterMinute, { 'File status': file => file.json().response.fileStatus != 1});
+
     const payload = JSON.stringify({
+        status: 1,
         key: openedit.document.key,
         url: openedit.document.url,
         token: openedit.token,
-        forcesave: openedit.editorConfig.forcesave,
         fileType: openedit.document.fileType
     });
     const res = http.post(callbackUrl, payload, {
@@ -53,7 +66,17 @@ export default function (data) {
         }
     );
     check(res, { 'Callback url status': res => res.status === 200});
-    sleep(1); 
+
+    /*
+    Received file status right after callbackUrl
+    */
+    const getFileRightAway = getFile(fileId, data.params, customMetrics, exec.scenario.name, basePath);
+    check(getFileRightAway, { 'File status': file => file.json().response.fileStatus == 1});
+
+    /*
+    Wait 1 minute
+    */
+    sleep(60); 
 };
 
 export function teardown(data) {
