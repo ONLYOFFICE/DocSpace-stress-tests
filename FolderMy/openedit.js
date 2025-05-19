@@ -8,6 +8,8 @@ import { parallel, instances, basePath, setThresholds } from '../config/params.j
 import { setMetrics, setScenarioData } from '../config/metrics.js';
 import { checkScenarioDescription, initializeScenarioFlags } from '../config/scenarios.js';
 import { check } from 'k6';
+import { b64encode } from 'k6/encoding';
+import { hmac } from 'k6/crypto';
 
 const scenarios_data = setScenarios(instances)
 export const options = { 
@@ -28,9 +30,16 @@ export function setup() {
 
 let callbackUrl;
 let createdFileIds = [];
-let token;
 let openedit;
 let fileId;
+let tokenCompact;
+
+function base64url(str) {
+    return b64encode(str, 'rawstd')
+        .replace(/\+/g, '-')
+        .replace(/\//g, '_')
+        .replace(/=+$/, '');
+};
 
 export default function (data) {
     let scenario = exec.scenario.name;
@@ -46,20 +55,51 @@ export default function (data) {
         }
         openedit = openeditFile(data.params, fileId, basePath);
         callbackUrl = openedit.editorConfig.callbackUrl;
-    }
 
-    /*
-    Received file status before callbackUrl and after minute
-    */
-    const getFileAfterMinute = getFile(fileId, data.params, customMetrics, exec.scenario.name, basePath);
-    check(getFileAfterMinute, { 'File status': file => file.json().response.fileStatus != 1});
+        const secret = 'secret';
+
+        const header = {
+            alg: "HS256",
+            typ: "JWT"
+        };
+
+        const payload = {
+            key: openedit.document.key,
+            status: 1,
+            actions: [{
+                type: 0,
+                userid: openedit.editorConfig.user.id
+            }],
+            users: [openedit.editorConfig.user.id],
+            iat: Math.floor(Date.now() / 1000),
+            exp: Math.floor(Date.now() / 1000) + 3600
+        };
+
+        const encodedHeader = base64url(JSON.stringify(header));
+        const encodedPayload = base64url(JSON.stringify(payload));
+        const signatureInput = `${encodedHeader}.${encodedPayload}`;
+
+        const signature = base64url(hmac('sha256', secret, signatureInput, 'binary'));
+
+        tokenCompact = `${signatureInput}.${signature}`;
+        const getFileAfterMinute = getFile(fileId, data.params, customMetrics, exec.scenario.name, basePath);
+        check(getFileAfterMinute, { 'File status before callback': file => file.json().response.fileStatus === 0});
+    }
 
     const payload = JSON.stringify({
         status: 1,
         key: openedit.document.key,
         url: openedit.document.url,
-        token: openedit.token,
-        fileType: openedit.document.fileType
+        token: tokenCompact,
+        users: [openedit.editorConfig.user.id],
+        actions: [
+            {
+                type: 1,
+                userid: openedit.editorConfig.user.id
+            }
+        ],
+        encrypted: false,
+        forceSaveType: 0
     });
     const res = http.post(callbackUrl, payload, {
         headers: data.params.headers
@@ -71,12 +111,12 @@ export default function (data) {
     Received file status right after callbackUrl
     */
     const getFileRightAway = getFile(fileId, data.params, customMetrics, exec.scenario.name, basePath);
-    check(getFileRightAway, { 'File status': file => file.json().response.fileStatus == 1});
+    check(getFileRightAway, { 'File status after callback': file => file.json().response.fileStatus == 1});
 
     /*
     Wait 1 minute
     */
-    sleep(60); 
+    sleep(65); 
 };
 
 export function teardown(data) {
