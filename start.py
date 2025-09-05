@@ -10,7 +10,7 @@ def myFunction():
         if consoleInput == "--help" or consoleInput == "-h":
             help()
         else:
-            testPath = r'(\w+\\.*.js|\w+\/.*.js)'
+            testPath = r'(\w+\\.*.ts|\w+\/.*.ts)'
             testPathMatch = re.search(testPath, consoleInput)
             output = r'((--out|-o)\s+(\S+))'
             outputMatch = re.search(output, consoleInput)
@@ -38,7 +38,7 @@ def initArg(argMatch):
     for m in argMatch:
         args = f'{args} {m.group()}'
     abs_path = os.getcwd()
-    os.system(f'node {abs_path}/config/init/index.js {args}')
+    os.system(f'node {abs_path}/config/init/index.ts {args}')
 
 def help():
     print("--email                                   Set up user email (e.g: --email=test@onlyoffice.com)")

@@ -1,9 +1,10 @@
+// @ts-nocheck
 import http from 'k6/http';
 import { check, group } from 'k6';
-import { rooms, instPath, instances, basePath, setParams, path } from '../config/params.js';
-import faker  from 'https://cdnjs.cloudflare.com/ajax/libs/Faker/3.1.0/faker.min.js';
-import { addTagsDefault } from '../config/scenarios.js';
-import { auth } from '../config/auth.js';
+import { rooms, instPath, instances, basePath, setParams, path } from '../config/params';
+import { faker } from '@faker-js/faker';
+import { addTagsDefault } from '../config/scenarios';
+import { auth } from '../config/auth';
 
 export function createRoom(params, trend, environment, url){
     const roomTitle = faker.random.words();

@@ -1,12 +1,13 @@
+// @ts-nocheck
 import exec from 'k6/execution';
 import http from 'k6/http';
 import { sleep } from 'k6';
-import { openeditFile } from './filehandler.ts';
-import { setScenarios } from '../config/scenarios.ts';
-import { createFile, emptyTrash, setupFunc, deleteFile, getFile } from './CRUD.ts';
-import { parallel, instances, basePath, setThresholds } from '../config/params.ts';
-import { setMetrics, setScenarioData } from '../config/metrics.ts';
-import { checkScenarioDescription, initializeScenarioFlags } from '../config/scenarios.ts';
+import { openeditFile } from './filehandler';
+import { setScenarios } from '../config/scenarios';
+import { createFile, emptyTrash, setupFunc, deleteFile, getFile } from './CRUD';
+import { parallel, instances, basePath, setThresholds } from '../config/params';
+import { setMetrics, setScenarioData } from '../config/metrics';
+import { checkScenarioDescription, initializeScenarioFlags } from '../config/scenarios';
 import { check } from 'k6';
 import { b64encode } from 'k6/encoding';
 import { hmac } from 'k6/crypto';

@@ -1,20 +1,32 @@
-import http from 'k6/http';
+import http, {
+    Params
+} from 'k6/http';
 import { check, group } from 'k6';
-import faker  from 'https://cdnjs.cloudflare.com/ajax/libs/Faker/3.1.0/faker.min.js';
+import { faker } from '@faker-js/faker';
 import exec from 'k6/execution';
 
-import { folderMy, path, instPath, instances, url, basePath, setParams, filesCountFolderMy, foldersCountFolderMy, wizardData, authData} from '../config/params.js';
-import { foldersAndFiles } from '../data/data.js';
-import { auth } from '../config/auth.js';
-import { addTagsDefault } from '../config/scenarios.js';
-
+import {
+    folderMy,
+    path,
+    instPath,
+    instances,
+    url,
+    basePath,
+    setParams,
+    filesCountFolderMy,
+    foldersCountFolderMy,
+    wizardData,
+    authData
+} from '../config/params';
+import { foldersAndFiles } from '../data/data';
+import { auth } from '../config/auth';
+import { addTagsDefault } from '../config/scenarios';
 
 /*-------------------------------------------------FOLDER-------------------------------------------------*/
-
 /*
 Function get folder my id
 */
-export function getFolderMyId(params, pathMy){
+export function getFolderMyId(params: Params, pathMy: string){
     const res = http.get(folderMy(pathMy), {headers: params.headers, tags: { property: 'Get folder my', api: `${path}files/@my`}});
     let id = null;
     if(check(res, {'Get folderMy': res => res.status === 200})){
@@ -28,16 +40,14 @@ Function create folder
 id - id of folder my
 params - headers 
 */
-export function createFolder(id, params, trend, environment, url){
-    const folderTitle = faker.random.word();
+export function createFolder(id: number, params: Params, trend: any[], environment: string, url: string){
+    const folderTitle = faker.word.words();
     const payload = JSON.stringify({
         title:	folderTitle,
     });
     let URL = `${url}files/folder/${id}`;
-    const res = http.post(URL, payload, {
-        headers: params.headers, 
-        tags: addTagsDefault(false, 'Create folder', `${path}files/folder/{id}`),
-    });
+    params.tags = addTagsDefault(false, 'Create folder', `${path}files/folder/{id}`);
+    const res = http.post(URL, payload, params);
     let idMy = null;
     if(check(res, {'Cretion folder status': res => res.status === 200}, { property: 'Create folder' })){
         idMy = res.json().response.id;
@@ -51,12 +61,10 @@ Function get folder info
 id - id of folder
 params - headers
 */
-export function getFolder(id, params, trend, environment, url){
+export function getFolder(id: number, params: Params, trend: any[], environment: string, url: string){
     let URL = `${url}files/folder/${id}`;
-    const res = http.get(URL, {
-        headers: params.headers, 
-        tags: addTagsDefault(false, 'Get folder info', `${path}files/folder/{id}`),
-    });
+    params.tags = addTagsDefault(false, 'Get folder info', `${path}files/folder/{id}`);
+    const res = http.get(URL, params);
     check(res, {'Get folder info status': res => res.status === 200}, { property: 'Get folder info' });
    // trend[environment].add(res.timings.duration, { api: `${path}files/folder/{id}`, status: res.status, method: res.request.method, property: 'Get folder info' });
 }
@@ -66,16 +74,14 @@ Function update folder
 id - id of folder
 params - headers
 */
-export function updateFolder(id, params, trend, environment, url){
-    const folderTitle = faker.random.word();
+export function updateFolder(id: number, params: Params, trend: any[], environment: string, url: string){
+    const folderTitle = faker.word.words();
     const payload = JSON.stringify({
         title: folderTitle,
     });
     let URL = `${url}files/folder/${id}`;
-    const res = http.put(URL, payload, {
-        headers: params.headers, 
-        tags: addTagsDefault(false, 'Update folder title', `${path}files/folder/{id}`),
-    });
+    params.tags = addTagsDefault(false, 'Update folder title', `${path}files/folder/{id}`);
+    const res = http.put(URL, payload, params);
     check(res, {'Update folder status': res => res.status === 200}, { property: 'Update folder title' });
     //trend[environment].add(res.timings.duration, { api: `${path}files/folder/{id}`, status: res.status, method: res.request.method, property: 'Update folder title'});
 }
@@ -85,15 +91,14 @@ Function delete folder
 id - id of folder
 params - headers
 */
-export function deleteFolder(id, params, trend, environment, url){
+export function deleteFolder(id: number, params: Params, trend: any[], environment: string, url: string){
     const payload = JSON.stringify({
         DeleteAfter: false,
         Immediately: true,
     });
     let URL = `${url}files/folder/${id}`;
-    const res = http.del(URL, payload, {headers: params.headers,
-        tags: addTagsDefault(false, 'Delete folder', `${path}files/folder/{id}`),
-    });
+    params.tags = addTagsDefault(false, 'Delete folder', `${path}files/folder/{id}`);
+    const res = http.del(URL, payload, params);
     check(res, { 'Folder delete status': res => res.status === 200 }, { property: 'Delete folder' });
     //trend[environment].add(res.timings.duration, { api: `${path}files/folder/{id}`, status: res.status, method: res.request.method, property: 'Delete folder'});
 }
@@ -103,7 +108,7 @@ Function delete folder
 id - id of folder
 params - headers
 */
-export function insertFileInFolder(id, params, trend, environment, url){
+export function insertFileInFolder(id: number, params: Params, trend: any[], environment: string, url: string){
     const fileTitle = faker.system.commonFileName('docx');
     const payload = JSON.stringify({
         folderId: id,
@@ -112,15 +117,14 @@ export function insertFileInFolder(id, params, trend, environment, url){
         KeepConvertStatus: true,
     });
     let URL = `${url}files/folder/${id}/insert`;
-    const res = http.post(URL, payload, {headers: params.headers,
-        tags: addTagsDefault(false, 'Insert file in specified folder', res.request.url),
-    });
+    params.tags = addTagsDefault(false, 'Insert file in specified folder', URL);
+    const res = http.post(URL, payload, params);
     check(res, { 'Insertion file status': res => res.status === 200 });
     //trend[environment].add(res.timings.duration, { api: res.request.url, status: res.status, method: res.request.method,});
 }
 
-export function FolderCRUD(idMy, params, trend, environment, url) {
-    let folderId = null;
+export function FolderCRUD(idMy: number, params: Params, trend: any[], environment: string, url: string) {
+    let folderId:number;
 
     group('Create folder', () => {
         folderId = createFolder(idMy, params, trend, environment, url);
@@ -140,15 +144,13 @@ export function FolderCRUD(idMy, params, trend, environment, url) {
 
 };
 
-
 /*-------------------------------------------------FILE-------------------------------------------------*/
-
 /*
 Function create file 
 id - id of folder my
 params - headers 
 */
-export function createFile(id, params, trend, environment, url){
+export function createFile(id: number, params: Params, trend: any[], environment: string, url: string){
     const fileTitle = faker.system.commonFileName('docx');
     const payload = JSON.stringify({
         title:	fileTitle,
@@ -156,11 +158,9 @@ export function createFile(id, params, trend, environment, url){
     });
 
     let URL = `${url}files/${id}/file`;
-    const res = http.post(URL, payload, {
-        headers: params.headers,
-        tags: addTagsDefault(false, 'Create file', `${path}files/{id}/file`),
-    });
-    let idMy = null;
+    params.tags =  addTagsDefault(false, 'Create file', `${path}files/{id}/file`);
+    const res = http.post(URL, payload, params);
+    let idMy:number = 0;
     if(check(res, {'Cretion file status': res => res.status === 200})){
         idMy = res.json().response.id;
     }
@@ -173,17 +173,15 @@ Function get file info
 id - id of file
 params - headers
 */
-export function getFile(id, params, trend, environment, url){
+export function getFile(id: number, params: Params, trend: any[], environment: string, url: string){
     let URL = `${url}files/file/${id}`;
-    let tagsDelete = {};
     if(trend)
     {
-        tagsDelete = { tags: addTagsDefault(false, 'Get file info', `${path}files/file/{id}`)};
+        params.tags = addTagsDefault(false, 'Get file info', `${path}files/file/{id}`);
     }
-    const res = http.get(URL, {
-        headers: params.headers, 
-        tags: tagsDelete.tags,
-    });
+
+    const res = http.get(URL, params);
+    
     check(res, {'Get file info status': res => res.status === 200});
     //if(trend)
     //{
@@ -197,16 +195,14 @@ Function update file
 id - id of file
 params - headers
 */
-export function updateFile(id, params, trend, environment, url){
+export function updateFile(id: number, params: Params, trend: any[], environment: string, url: string){
     const fileTitle = faker.system.commonFileName('docx');
     const payload = JSON.stringify({
         title: fileTitle,
     });
     let URL = `${url}files/file/${id}`;
-    const res = http.put(URL, payload, {
-        headers: params.headers, 
-        tags: addTagsDefault(false, 'Update file title', `${path}files/file/{id}`),
-    });
+    params.tags =  addTagsDefault(false, 'Update file title', `${path}files/file/{id}`);
+    const res = http.put(URL, payload, params);
     check(res, {'Update file status': res => res.status === 200});
     //trend[environment].add(res.timings.duration, { api: `${path}files/file/{id}`, status: res.status, method: res.request.method, });
 
@@ -217,21 +213,18 @@ Function delete file
 id - id of folder
 params - headers
 */
-export function deleteFile(id, params, trend, environment, url){
+export function deleteFile(id: number, params: Params, trend: any[] | null, environment: string | null, url: string){
     const payload = JSON.stringify({
         DeleteAfter: false,
         Immediately: true,
     });
     let URL = `${url}files/file/${id}`;
-    let tagsDelete = {};
     if(trend)
     {
-        tagsDelete = { tags: addTagsDefault(false, 'Delete file', `${path}files/file/{id}`)};
+        params.tags = addTagsDefault(false, 'Delete file', `${path}files/file/{id}`);
     }
-    const res = http.del(URL, payload, { 
-        headers: params.headers, 
-        tags: tagsDelete.tags,
-    });
+    
+    const res = http.del(URL, payload, params);
     check(res, { 'File delete status': res => res.status === 200 });
     //if(trend)
     //{
@@ -239,8 +232,8 @@ export function deleteFile(id, params, trend, environment, url){
     //}
 }
 
-export function FileCRUD(idMy, params, trend, environment, url){
-    let fileid = null;
+export function FileCRUD(idMy: number, params: Params, trend: any[], environment: string, url: string){
+    let fileid: number;
 
     group('Create file', () => {
         fileid = createFile(idMy, params, trend, environment, url);
@@ -260,47 +253,45 @@ export function FileCRUD(idMy, params, trend, environment, url){
 
 }
 
-export function emptyTrash(params, url){
+export function emptyTrash(params: Params, url: string){
     let URL = `${url}files/fileops/emptytrash`;
     const payload = JSON.stringify({});
-    const res = http.put(URL, payload, {
-        headers: params.headers, tags: { property: 'Empty trash folder', api: `${path}files/fileops/emptytrash`}
-    });
+    params.tags =  { property: 'Empty trash folder', api: `${path}files/fileops/emptytrash`};
+    const res = http.put(URL, payload, params);
     check(res, { 'Empty trash status': res => res.status === 200});
 }
 
-export function openEdit(id, params, trend, environment, url){
+export function openEdit(id: number, params: Params, trend: any[], environment: string, url: string){
     let URL = `${url}files/file/${id}/openedit`;
-    const res = http.get(URL, {
-        headers: params.headers, 
-        tags: addTagsDefault(false, 'Open and edit file', `${path}files/file/{id}/openedit`),
-    });
+    params.tags =   addTagsDefault(false, 'Open and edit file', `${path}files/file/{id}/openedit`);
+    const res = http.get(URL, params);
     check(res, {'Open and edit file status': res => res.status === 200});
     //trend[environment].add(res.timings.duration, { api: `${path}files/file/{id}/openedit`, status: res.status, method: res.request.method, });
 }
 
 export function setupFunc(){
-    let data = {};
     if(instances.parallel === true|| instances.parallel === "true") {
-        data = setupParallel();
-        return data;
+        return  setupParallel();
     }
     else {
-        var wizard = wizardData(null, null);
-        var authdata = authData(null, null);
-        var authToken = auth(basePath, wizard, authdata);
+        const wizard = wizardData(undefined, undefined);
+        const authdata = authData(undefined, undefined);
+        const authToken = auth(basePath, wizard, authdata);
         foldersAndFiles(foldersCountFolderMy, filesCountFolderMy, folderMy(basePath), authToken);
-        data.params = setParams(authToken);
-        data.idMy = getFolderMyId(data.params, basePath);
-        return data;
+        const params = setParams(authToken);
+
+        return {
+            params: params,
+            idMy: getFolderMyId(params, basePath)
+        };
     }
 }
 
 function setupParallel(){
-    for(var i in instances.instances){
+    for(let i in instances.instances){
         let url = instPath(instances.instances[i].url);
-        var wizard = wizardData(instances.instances[i].email, instances.instances[i].password);
-        var authdata = authData(instances.instances[i].email, instances.instances[i].password);
+        const wizard = wizardData(instances.instances[i].email, instances.instances[i].password);
+        const authdata = authData(instances.instances[i].email, instances.instances[i].password);
         let authToken = auth(url, wizard, authdata);
         if(instances.instances[i].port) {
             instances.instances[i].url = instPath(`${instances.instances[i].url}:${instances.instances[i].port}`)

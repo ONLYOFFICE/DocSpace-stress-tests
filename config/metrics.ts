@@ -1,5 +1,6 @@
+// @ts-nocheck
 import { Trend, Gauge } from 'k6/metrics';
-import { thresholdsSet } from './params.js';
+import { thresholdsSet } from './params';
 
 let metrics = {};
 

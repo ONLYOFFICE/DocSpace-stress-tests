@@ -1,15 +1,17 @@
-import { FileCRUD, emptyTrash, setupFunc } from './CRUD.js';
-import { setScenarios } from '../config/scenarios.js';
-import { parallel, instances, basePath, setThresholds } from '../config/params.js';
-import { setMetrics, setScenarioData } from '../config/metrics.js';
+// @ts-nocheck
+import { RoomCRUD, setupFunc } from './CRUD';
+import { setScenarios } from '../config/scenarios';
+import { setMetrics, setScenarioData } from '../config/metrics';
+import { basePath, parallel, instances, setThresholds } from '../config/params';
 import exec from 'k6/execution';
+import { checkScenarioDescription, initializeScenarioFlags } from '../config/scenarios';
 import { group } from 'k6';
-import { checkScenarioDescription, initializeScenarioFlags } from '../config/scenarios.js';
 
 const scenarios_data = setScenarios(instances)
 export const options = { 
     scenarios: scenarios_data,
     thresholds: setThresholds(scenarios_data),
+    summaryTrendStats: ['avg', 'min', 'med', 'max', 'p(90)', 'p(95)', 'p(99)', 'count'],
 };
 
 let customMetrics = setMetrics(options);
@@ -34,24 +36,12 @@ export default function (data) {
             var scenarioName = exec.scenario.name;
             if(scenarioName === data.instances[i].tag){
                 group(data.instances[i].tag, () => {
-                    FileCRUD(data.instances[i].idMy, data.instances[i].params, customMetrics, scenarioName, data.instances[i].url);
+                    RoomCRUD(data.instances[i].params, customMetrics, scenarioName, data.instances[i].url);
                 })
             }
         }
     }
     else{
-        FileCRUD(data.idMy, data.params, customMetrics, exec.scenario.name, basePath);
-    }
-};
-
-export function teardown(data) {
-    if(parallel === true || parallel === "true")
-    {
-        for(var i in data.instances){
-            emptyTrash(data.instances[i].params, data.instances[i].url);
-        }
-    }
-    else{
-        emptyTrash(data.params, basePath);
+        RoomCRUD(data.params, customMetrics, exec.scenario.name, basePath);
     }
 }

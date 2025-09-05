@@ -1,3 +1,10 @@
+import {
+    Params
+} from 'k6/http';
+import {
+    Scenario
+} from "./scenarios";
+
 const data = JSON.parse(open("../config/init/config.json"));
 export const instances = JSON.parse(open("../config/init/instances.json"));
 export const parallel = instances.parallel;
@@ -5,25 +12,46 @@ export const parallel = instances.parallel;
 const email = data.email;
 const password = data.password;
 
-export function authData(emailInst, passwordInst ){
-    var auth;
+
+export class AuthData {
+    UserName: string;
+    Password: string;
+    constructor(UserName: string, Password: string) {
+        this.UserName = UserName;
+        this.Password = Password;
+    }
+}
+
+export class WizardData {
+    Email: string;
+    PasswordHash: string;
+    constructor(Email: string, PasswordHash: string) {
+        this.Email = Email;
+        this.PasswordHash = PasswordHash;
+    }
+}
+
+export function authData(emailInst: string | undefined, passwordInst: string | undefined){
+    let auth;
+    
     if(emailInst && passwordInst){
-        auth = { UserName : `${emailInst}`, Password: `${passwordInst}`,};
+        auth = new AuthData(emailInst, passwordInst);
     }
     else{
-        auth = { UserName : `${email}`, Password: `${password}`,};
+        auth =  new AuthData(email, password);
     }
     return auth;
 }
 
-export function wizardData(emailInst, passwordInst){
-    var wizard;
+export function wizardData(emailInst: string | undefined, passwordInst: string | undefined){
+    let wizard;
     if(emailInst && passwordInst){
-        wizard = { Email : `${emailInst}`, PasswordHash : `${passwordInst}`, };
+        wizard = new WizardData(emailInst, passwordInst);
     }
-    else{
-        wizard = { Email : `${email}`, PasswordHash : `${password}`, };
+    else {
+        wizard = new WizardData(email, password);
     }
+    return wizard;
 }
 
 
@@ -32,51 +60,40 @@ export const path = 'api/2.0/'
 export const url = `${data.url}`;
 export const basePath = `${url}/${path}`;
 
-export function instPath(basePath)
+export function instPath(basePath:string)
 {
-    const instUrl = `${basePath}/${path}`;
-    return instUrl;
+    return `${basePath}/${path}`;
 }
 
-export function  folderMy(basePath){
-    const folderMy = `${basePath}files/@my`;
-    return folderMy;
+export function  folderMy(basePath:string){
+    return `${basePath}files/@my`;
 }
-export function folderCommon(basePath){
-    const folderCommon = `${basePath}files/@common`;
-    return folderCommon;
+export function folderCommon(basePath:string){
+    return `${basePath}files/@common`;
 }
-export function folderRecent(basePath){
-    const folderRecent = `${basePath}files/@recent`;
-    return folderRecent;
+export function folderRecent(basePath:string){
+    return `${basePath}files/@recent`;
 }
-export function folderTrash(basePath){
-    const folderTrash = `${basePath}files/@trash`;
-    return folderTrash;
+export function folderTrash(basePath:string){
+    return `${basePath}files/@trash`;
 }
-export function privateRoom(basePath){
-    const privateRoom = `${basePath}files/@privacy`;
-    return privateRoom;
+export function privateRoom(basePath:string){
+    return `${basePath}files/@privacy`;
 }
-export function folderTemplates(basePath){
-    const folderTemplates = `${basePath}files/@templates`;
-    return folderTemplates;
+export function folderTemplates(basePath:string){
+    return `${basePath}files/@templates`;
 }
-export function folderShared(basePath){
-    const folderShared = `${basePath}files/@share`;
-    return folderShared;
+export function folderShared(basePath:string){
+    return `${basePath}files/@share`;
 }
-export function wizardComplete(basePath){
-    const wizardComplete = `${basePath}settings/wizard/complete`;
-    return wizardComplete;
+export function wizardComplete(basePath:string){
+    return `${basePath}settings/wizard/complete`;
 }
-export function authentication(basePath){
-    const authentication = `${basePath}authentication`;
-    return authentication;
+export function authentication(basePath:string){
+    return `${basePath}authentication`;
 }
-export function rooms(basePath){
-    const rooms = `${basePath}files/rooms`;
-    return rooms;
+export function rooms(basePath:string){
+    return `${basePath}files/rooms`;
 }
 
 /*------------------------------------------------Starting data for the test------------------------------------------------*/
@@ -85,28 +102,29 @@ export const foldersCountFolderMy = data.foldersMy;
 export const filehandlerDownloadFilesCount = data.filehandlerFiles;
 
 /*-------------------------------------------------------TEST SETTINGS-------------------------------------------------------*/
-export function setParams(authToken){
-    let params = {};
-    if(authToken)
-    {
-        params = {
+
+export function setParams(authToken:string){
+    let result: Params;
+    
+    if (authToken) {
+        result = {
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `${(authToken)}`,
+                'Authorization': authToken
             }
-        }
-        return params;
+        };
+        return result;
     }
-    else
-    {
-        params = { 
-            headers: {
-                'Content-Type': 'application/json',
-            }
+
+    result = {
+        headers: {
+            'Content-Type': 'application/json',
         }
-        return params;
-    }
-};
+    };
+    
+    return result;
+    
+}
 
 export const thresholdsSet = 'avg < 2000';
 
@@ -223,32 +241,32 @@ export const ramp_vus_scenario = {
 };
 
 
-export function setThresholds(scenarios) {
+export function setThresholds(scenarios:Scenario) {
     const thresholds = {};
 
     Object.keys(scenarios).forEach((scenarioName) => {
         const threshold = data[`${scenarioName}_thresholds`];
-        const scenario = scenarios[scenarioName];
+        const scenario = scenarios[scenarioName as keyof Scenario];
 
-        if (threshold && scenario) {
-            if (!scenario.tags) {
-                scenario.tags = { scenario: scenarioName };
-            }
-            thresholds[`http_req_duration{scenario:${scenario.tags.scenario}}`] = threshold;
-        }
-        else if((parallel === "true" || parallel === true) && scenario)
-        {
-            for(var i in instances.instances)
-            {
-                if(scenarioName === instances.instances[i].tag)
-                {
-                    if (!scenario.tags) {
-                        scenario.tags = { scenario: scenarioName };
-                    }
-                    thresholds[`http_req_duration{scenario:${scenario.tags.scenario}}`] = instances.instances[i].thresholds;
-                }
-            }
-        }
+        // if (threshold && scenario) {
+        //     if (!scenario.tags) {
+        //         scenario.tags = { scenario: scenarioName };
+        //     }
+        //     thresholds[`http_req_duration{scenario:${scenario.tags.scenario}}`] = threshold;
+        // }
+        // else if((parallel === "true" || parallel === true) && scenario)
+        // {
+        //     for(var i in instances.instances)
+        //     {
+        //         if(scenarioName === instances.instances[i].tag)
+        //         {
+        //             if (!scenario.tags) {
+        //                 scenario.tags = { scenario: scenarioName };
+        //             }
+        //             thresholds[`http_req_duration{scenario:${scenario.tags.scenario}}`] = instances.instances[i].thresholds;
+        //         }
+        //     }
+        // }
         
     });
 

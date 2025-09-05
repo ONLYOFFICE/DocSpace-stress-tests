@@ -1,39 +1,66 @@
-import exec from 'k6/execution';
+// @ts-nocheck
+import exec
+    from 'k6/execution';
 
-import { constVusScenarioSettings, sharedIterationScenarioSettings, perVuScenarioSettings, constArrivalRateScenarioSettings, rampArrivalRateScenarioSettings, extControlledScenarioSettings, rampVusScenarioSettings,
- const_vus_scenario, shared_iter_scenario, per_vu_scenario, const_arrival_rate_scenario, ramp_arrival_rate_scenario, ext_controlled_scenario, ramp_vus_scenario} from './params.js';
+import {
+    constVusScenarioSettings,
+    sharedIterationScenarioSettings,
+    perVuScenarioSettings,
+    constArrivalRateScenarioSettings,
+    rampArrivalRateScenarioSettings,
+    extControlledScenarioSettings,
+    rampVusScenarioSettings,
+    const_vus_scenario,
+    shared_iter_scenario,
+    per_vu_scenario,
+    const_arrival_rate_scenario,
+    ramp_arrival_rate_scenario,
+    ext_controlled_scenario,
+    ramp_vus_scenario
+} from './params';
+
+export class Scenario {
+    const_vus_scenario: boolean;
+    shared_iter_scenario: boolean;
+    per_vu_scenario: boolean;
+    const_arrival_rate_scenario: boolean;
+    ramp_arrival_rate_scenario: boolean;
+    ext_controlled_scenario: boolean;
+    ramp_vus_scenario: boolean;
+    startTime: string;
+    env: object;
+    stages: object;
+}
 
 export function setScenarios(instances) {
-    let scenarios = {};
+    let scenarios: Scenario = {};
 
-    if(constVusScenarioSettings === true || constVusScenarioSettings === "true"){
+    if (constVusScenarioSettings === true || constVusScenarioSettings === "true") {
         scenarios.const_vus_scenario = const_vus_scenario;
     }
-    if(sharedIterationScenarioSettings === true || sharedIterationScenarioSettings === "true"){
+    if (sharedIterationScenarioSettings === true || sharedIterationScenarioSettings === "true") {
         scenarios.shared_iter_scenario = shared_iter_scenario;
     }
-    if(perVuScenarioSettings === true || perVuScenarioSettings === "true"){
+    if (perVuScenarioSettings === true || perVuScenarioSettings === "true") {
         scenarios.per_vu_scenario = per_vu_scenario;
     }
-    if(constArrivalRateScenarioSettings === true || constArrivalRateScenarioSettings === "true"){
+    if (constArrivalRateScenarioSettings === true || constArrivalRateScenarioSettings === "true") {
         scenarios.const_arrival_rate_scenario = const_arrival_rate_scenario;
     }
-    if(rampArrivalRateScenarioSettings === true || rampArrivalRateScenarioSettings === "true"){
+    if (rampArrivalRateScenarioSettings === true || rampArrivalRateScenarioSettings === "true") {
         scenarios.ramp_arrival_rate_scenario = ramp_arrival_rate_scenario;
     }
-    if(extControlledScenarioSettings === true || extControlledScenarioSettings === "true"){
+    if (extControlledScenarioSettings === true || extControlledScenarioSettings === "true") {
         scenarios.ext_controlled_scenario = ext_controlled_scenario;
     }
-    if(rampVusScenarioSettings === true || rampVusScenarioSettings === "true"){
+    if (rampVusScenarioSettings === true || rampVusScenarioSettings === "true") {
         scenarios.ramp_vus_scenario = ramp_vus_scenario;
     }
 
-    let scenariosParallel = {};
-    if(instances.parallel === true || instances.parallel === "true"){
-        for(var inst in instances.instances)
-        {
-            for(var scen in scenarios)
-            {
+    let scenariosParallel:Scenario = {};
+    if (instances.parallel === true || instances.parallel === "true") {
+        for (let inst in instances.instances) {
+            for (let scen in scenarios) {
                 let scenario = scenarios[scen];
                 scenario.startTime = instances.instances[inst].startTime;
                 scenariosParallel[`${instances.instances[inst].tag}`] = Object.assign({}, scenario);
@@ -43,8 +70,7 @@ export function setScenarios(instances) {
     return (instances.parallel === true || instances.parallel === "true") ? scenariosParallel : scenarios;
 }
 
-function getScenarioData()
-{
+function getScenarioData() {
     const tag = exec.vu.tags['scenario'];
     let jsonData = JSON.parse(JSON.stringify(exec.test.options.scenarios[`${tag}`]));
     let scenarioData = {
@@ -68,11 +94,10 @@ function getScenarioData()
     return scenarioData;
 }
 
-export function addTagsDefault(def, property, api=null){
+export function addTagsDefault(def: boolean, property: string, api?: string | undefined) {
     let tags = {};
     let scenarioData = getScenarioData();
-    if(def == true)
-    {
+    if (def) {
         tags = {
             scenario_executor: scenarioData.scenario_executor,
             scenario_startTime: scenarioData.scenario_startTime,
@@ -93,8 +118,7 @@ export function addTagsDefault(def, property, api=null){
             property: property,
         };
         return tags;
-    }
-    else{
+    } else {
         tags = {
             property: property,
             api: api,
