@@ -22,37 +22,37 @@ export function setup() {
     isMetricRecorded = {};
     initializeScenarioFlags(options.scenarios, isMetricRecorded);
     return data;
-};
+}
 
-export default function (data) {
+export default async function (data) {
     let scenario = exec.scenario.name;
     checkScenarioDescription(exec.scenario.iterationInInstance, isMetricRecorded, scenario, scenarioInfoMetric);
 
     if(parallel === true || parallel === "true")
     {
-        for(var i in data.instances)
+        for(let i in data.instances)
         {
-            var scenarioName = exec.scenario.name;
+            const scenarioName = exec.scenario.name;
             if(scenarioName === data.instances[i].tag){
-                group(data.instances[i].tag, () => {
-                    FileCRUD(data.instances[i].idMy, data.instances[i].params, customMetrics, scenarioName, data.instances[i].url);
+                await group(data.instances[i].tag, async () => {
+                    await FileCRUD(data.instances[i].idMy, data.instances[i].params, customMetrics, scenarioName, data.instances[i].url);
                 })
             }
         }
     }
     else{
-        FileCRUD(data.idMy, data.params, customMetrics, exec.scenario.name, basePath);
+        await FileCRUD(data.idMy, data.params, customMetrics, exec.scenario.name, basePath);
     }
 };
 
-export function teardown(data) {
+export async function teardown(data) {
     if(parallel === true || parallel === "true")
     {
-        for(var i in data.instances){
-            emptyTrash(data.instances[i].params, data.instances[i].url);
+        for(let i in data.instances){
+            await emptyTrash(data.instances[i].params, data.instances[i].url);
         }
     }
     else{
-        emptyTrash(data.params, basePath);
+        await emptyTrash(data.params, basePath);
     }
 }

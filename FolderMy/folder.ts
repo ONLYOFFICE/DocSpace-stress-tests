@@ -25,7 +25,7 @@ export function setup() {
     return data;
 };
 
-export default function (data) {
+export default async function (data) {
     let scenario = exec.scenario.name;
     checkScenarioDescription(exec.scenario.iterationInInstance, isMetricRecorded, scenario, scenarioInfoMetric);
 
@@ -35,25 +35,25 @@ export default function (data) {
         {
             const scenarioName = exec.scenario.name;
             if(scenarioName === data.instances[i].tag){
-                group(data.instances[i].tag, () => {
-                FolderCRUD(data.instances[i].idMy, data.instances[i].params, customMetrics, scenarioName, data.instances[i].url);
+                await group(data.instances[i].tag, async () => {
+                    await FolderCRUD(data.instances[i].idMy, data.instances[i].params, customMetrics, scenarioName, data.instances[i].url);
                 })
             }
         }
     }
-    else{
-        FolderCRUD(data.idMy, data.params, customMetrics, scenario, basePath);
+    else {
+        await FolderCRUD(data.idMy, data.params, customMetrics, scenario, basePath);
     }
 }
 
-export function teardown(data) {
+export async function teardown(data) {
     if(parallel === true || parallel === "true") 
     {
         for(let i in data.instances){
-            emptyTrash(data.instances[i].params, data.instances[i].url);
+            await emptyTrash(data.instances[i].params, data.instances[i].url);
         }
     }
     else{
-        emptyTrash(data.params, basePath);
+        await emptyTrash(data.params, basePath);
     }
 }

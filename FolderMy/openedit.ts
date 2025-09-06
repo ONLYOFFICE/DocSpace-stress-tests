@@ -27,7 +27,7 @@ export function setup() {
     isMetricRecorded = {};
     initializeScenarioFlags(options.scenarios, isMetricRecorded);
     return data;
-};
+}
 
 let callbackUrl;
 let createdFileIds = [];
@@ -40,7 +40,7 @@ function base64url(str) {
         .replace(/\+/g, '-')
         .replace(/\//g, '_')
         .replace(/=+$/, '');
-};
+}
 
 export default function (data) {
     let scenario = exec.scenario.name;
@@ -120,9 +120,9 @@ export default function (data) {
     sleep(65); 
 };
 
-export function teardown(data) {
+export async function teardown(data) {
     for (const id of createdFileIds) {
-        deleteFile(id, data.params, null, null, basePath);
+        await deleteFile(id, data.params, null, null, basePath);
     }
-    emptyTrash(data.params, basePath);
+    await emptyTrash(data.params, basePath);
 }

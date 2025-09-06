@@ -31,7 +31,7 @@ export class WizardData {
     }
 }
 
-export function authData(emailInst: string | undefined, passwordInst: string | undefined){
+export function authData(emailInst?: string | undefined, passwordInst?: string | undefined){
     let auth;
     
     if(emailInst && passwordInst){
@@ -43,7 +43,7 @@ export function authData(emailInst: string | undefined, passwordInst: string | u
     return auth;
 }
 
-export function wizardData(emailInst: string | undefined, passwordInst: string | undefined){
+export function wizardData(emailInst?: string | undefined, passwordInst?: string | undefined){
     let wizard;
     if(emailInst && passwordInst){
         wizard = new WizardData(emailInst, passwordInst);

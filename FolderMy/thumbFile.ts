@@ -30,17 +30,17 @@ export function setup() {
 };
 
 
-export default function ({params, arrayFiles}) {
+export default async function ({params, arrayFiles}) {
     let scenario = exec.scenario.name;
     checkScenarioDescription(exec.scenario.iterationInInstance, isMetricRecorded, scenario, scenarioInfoMetric);
     thumbFile(params, arrayFiles[exec.scenario.iterationInTest], customMetrics, exec.scenario.name);
 };
 
-export function teardown({params, arrayFiles}) {
+export async function teardown({params, arrayFiles}) {
     for(let i in arrayFiles){
         let res = getFile(arrayFiles[i], params, null, null);
         check(res, {'Thumbnail file': res => res.json().response.thumbnailStatus === 3});
-        deleteFile(arrayFiles[i], params, null, null);
+        await deleteFile(arrayFiles[i], params, null, null);
     }
-    emptyTrash(params);
+    await emptyTrash(params);
 }
