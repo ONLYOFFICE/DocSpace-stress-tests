@@ -9,8 +9,6 @@ import {
     scenariosOptions
 } from "./scenarios";
 
-let metrics: Metrics;
-
 export class Metrics {
     [name: string]: Metric
 }
@@ -19,6 +17,7 @@ export class isMetricRecorded {
     [name: string]: boolean
 }
 
+let metrics: Metrics = new Metrics();
 export function setMetrics(options: scenariosOptions){
     if (!options.scenarios?.list){
         return metrics;

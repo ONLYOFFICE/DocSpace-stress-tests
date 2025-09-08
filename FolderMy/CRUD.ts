@@ -299,6 +299,15 @@ export async function openEdit(id: number, authToken: string, trend: Metrics, en
     //trend[environment].add(res.timings.duration, { api: `${path}files/file/{id}/openedit`, status: res.status, method: res.request.method, });
 }
 
+export class SetupData {
+    authToken: string | null | undefined;
+    idMy: number | undefined;
+    constructor(authToken: string | null | undefined, idMy: number | undefined){
+        this.authToken = authToken;
+        this.idMy = idMy;
+    }
+}
+
 export async function setupFunc(){
     // if(instances.parallel === true|| instances.parallel === "true") {
     //     return  await setupParallel();
@@ -308,10 +317,7 @@ export async function setupFunc(){
         const aData = authData();
         const authToken = await auth(basePath, wizard, aData);
         await foldersAndFiles(foldersCountFolderMy, filesCountFolderMy, basePath, authToken);
-        return {
-            authToken: authToken,
-            idMy: getFolderMyId(authToken, url)
-        };
+        return new SetupData(authToken, await getFolderMyId(authToken, url));
     // }
 }
 

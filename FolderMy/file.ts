@@ -1,26 +1,43 @@
-import { FileCRUD, emptyTrash, setupFunc } from './CRUD';
-import { setScenarios } from '../config/scenarios';
-import { parallel, instances, basePath, setThresholds } from '../config/params';
+import {
+    FileCRUD,
+    emptyTrash,
+    setupFunc,
+    SetupData
+} from './CRUD';
+import {
+    setScenarios
+} from '../config/scenarios';
+import {
+    parallel,
+    instances,
+    basePath,
+    setThresholds
+} from '../config/params';
 import {
     isMetricRecorded,
     setMetrics,
     setScenarioData
 } from '../config/metrics';
 import exec from 'k6/execution';
-import { group } from 'k6';
-import { checkScenarioDescription, initializeScenarioFlags } from '../config/scenarios';
+import {
+    group
+} from 'k6';
+import {
+    checkScenarioDescription,
+    initializeScenarioFlags
+} from '../config/scenarios';
 
 
 //const scenarios_data = setScenarios(instances)
 const scenarios_data = setScenarios();
-export const options = { 
+export const options = {
     scenarios: scenarios_data,
     thresholds: setThresholds(scenarios_data),
 };
 
 
 let customMetrics = setMetrics(options);
-let isRecorded: isMetricRecorded = new isMetricRecorded();
+let isRecorded = new isMetricRecorded();
 let scenarioInfoMetric = setScenarioData(options, isRecorded);
 
 export async function setup() {
@@ -29,11 +46,11 @@ export async function setup() {
     return data;
 }
 
-export default async function (data: { authToken: string | null | undefined, idMy: number }) {
-    if(!data.authToken){
+export default async function (data: SetupData) {
+    if (!data.authToken || !data.idMy) {
         return;
     }
-    
+
     let scenario = exec.scenario.name;
     checkScenarioDescription(exec.scenario.iterationInInstance, isRecorded, scenario, scenarioInfoMetric);
 
@@ -50,12 +67,15 @@ export default async function (data: { authToken: string | null | undefined, idM
     //     }
     // }
     // else{
-        await FileCRUD(data.idMy, data.authToken, customMetrics, exec.scenario.name, basePath);
+    await FileCRUD(data.idMy, data.authToken, customMetrics, exec.scenario.name, basePath);
     // }
 };
 
-export async function teardown(data: { authToken: string | null | undefined, idMy: number }) {
-    if(!data.authToken){
+export async function teardown(data: {
+    authToken: string | null | undefined,
+    idMy: number
+}) {
+    if (!data.authToken) {
         return;
     }
     // if(parallel === true || parallel === "true")
@@ -65,6 +85,6 @@ export async function teardown(data: { authToken: string | null | undefined, idM
     //     }
     // }
     // else{
-        await emptyTrash(data.authToken, basePath);
+    await emptyTrash(data.authToken, basePath);
     //}
 }

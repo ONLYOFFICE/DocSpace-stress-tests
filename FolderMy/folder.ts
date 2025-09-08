@@ -1,4 +1,9 @@
-import { FolderCRUD, emptyTrash, setupFunc } from "./CRUD";
+import {
+    FolderCRUD,
+    emptyTrash,
+    setupFunc,
+    SetupData
+} from "./CRUD";
 import { setScenarios } from '../config/scenarios';
 import { parallel, instances, basePath, setThresholds } from '../config/params';
 import {
@@ -19,7 +24,7 @@ export const options = {
     thresholds: thresholds,
 };
 
-let customMetrics: Metrics;
+let customMetrics: Metrics = setMetrics(options);
 let isMetricRecorded = {};
 let scenarioInfoMetric = setScenarioData(options, isMetricRecorded);
 
@@ -30,8 +35,8 @@ export async function setup() {
     return data;
 };
 
-export default async function (data: { authToken: string | null | undefined, idMy: number }) {
-    if(!data.authToken){
+export default async function (data: SetupData) {
+    if(!data.authToken || !data.idMy){
         return;
     }
     let scenario = exec.scenario.name;
