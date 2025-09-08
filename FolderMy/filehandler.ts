@@ -1,4 +1,3 @@
-// @ts-nocheck
 // import http, {
 //     Params
 // } from 'k6/http';

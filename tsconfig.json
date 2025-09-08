@@ -1,15 +1,29 @@
 {
   "compilerOptions": {
     "baseUrl": "./", 
-    "target": "es5",
-    "allowJs": true,
-    "skipLibCheck": true,
-    "strict": true,
+    "target": "es2023",
+    
+    "moduleResolution": "node",
+    "module": "commonjs",
     "noEmit": true,
+    "allowJs": true,
+    "removeComments": false,
+
+    "strict": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+
+    //"noUnusedLocals": true,
+    //"noUnusedParameters": true,
+    //"noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+
+    "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "incremental": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+
+    "skipLibCheck": true
   },
   "include": [
     "**/*.ts",

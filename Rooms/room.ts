@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { RoomCRUD, setupFunc } from './CRUD';
 import { setScenarios } from '../config/scenarios';
 import { setMetrics, setScenarioData } from '../config/metrics';

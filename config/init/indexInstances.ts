@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { parseArgumentAsArray } from './indexConfig';
 import nconf from 'nconf';
 

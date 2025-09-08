@@ -1,6 +1,4 @@
-// @ts-nocheck
-import exec
-    from 'k6/execution';
+import exec   from 'k6/execution';
 
 import {
     constVusScenarioSettings,
@@ -20,48 +18,81 @@ import {
 } from './params';
 
 export class Scenario {
-    const_vus_scenario: boolean;
-    shared_iter_scenario: boolean;
-    per_vu_scenario: boolean;
-    const_arrival_rate_scenario: boolean;
-    ramp_arrival_rate_scenario: boolean;
-    ext_controlled_scenario: boolean;
-    ramp_vus_scenario: boolean;
+    executor: string;
+    startRate: number;
+    rate: number;
+    maxVUs: number;
+    vus: number;
+    iterations: number;
     startTime: string;
-    env: object;
-    stages: object;
+    preAllocatedVUs: number;
+    duration: string;
+    maxDuration: string;
+    gracefulStop: string;
+    timeUnit: string;
+    env: { SCENARIO: string };
+    stages: [
+        {
+            "target": number;
+            "duration": string;
+        }
+    ]
+
+    constructor(data: any) {
+        this.executor = data.executor;
+        this.startRate = data.startRate;
+        this.rate = data.rate;
+        this.maxVUs = data.maxVUs;
+        this.vus = data.vus;
+        this.iterations = data.iterations;
+        this.startTime = data.startTime;
+        this.duration = data.duration;
+        this.preAllocatedVUs = data.preAllocatedVUs;
+        this.maxDuration = data.maxDuration;
+        this.gracefulStop = data.gracefulStop;
+        this.timeUnit = data.timeUnit;
+        this.env = { SCENARIO: data.executor };
+        this.stages = data.stages;
+    }
+}
+
+export class Scenarios {
+    list: Scenario[] = [];
+    startTime?: string;
+    env?: object;
+    stages?: object;
 }
 
 export function setScenarios(instances) {
-    let scenarios: Scenario = {};
+    let scenarios: Scenarios = new Scenarios();
 
     if (constVusScenarioSettings === true || constVusScenarioSettings === "true") {
-        scenarios.const_vus_scenario = const_vus_scenario;
+        scenarios.list.push(const_vus_scenario);
     }
     if (sharedIterationScenarioSettings === true || sharedIterationScenarioSettings === "true") {
-        scenarios.shared_iter_scenario = shared_iter_scenario;
+        scenarios.list.push(shared_iter_scenario);
     }
     if (perVuScenarioSettings === true || perVuScenarioSettings === "true") {
-        scenarios.per_vu_scenario = per_vu_scenario;
+        scenarios.list.push(per_vu_scenario);
     }
     if (constArrivalRateScenarioSettings === true || constArrivalRateScenarioSettings === "true") {
-        scenarios.const_arrival_rate_scenario = const_arrival_rate_scenario;
+        scenarios.list.push(const_arrival_rate_scenario);
     }
     if (rampArrivalRateScenarioSettings === true || rampArrivalRateScenarioSettings === "true") {
-        scenarios.ramp_arrival_rate_scenario = ramp_arrival_rate_scenario;
+        scenarios.list.push(ramp_arrival_rate_scenario);
     }
     if (extControlledScenarioSettings === true || extControlledScenarioSettings === "true") {
-        scenarios.ext_controlled_scenario = ext_controlled_scenario;
+        scenarios.list.push(ext_controlled_scenario);
     }
     if (rampVusScenarioSettings === true || rampVusScenarioSettings === "true") {
-        scenarios.ramp_vus_scenario = ramp_vus_scenario;
+        scenarios.list.push(ramp_vus_scenario);
     }
 
-    let scenariosParallel:Scenario = {};
+    let scenariosParallel:Scenarios = new Scenarios();
     if (instances.parallel === true || instances.parallel === "true") {
         for (let inst in instances.instances) {
-            for (let scen in scenarios) {
-                let scenario = scenarios[scen];
+            for (let i = 0; i < scenarios.list.length; i++) {
+                let scenario = scenarios.list[i];
                 scenario.startTime = instances.instances[inst].startTime;
                 scenariosParallel[`${instances.instances[inst].tag}`] = Object.assign({}, scenario);
             }
@@ -127,10 +158,11 @@ export function addTagsDefault(def: boolean, property: string, api?: string | un
     }
 }
 
-export function initializeScenarioFlags(scenarios, metric) {
-    Object.keys(scenarios).forEach(scenarioName => {
-        metric[`${scenarioName}_description`] = false;
-    });
+export function initializeScenarioFlags(scenarios: Scenarios, metric) {
+    for (let i = 0; i < scenarios.list.length; i++) {
+        metric[`${scenarios.list[i].executor}_description`] = false;
+    }
+
 }
 
 export function checkScenarioDescription(iteration, metric, scenario, trend) {

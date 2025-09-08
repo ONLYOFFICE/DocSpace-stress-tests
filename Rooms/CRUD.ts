@@ -1,152 +1,152 @@
-// @ts-nocheck
 import http from 'k6/http';
 import { check, group } from 'k6';
-import { rooms, instPath, instances, basePath, setParams, path } from '../config/params';
+import { rooms, instPath, instances, basePath, path } from '../config/params';
 import { faker } from '@faker-js/faker';
 import { addTagsDefault } from '../config/scenarios';
 import { auth } from '../config/auth';
 
-export function createRoom(params, trend, environment, url){
-    const roomTitle = faker.random.words();
-    const payload = JSON.stringify({
-        Title: roomTitle,
-        RoomType: 6,
-    });
+import {
+    FilesRoomsApi,
+    FilesFoldersApi,
+    FilesOperationsApi,
+    Configuration
+} from '@onlyoffice/docspace-api-typescript';
 
-    let URL = rooms(url);
-    const res = http.post(URL, payload, {
-        headers: params.headers, 
-        tags: addTagsDefault(false, 'Create new room', `${path}files/rooms`),
-    });
+export async function createRoom(authToken: string, trend: any[], environment: string, basePath: string){
+    const configuration = new Configuration({apiKey: authToken, basePath: basePath});
+    const apiInstance = new FilesRoomsApi(configuration);
+    //var tags = addTagsDefault(false, 'Create new room', `${path}files/rooms`),
+    const res = await apiInstance.createRoom({title: faker.word.words(), roomType: 6});
+    
     check(res, {'Cretion room status': res => res.status === 200});
     //trend[environment].add(res.timings.duration, { url: res.request.url, status: res.status, method: res.request.method,});
-    return res.json().response.id;
+    return res.data.response?.id;
 }
 
-export function getRoomInfo(id, params, trend, environment, url){
-    let URL = `${rooms(url)}/${id}`;
-    const res = http.get(URL, {
-        headers: params.headers, 
-        tags: addTagsDefault(false, 'Get room info', `${path}files/rooms/{id}`),
-    });
+export async function getRoomInfo(id: number | undefined, authToken: string, trend: any[], environment: string, basePath: string){
+    if(!id)
+    {
+        return;
+    }
+    const configuration = new Configuration({apiKey: authToken, basePath: basePath});
+    const apiInstance = new FilesRoomsApi(configuration);
+    //var tags =addTagsDefault(false, 'Get room info', `${path}files/rooms/{id}`),
+    const res = await apiInstance.getRoomInfo(id);
     check(res, {'Get room info status': res => res.status === 200});
     //trend[environment].add(res.timings.duration, { url: res.request.url, status: res.status, method: res.request.method,});
 }
 
-export function renameRoom(id, params, trend, environment, url){
-    const roomTitle = faker.random.words();
-    const payload = JSON.stringify({
-        Title: roomTitle,
-    });
-    let URL = `${rooms(url)}/${id}`;
-    const res = http.put(URL, payload, {
-        headers: params.headers, 
-        tags: addTagsDefault(false, 'Rename room', `${path}files/rooms/{id}`),
-    });
+export async function renameRoom(id: number | undefined, authToken: string,trend: any[], environment: string, basePath: string){
+    if(!id)
+    {
+        return;
+    }
+    const configuration = new Configuration({apiKey: authToken, basePath: basePath});
+    const apiInstance = new FilesRoomsApi(configuration);
+    
+    //addTagsDefault(false, 'Rename room', `${path}files/rooms/{id}`),
+    const roomTitle = faker.word.words();
+    const res = await apiInstance.updateRoom(id, {title: roomTitle});
     check(res, {'Rename room status': res => res.status === 200});
     //trend[environment].add(res.timings.duration, { url: res.request.url, status: res.status, method: res.request.method,});
 }
 
-export function removeRoom(id, params, trend, environment, url){
-    const payload = JSON.stringify({
-        DeleteAfter: false,
-    });
-    let URL = `${rooms(url)}/${id}`;
-    const res = http.del(URL, payload, {
-        headers: params.headers, 
-        tags: addTagsDefault(false, 'Remove room', `${path}files/rooms/{id}`),
-    });
-    check(res, { 'Room delete status': res => res.status === 200 });
+export async function removeRoom(id: number | undefined, authToken: string, trend: any[], environment: string, basePath: string) {
+    if(!id)
+    {
+        return;
+    }
+    const configuration = new Configuration({ apiKey: authToken, basePath: basePath });
+    const apiInstance = new FilesRoomsApi(configuration);
+    //addTagsDefault(false, 'Remove room', `${path}files/rooms/{id}`),
+
+    const res = await apiInstance.deleteRoom(id, {deleteAfter: false});
+    check(res, {'Room delete status': res => res.status === 200});
     //trend[environment].add(res.timings.duration, { url: res.request.url, status: res.status, method: res.request.method,});
 }
 
-export function archiveRoom(id, params, trend, environment, url){
-    const payload = JSON.stringify({
-        DeleteAfter: false,
-    });
-    let URL = `${rooms(url)}/${id}/archive`;
-    const res = http.put(URL, payload, {
-        headers: params.headers, 
-        tags: addTagsDefault(false, 'Archive room', `${path}files/rooms/{id}/archive`),
-    });
+export async function archiveRoom(id: number | undefined, authToken: string, trend: any[], environment: string, basePath: string){
+    if(!id)
+    {
+        return;
+    }
+    const configuration = new Configuration({ apiKey: authToken, basePath: basePath });
+    const apiInstance = new FilesRoomsApi(configuration);
+    //var tags = addTagsDefault(false, 'Archive room', `${path}files/rooms/{id}/archive`),
+    const res = await apiInstance.archiveRoom(id, {deleteAfter: false});
     check(res, { 'Room archive status': res => res.status === 200 });
     //trend[environment].add(res.timings.duration, { url: res.request.url, status: res.status, method: res.request.method,});
 }
 
-export function unarchiveRoom(id, params, trend, environment, url){
-    const payload = JSON.stringify({
-        DeleteAfter: false,
-    });
-    let URL = `${rooms(url)}/${id}/unarchive`;
-    const res = http.put(URL, payload, {
-        headers: params.headers, 
-        tags: addTagsDefault(false, 'Unarchive room', `${path}files/rooms/{id}/unarchive`),
-    });
+export async function unarchiveRoom(id: number | undefined, authToken: string, trend: any[], environment: string, basePath: string){
+    if(!id)
+    {
+        return;
+    }
+    const configuration = new Configuration({ apiKey: authToken, basePath: basePath });
+    const apiInstance = new FilesRoomsApi(configuration);
+    // addTagsDefault(false, 'Unarchive room', `${path}files/rooms/{id}/unarchive`),
+    const res = await apiInstance.unarchiveRoom(id, { deleteAfter: false });
     check(res, { 'Room unarchive status': res => res.status === 200 });
     //trend[environment].add(res.timings.duration, { url: res.request.url, status: res.status, method: res.request.method,});
 }
 
-export function pinRoom(id, params, trend, environment, url){
-    let URL = `${rooms(url)}/${id}/pin`;
-    const res = http.put(URL, {
-        headers: params.headers, 
-        tags: addTagsDefault(false, 'Pin room', `${path}files/rooms/{id}/pin`),
-    });
+export async function pinRoom(id: number, authToken: string, trend: any[], environment: string, basePath: string){
+    const configuration = new Configuration({ apiKey: authToken, basePath: basePath });
+    const apiInstance = new FilesRoomsApi(configuration);
+    //addTagsDefault(false, 'Pin room', `${path}files/rooms/{id}/pin`)
+    const res = await apiInstance.pinRoom(id);
     check(res, { 'Room pin status': res => res.status === 200 });
     //trend[environment].add(res.timings.duration, { url: res.request.url, status: res.status, method: res.request.method,});
 }
 
-export function unpinRoom(id, params, trend, environment, url){
-    let URL = `${rooms(url)}/${id}/unpin`;
-    const res = http.put(URL, {
-        headers: params.headers, 
-        tags: addTagsDefault(false, 'Unpin room', `${path}files/rooms/{id}/unpin`),
-    });
+export async function unpinRoom(id: number, authToken: string, trend: any[], environment: string, basePath: string){
+    const configuration = new Configuration({ apiKey: authToken, basePath: basePath });
+    const apiInstance = new FilesRoomsApi(configuration);
+    //addTagsDefault(false, 'Unpin room', `${path}files/rooms/{id}/unpin`)
+    const res = await apiInstance.unpinRoom(id);
     check(res, { 'Room unpin status': res => res.status === 200 });
     //trend[environment].add(res.timings.duration, { url: res.request.url, status: res.status, method: res.request.method,});
 }
 
-export function getRoomAcessRights(id, params, trend, environment, url){
-    const payload = JSON.stringify({
-        "filterType": null,
-    });
-    let URL = `${rooms(url)}/${id}/share`;
-    const res = http.get(URL, payload, {
-        headers: params.headers, 
-        tags: addTagsDefault(false, 'Get room acess rights', `${path}files/rooms/{id}/share`),
-    });
+export async function getRoomAcessRights(id: number, authToken: string, trend: any[], environment: string, basePath: string){
+    const configuration = new Configuration({ apiKey: authToken, basePath: basePath });
+    const apiInstance = new FilesRoomsApi(configuration);
+    
+    //addTagsDefault(false, 'Get room acess rights', `${path}files/rooms/{id}/share`)
+    const res = await apiInstance.getRoomSecurityInfo(id);
     check(res, { 'Get room acess rights status': res => res.status === 200 });
     //trend[environment].add(res.timings.duration, { url: res.request.url, status: res.status, method: res.request.method,});
 }
 
-export function RoomCRUD(params, trend, environment, url) {
-    let folderId = null;
+export async function RoomCRUD(authToken: string, trend: any[], environment: string, basePath: string) {
+    let folderId: number | undefined;
 
-    group('Create new room', () => {
-        folderId = createRoom(params, trend, environment, url);
+    await group('Create new room', async () => {
+        folderId = await createRoom(authToken, trend, environment, basePath);
     });
 
-    group('Get room info', () => {
-        getRoomInfo(folderId, params, trend, environment, url);
+    await group('Get room info', async () => {
+        await getRoomInfo(folderId, authToken, trend, environment, basePath);
     });
 
-    group('Rename room', () => {
-        renameRoom(folderId, params, trend, environment, url);
+    await group('Rename room', async () => {
+       await renameRoom(folderId, authToken, trend, environment, basePath);
     });
 
-    group('Archive room', () =>{
-        archiveRoom(folderId, params, trend, environment, url);
+    await group('Archive room', async () =>{
+        await archiveRoom(folderId, authToken, trend, environment, basePath);
     })
 
-    group('Unarchive room', () => {
-        unarchiveRoom(folderId, params, trend, environment, url);
+    await group('Unarchive room', async () => {
+        await unarchiveRoom(folderId, authToken, trend, environment, basePath);
     })
 
-    group('Remove room', () => {
-        removeRoom(folderId, params, trend, environment, url);
+    await group('Remove room', async () => {
+        await removeRoom(folderId, authToken, trend, environment, basePath);
     });
 
-};
+}
 
 export function setupFunc(){
     let data = {};
@@ -161,15 +161,14 @@ export function setupFunc(){
     }
 }
 
-function setupParallel(){
-    for(var i in instances.instances){
+async function setupParallel() {
+    for (const i in instances.instances) {
         let url = instPath(instances.instances[i].url);
-        let authToken = auth(url);
-        if(instances.instances[i].port) {
+        let authToken = await auth(url);
+        if (instances.instances[i].port) {
             instances.instances[i].url = instPath(`${instances.instances[i].url}:${instances.instances[i].port}`)
-        }
-        else {
-        instances.instances[i].url = instPath(`${instances.instances[i].url}`);
+        } else {
+            instances.instances[i].url = instPath(`${instances.instances[i].url}`);
         }
         instances.instances[i].params = setParams(authToken);
     }

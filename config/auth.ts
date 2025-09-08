@@ -1,43 +1,45 @@
-// @ts-nocheck
 import http from 'k6/http';
-import { wizardComplete, authentication, setParams, WizardData, AuthData} from './params';
+import {WizardData, AuthData} from './params';
+import {
+    SettingsCommonSettingsApi,
+    AuthenticationApi,
+    FilesFoldersApi,
+    FilesOperationsApi,
+    Configuration
+} from '@onlyoffice/docspace-api-typescript';
+import {
+    SettingsDto
+} from "@onlyoffice/docspace-api-typescript/models/settings-dto";
 
-export function auth(basePath: string, wizardData?: WizardData | undefined, authData?: AuthData | undefined) {
-  let url = `${basePath}settings?withPassword=true`;
-  let params = {
-    headers: {
-      'Content-Type': 'application/json',
-    }
-  };
 
-  let res = http.get(url, params);
-  let response = null;
+export async function auth(basePath: string, wizardData?: WizardData | undefined, authData?: AuthData | undefined) {
+    const configuration = new Configuration({basePath: basePath});
+    const commonSettingsApi = new SettingsCommonSettingsApi(configuration);
+  let res = await commonSettingsApi.getSettings(true);
+  let response: SettingsDto | undefined = res.data.response;
+  
+  if (response?.wizardToken && wizardData) {
+      const completeWizard = await commonSettingsApi.completeWizard({
+          email: wizardData.Email,
+          passwordHash: wizardData.PasswordHash
+      }, {
+          headers: {
+              'Content-Type': 'application/json',
+              'confirm': `${response.wizardToken}`
+          }
+      })
 
-  if (res.status === 200) {
-    response = res.json().response;
+      return completeWizard.headers["set-cookie"];//?.find({value: "asc_auth_key"});
   }
-  if (response.wizardToken) {
-    url = wizardComplete(basePath);
-    params = {
-      headers: {
-        'Content-Type': 'application/json',
-        'confirm': `${res.wizardToken}`
-      }
-    };
-    const payload = JSON.stringify(wizardData);
 
-    res = http.put(url, payload, params);
-    return res.cookies.asc_auth_key[0].value;
+  const authenticationApi = new AuthenticationApi(configuration);
+  const authResult = await authenticationApi.authenticateMe({
+      password: authData?.Password,
+      userName: authData?.UserName
+  });
+    
+  if (authResult.status === 200) {
+    return  authResult.data.response?.token;
   }
-
-  url = authentication(basePath);
-  params = setParams(null);
-  const payload = JSON.stringify(authData);
-
-  res = http.post(url, payload, params);
-  let token = null;
-  if (res.status === 200) {
-    token = res.json().response.token;
-  }
-  return token;
+  return undefined;
 }

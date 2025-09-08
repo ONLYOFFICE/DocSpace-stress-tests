@@ -1,15 +1,12 @@
 import { check, group } from 'k6';
 import { faker } from '@faker-js/faker';
-import exec from 'k6/execution';
 
 import {
-    folderMy,
     path,
     instPath,
     instances,
     url,
     basePath,
-    setParams,
     filesCountFolderMy,
     foldersCountFolderMy,
     wizardData,
@@ -42,7 +39,7 @@ export async function getFolderMyId(authToken: string, basePath: string){
 }
 
 /*
-Function create folder 
+Function creates folder 
 id - id of folder my
 params - headers 
 */
@@ -54,7 +51,7 @@ export async function createFolder(id: number, authToken: string, trend: any[], 
     });
     
     //var tags = addTagsDefault(false, 'Create folder', `${path}files/folder/{id}`);
-    let result : number | undefined = undefined;
+    let result : number | undefined;
     if(check(res, {'Creation folder status': res => res.status === 200}, { property: 'Create folder' })){
         result = res.data.response?.id;
     }
@@ -287,16 +284,16 @@ export async function openEdit(id: number, authToken: string, trend: any[], envi
     //trend[environment].add(res.timings.duration, { api: `${path}files/file/{id}/openedit`, status: res.status, method: res.request.method, });
 }
 
-export function setupFunc(){
+export async function setupFunc(){
     if(instances.parallel === true|| instances.parallel === "true") {
-        return  setupParallel();
+        return  await setupParallel();
     }
     else {
         const wizard = wizardData();
         const aData = authData();
-        const authToken = auth(basePath, wizard, aData);
-        foldersAndFiles(foldersCountFolderMy, filesCountFolderMy, folderMy(basePath), authToken);
-        const params = setParams(authToken);
+        const authToken = await auth(basePath, wizard, aData);
+        await foldersAndFiles(foldersCountFolderMy, filesCountFolderMy, basePath, authToken);
+        const params = authToken;
 
         return {
             params: params,
@@ -305,20 +302,20 @@ export function setupFunc(){
     }
 }
 
-function setupParallel(){
+async function setupParallel(){
     for(let i in instances.instances){
         let url = instPath(instances.instances[i].url);
         const wizard = wizardData(instances.instances[i].email, instances.instances[i].password);
         const authdata = authData(instances.instances[i].email, instances.instances[i].password);
-        let authToken = auth(url, wizard, authdata);
+        let authToken = await auth(url, wizard, authdata);
         if(instances.instances[i].port) {
             instances.instances[i].url = instPath(`${instances.instances[i].url}:${instances.instances[i].port}`)
         }
         else {
             instances.instances[i].url = instPath(`${instances.instances[i].url}`);
         }
-        foldersAndFiles(foldersCountFolderMy, filesCountFolderMy, folderMy(instances.instances[i].url), authToken);
-        instances.instances[i].idMy = getFolderMyId(authToken, instances.instances[i].url);
+        await foldersAndFiles(foldersCountFolderMy, filesCountFolderMy, instances.instances[i].url, authToken);
+        instances.instances[i].idMy = await getFolderMyId(authToken, instances.instances[i].url);
     }
     return instances;
 }

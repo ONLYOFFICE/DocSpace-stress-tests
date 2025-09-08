@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { FolderCRUD, emptyTrash, setupFunc } from "./CRUD";
 import { setScenarios } from '../config/scenarios';
 import { parallel, instances, basePath, setThresholds } from '../config/params';
@@ -18,8 +17,8 @@ let customMetrics = 0;
 let isMetricRecorded = {};
 let scenarioInfoMetric = setScenarioData(options, isMetricRecorded);
 
-export function setup() {
-    let data = setupFunc();
+export async function setup() {
+    let data = await setupFunc();
     isMetricRecorded = {};
     initializeScenarioFlags(options.scenarios, isMetricRecorded);
     return data;
