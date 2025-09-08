@@ -4,6 +4,10 @@ import {
     Metric
 } from 'k6/metrics';
 import { thresholdsSet } from './params';
+import {
+    Scenario,
+    scenariosOptions
+} from "./scenarios";
 
 let metrics: Metrics;
 
@@ -15,9 +19,15 @@ export class isMetricRecorded {
     [name: string]: boolean
 }
 
-export function setMetrics(options){
-    for (let key in options.scenarios) {
-        options.scenarios[key].env['MY_SCENARIO'] = key;
+export function setMetrics(options: scenariosOptions){
+    if (!options.scenarios?.list){
+        return metrics;
+    }
+    
+    for (let i = 0; i < options.scenarios?.list?.length; i++) {
+        let scenario: Scenario = options.scenarios.list[i];
+        const key = scenario.executor;
+        scenario.env['MY_SCENARIO'] = key;
         metrics[key] = new Trend(key, true);
 
         if (!options.thresholds[key]) {
@@ -28,9 +38,14 @@ export function setMetrics(options){
     return metrics;
 }
 
-export function setScenarioData(options, isRecorded: isMetricRecorded){
-    for (let key in options.scenarios) {
-        options.scenarios[key].env['MY_SCENARIO'] = key;
+export function setScenarioData(options: scenariosOptions, isRecorded: isMetricRecorded){
+    if (!options.scenarios?.list){
+        return metrics;
+    }
+    for (let i = 0; i < options.scenarios?.list?.length; i++) {
+        let scenario: Scenario = options.scenarios.list[i];
+        const key = scenario.executor;
+        scenario.env['MY_SCENARIO'] = key;
         let metricName = `${key}_description`;
         metrics[metricName] = new Gauge(metricName, true);
     }

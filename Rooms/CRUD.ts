@@ -1,8 +1,7 @@
-import http from 'k6/http';
 import { check, group } from 'k6';
-import { rooms, instPath, instances, basePath, path } from '../config/params';
+import { instPath, instances, basePath, path } from '../config/params';
 import { faker } from '@faker-js/faker';
-import { addTagsDefault } from '../config/scenarios';
+//import { addTagsDefault } from '../config/scenarios';
 import { auth } from '../config/auth';
 
 import {
