@@ -6,7 +6,8 @@ import exec from 'k6/execution';
 import { checkScenarioDescription, initializeScenarioFlags } from '../config/scenarios';
 import { group } from 'k6';
 
-const scenarios_data = setScenarios(instances)
+//const scenarios_data = setScenarios(instances)
+const scenarios_data = setScenarios();
 export const options = { 
     scenarios: scenarios_data,
     thresholds: setThresholds(scenarios_data),
@@ -17,30 +18,18 @@ let customMetrics = setMetrics(options);
 let isMetricRecorded = {};
 let scenarioInfoMetric = setScenarioData(options, isMetricRecorded);
 
-export function setup() {
-    let data = setupFunc();
+export async function setup() {
+    let data = await setupFunc();
     isMetricRecorded = {};
     initializeScenarioFlags(options.scenarios, isMetricRecorded);
     return data;
-};
+}
 
-export default function (data) {
+export default async function (authToken: string| null| undefined) {
+    if(!authToken) {
+        return;
+    }
     let scenario = exec.scenario.name;
     checkScenarioDescription(exec.scenario.iterationInInstance, isMetricRecorded, scenario, scenarioInfoMetric);
-
-    if(parallel === true || parallel === "true")
-    {
-        for(var i in data.instances)
-        {
-            var scenarioName = exec.scenario.name;
-            if(scenarioName === data.instances[i].tag){
-                group(data.instances[i].tag, () => {
-                    RoomCRUD(data.instances[i].params, customMetrics, scenarioName, data.instances[i].url);
-                })
-            }
-        }
-    }
-    else{
-        RoomCRUD(data.params, customMetrics, exec.scenario.name, basePath);
-    }
+    await RoomCRUD(authToken, customMetrics, exec.scenario.name, basePath);
 }

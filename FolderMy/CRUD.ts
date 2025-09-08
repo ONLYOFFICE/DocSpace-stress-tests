@@ -300,19 +300,19 @@ export async function openEdit(id: number, authToken: string, trend: Metrics, en
 }
 
 export async function setupFunc(){
-    if(instances.parallel === true|| instances.parallel === "true") {
-        return  await setupParallel();
-    }
-    else {
+    // if(instances.parallel === true|| instances.parallel === "true") {
+    //     return  await setupParallel();
+    // }
+    // else {
         const wizard = wizardData();
         const aData = authData();
         const authToken = await auth(basePath, wizard, aData);
         await foldersAndFiles(foldersCountFolderMy, filesCountFolderMy, basePath, authToken);
         return {
-            params: authToken,
+            authToken: authToken,
             idMy: getFolderMyId(authToken, url)
         };
-    }
+    // }
 }
 
 async function setupParallel(){

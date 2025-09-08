@@ -75,7 +75,7 @@ export class scenariosOptions {
     thresholds: any;
 }
 
-export function setScenarios(instances) {
+export function setScenarios() {
     let scenarios: Scenarios = new Scenarios();
 
     if (constVusScenarioSettings === true || constVusScenarioSettings === "true") {
@@ -100,17 +100,18 @@ export function setScenarios(instances) {
         scenarios.list.push(ramp_vus_scenario);
     }
 
-    let scenariosParallel:Scenarios = new Scenarios();
-    if (instances.parallel === true || instances.parallel === "true") {
-        for (let inst in instances.instances) {
-            for (let i = 0; i < scenarios.list.length; i++) {
-                let scenario = scenarios.list[i];
-                scenario.startTime = instances.instances[inst].startTime;
-                scenariosParallel.list.push(scenario);
-            }
-        }
-    }
-    return (instances.parallel === true || instances.parallel === "true") ? scenariosParallel : scenarios;
+    // let scenariosParallel:Scenarios = new Scenarios();
+    // if (instances.parallel === true || instances.parallel === "true") {
+    //     for (let inst in instances.instances) {
+    //         for (let i = 0; i < scenarios.list.length; i++) {
+    //             let scenario = scenarios.list[i];
+    //             scenario.startTime = instances.instances[inst].startTime;
+    //             scenariosParallel.list.push(scenario);
+    //         }
+    //     }
+    // }
+    //return (instances.parallel === true || instances.parallel === "true") ? scenariosParallel : scenarios;
+    return scenarios;
 }
 
 function getScenarioData() {

@@ -151,26 +151,26 @@ export async function RoomCRUD(authToken: string, trend: Metrics, environment: s
 }
 
 export async function setupFunc(){
-    let data = {};
-    if(instances.parallel === true|| instances.parallel === "true") {
-        data = setupParallel();
-        return data;
-    }
-    else {
+    // let data = {};
+    // if(instances.parallel === true|| instances.parallel === "true") {
+    //     data = setupParallel();
+    //     return data;
+    // }
+    // else {
         return await auth(basePath);
-    }
+    // }
 }
 
-async function setupParallel() {
-    for (const i in instances.instances) {
-        let url = instPath(instances.instances[i].url);
-        let authToken = await auth(url);
-        if (instances.instances[i].port) {
-            instances.instances[i].url = instPath(`${instances.instances[i].url}:${instances.instances[i].port}`)
-        } else {
-            instances.instances[i].url = instPath(`${instances.instances[i].url}`);
-        }
-        instances.instances[i].params = setParams(authToken);
-    }
-    return instances;
-}
+// async function setupParallel() {
+//     for (const i in instances.instances) {
+//         let url = instPath(instances.instances[i].url);
+//         let authToken = await auth(url);
+//         if (instances.instances[i].port) {
+//             instances.instances[i].url = instPath(`${instances.instances[i].url}:${instances.instances[i].port}`)
+//         } else {
+//             instances.instances[i].url = instPath(`${instances.instances[i].url}`);
+//         }
+//         instances.instances[i].params = setParams(authToken);
+//     }
+//     return instances;
+// }
