@@ -3,3 +3,4 @@
 /config/init/instances.json
 /.idea
 node_modules
+dist

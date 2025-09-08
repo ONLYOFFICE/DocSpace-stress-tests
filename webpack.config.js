@@ -5,7 +5,7 @@ const GlobEntries = require('webpack-glob-entries');
 
 module.exports = {
     mode: 'production',
-    entry: GlobEntries('./FolderMy/file.ts'), // Generates multiple entry for each test
+    entry: GlobEntries('./FolderMy/*.ts'), // Generates multiple entry for each test
     output: {
         path: path.join(__dirname, 'dist'),
         libraryTarget: 'commonjs',
@@ -18,7 +18,36 @@ module.exports = {
         rules: [
             {
                 test: /\.ts$/,
-                use: 'babel-loader',
+                use: [
+                    {
+                        loader: 'ts-loader',
+                        options: {
+                            transpileOnly: true,
+                        },
+                    },
+                ],
+                exclude: /node_modules/,
+            },
+            {
+                test: /\.js$/,
+                use: {
+                    loader: 'babel-loader',
+                    options: {
+                        presets: [
+                            ['@babel/preset-env', {
+                                targets: {
+                                    node: '22'
+                                }
+                            }],
+                            "@babel/preset-typescript"
+                        ],
+                        plugins: [
+                            "@babel/plugin-transform-runtime",
+                            "@babel/plugin-proposal-class-properties",
+                            "@babel/plugin-proposal-object-rest-spread"
+                        ]
+                    }
+                },
                 exclude: /node_modules/,
             },
         ],

@@ -24,7 +24,7 @@ export const options = {
     thresholds: thresholds,
 };
 
-let customMetrics: Metrics = setMetrics(options);
+let customMetrics = setMetrics(options);
 let isMetricRecorded = {};
 let scenarioInfoMetric = setScenarioData(options, isMetricRecorded);
 
