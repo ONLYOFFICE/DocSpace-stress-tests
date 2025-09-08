@@ -16,6 +16,10 @@ import {
     ext_controlled_scenario,
     ramp_vus_scenario
 } from './params';
+import {
+    isMetricRecorded,
+    Metrics
+} from "./metrics";
 
 export class Scenario {
     executor: string;
@@ -158,14 +162,14 @@ export function addTagsDefault(def: boolean, property: string, api?: string | un
     }
 }
 
-export function initializeScenarioFlags(scenarios: Scenarios, metric) {
+export function initializeScenarioFlags(scenarios: Scenarios, metric: isMetricRecorded) {
     for (let i = 0; i < scenarios.list.length; i++) {
         metric[`${scenarios.list[i].executor}_description`] = false;
     }
 
 }
 
-export function checkScenarioDescription(iteration, metric, scenario, trend) {
+export function checkScenarioDescription(iteration: number, metric: isMetricRecorded, scenario:string, trend: Metrics) {
     if (iteration === 0 && !metric[`${scenario}_description`]) {
         let scenarioMetric = trend[`${scenario}_description`];
         scenarioMetric.add(1, addTagsDefault(true, ''));

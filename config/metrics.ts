@@ -1,13 +1,24 @@
-import { Trend, Gauge } from 'k6/metrics';
+import {
+    Trend,
+    Gauge,
+    Metric
+} from 'k6/metrics';
 import { thresholdsSet } from './params';
 
-let metrics = {};
+let metrics: Metrics;
+
+export class Metrics {
+    [name: string]: Metric
+}
+
+export class isMetricRecorded {
+    [name: string]: boolean
+}
 
 export function setMetrics(options){
     for (let key in options.scenarios) {
         options.scenarios[key].env['MY_SCENARIO'] = key;
-        let metricName = key;
-        metrics[key] = new Trend(metricName, true);
+        metrics[key] = new Trend(key, true);
 
         if (!options.thresholds[key]) {
             options.thresholds[key] = [];
@@ -17,7 +28,7 @@ export function setMetrics(options){
     return metrics;
 }
 
-export function setScenarioData(options, isRecorded){
+export function setScenarioData(options, isRecorded: isMetricRecorded){
     for (let key in options.scenarios) {
         options.scenarios[key].env['MY_SCENARIO'] = key;
         let metricName = `${key}_description`;

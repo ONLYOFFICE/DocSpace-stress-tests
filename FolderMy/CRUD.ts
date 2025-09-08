@@ -1,33 +1,48 @@
-import { check, group } from 'k6';
-import { faker } from '@faker-js/faker';
+import {
+    check,
+    group
+} from 'k6';
+import {
+    faker
+} from '@faker-js/faker';
 
 import {
-    path,
-    instPath,
-    instances,
-    url,
+    authData,
     basePath,
     filesCountFolderMy,
     foldersCountFolderMy,
-    wizardData,
-    authData
+    instances,
+    instPath,
+    url,
+    wizardData
 } from '../config/params';
-import { foldersAndFiles } from '../data/data';
-import { auth } from '../config/auth';
-import { addTagsDefault } from '../config/scenarios';
+import {
+    foldersAndFiles
+} from '../data/data';
+import {
+    auth
+} from '../config/auth';
 
 import {
+    Configuration,
     FilesFilesApi,
     FilesFoldersApi,
-    FilesOperationsApi,
-    Configuration
+    FilesOperationsApi
 } from '@onlyoffice/docspace-api-typescript';
+import {
+    Metrics
+} from "../config/metrics";
 
 /*-------------------------------------------------FOLDER-------------------------------------------------*/
 /*
 Function get folder my id
 */
-export async function getFolderMyId(authToken: string, basePath: string){
+export async function getFolderMyId(authToken: string | null | undefined, basePath: string)
+{
+    if(!authToken) {
+        return 0;
+    }
+    
     const configuration = new Configuration({apiKey: authToken, basePath: basePath});
     const apiInstance = new FilesFoldersApi(configuration);
     const res = await apiInstance.getMyFolder();
@@ -43,7 +58,7 @@ Function creates folder
 id - id of folder my
 params - headers 
 */
-export async function createFolder(id: number, authToken: string, trend: any[], environment: string, basePath: string){
+export async function createFolder(id: number, authToken: string, trend: Metrics, environment: string, basePath: string){
     const configuration = new Configuration({apiKey: authToken, basePath: basePath});
     const apiInstance = new FilesFoldersApi(configuration);
     const res = await apiInstance.createFolder(id, {
@@ -64,7 +79,7 @@ Function get folder info
 id - id of folder
 params - headers
 */
-export async function getFolder(id: number | undefined, authToken: string, trend: any[], environment: string, basePath: string){
+export async function getFolder(id: number | undefined, authToken: string, trend: Metrics, environment: string, basePath: string){
     if(!id)
     {
         return;
@@ -82,7 +97,7 @@ Function update folder
 id - id of folder
 params - headers
 */
-export async function updateFolder(id: number | undefined, authToken: string, trend: any[], environment: string, basePath: string){
+export async function updateFolder(id: number | undefined, authToken: string, trend: Metrics, environment: string, basePath: string){
     if(!id)
     {
         return;
@@ -102,7 +117,7 @@ Function delete folder
 id - id of folder
 params - headers
 */
-export async function deleteFolder(id: number | undefined, authToken: string, trend: any[], environment: string, basePath: string){
+export async function deleteFolder(id: number | undefined, authToken: string, trend: Metrics, environment: string, basePath: string){
     if(!id)
     {
         return;
@@ -123,7 +138,7 @@ Function delete folder
 id - id of folder
 params - headers
 */
-export async function insertFileInFolder(id: number, authToken: string, trend: any[], environment: string, basePath: string){
+export async function insertFileInFolder(id: number, authToken: string, trend: Metrics, environment: string, basePath: string){
     const fileTitle = faker.system.commonFileName('docx');
     const configuration = new Configuration({apiKey: authToken, basePath: basePath});
     const apiInstance = new FilesFoldersApi(configuration);
@@ -133,7 +148,7 @@ export async function insertFileInFolder(id: number, authToken: string, trend: a
     //trend[environment].add(res.timings.duration, { api: res.request.url, status: res.status, method: res.request.method,});
 }
 
-export async function FolderCRUD(idMy: number, authToken: string, trend: any[], environment: string, basePath: string) {
+export async function FolderCRUD(idMy: number, authToken: string, trend: Metrics, environment: string, basePath: string) {
     let folderId:number | undefined;
 
     await group('Create folder', async () => {
@@ -160,7 +175,7 @@ Function create a file
 id - id of folder my
 params - headers 
 */
-export async function createFile(id: number, authToken: string, trend: any[], environment: string, basePath: string){
+export async function createFile(id: number, authToken: string, trend: Metrics, environment: string, basePath: string){
     const configuration = new Configuration({apiKey: authToken, basePath: basePath});
     const apiInstance = new FilesFilesApi(configuration);
     
@@ -180,7 +195,7 @@ Function get file info
 id - id of file
 params - headers
 */
-export async function getFile(id: number | undefined,  authToken: string, trend: any[], environment: string, basePath: string){
+export async function getFile(id: number | undefined,  authToken: string, trend: Metrics, environment: string, basePath: string){
     if(!id)
     {
         return;
@@ -206,7 +221,7 @@ Function update file
 id - id of file
 params - headers
 */
-export async function updateFile(id: number | undefined, authToken: string, trend: any[], environment: string, basePath: string){
+export async function updateFile(id: number | undefined, authToken: string, trend: Metrics, environment: string, basePath: string){
     if(!id)
     {
         return;
@@ -226,7 +241,7 @@ Function delete file
 id - id of folder
 params - headers
 */
-export async function deleteFile(id: number | undefined, authToken: string, trend: any[] | null, environment: string | null, basePath: string){
+export async function deleteFile(id: number | undefined, authToken: string, trend: Metrics | null, environment: string | null, basePath: string){
     if(!id)
     {
         return;
@@ -246,7 +261,7 @@ export async function deleteFile(id: number | undefined, authToken: string, tren
     //}
 }
 
-export async function FileCRUD(idMy: number,  authToken: string, trend: any[], environment: string, basePath: string){
+export async function FileCRUD(idMy: number,  authToken: string, trend: Metrics, environment: string, basePath: string){
     let fileid: number | undefined;
 
     await group('Create file', async () => {
@@ -275,7 +290,7 @@ export async function emptyTrash(authToken: string, basePath: string){
     check(res, { 'Empty trash status': res => res.status === 200});
 }
 
-export async function openEdit(id: number, authToken: string, trend: any[], environment: string, basePath: string){
+export async function openEdit(id: number, authToken: string, trend: Metrics, environment: string, basePath: string){
     const configuration = new Configuration({apiKey: authToken, basePath: basePath});
     const apiInstance = new FilesFilesApi(configuration);
     //var tags =   addTagsDefault(false, 'Open and edit file', `${path}files/file/{id}/openedit`);
@@ -293,10 +308,8 @@ export async function setupFunc(){
         const aData = authData();
         const authToken = await auth(basePath, wizard, aData);
         await foldersAndFiles(foldersCountFolderMy, filesCountFolderMy, basePath, authToken);
-        const params = authToken;
-
         return {
-            params: params,
+            params: authToken,
             idMy: getFolderMyId(authToken, url)
         };
     }

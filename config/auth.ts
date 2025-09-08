@@ -1,11 +1,11 @@
-import http from 'k6/http';
-import {WizardData, AuthData} from './params';
 import {
-    SettingsCommonSettingsApi,
+    AuthData,
+    WizardData
+} from './params';
+import {
     AuthenticationApi,
-    FilesFoldersApi,
-    FilesOperationsApi,
-    Configuration
+    Configuration,
+    SettingsCommonSettingsApi
 } from '@onlyoffice/docspace-api-typescript';
 import {
     SettingsDto
@@ -28,8 +28,13 @@ export async function auth(basePath: string, wizardData?: WizardData | undefined
               'confirm': `${response.wizardToken}`
           }
       })
+      
+      const cookieName = 'asc_auth_key';
 
-      return completeWizard.headers["set-cookie"];//?.find({value: "asc_auth_key"});
+      return (completeWizard.headers['set-cookie'] as string[])
+          .find(cookie => cookie.includes(cookieName))
+          ?.match(new RegExp(`^${cookieName}=(.+?);`))
+          ?.[1];
   }
 
   const authenticationApi = new AuthenticationApi(configuration);

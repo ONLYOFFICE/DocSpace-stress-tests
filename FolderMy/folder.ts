@@ -1,7 +1,11 @@
 import { FolderCRUD, emptyTrash, setupFunc } from "./CRUD";
 import { setScenarios } from '../config/scenarios';
 import { parallel, instances, basePath, setThresholds } from '../config/params';
-import { setMetrics, setScenarioData } from '../config/metrics';
+import {
+    Metrics,
+    setMetrics,
+    setScenarioData
+} from '../config/metrics';
 import exec from 'k6/execution';
 import { group } from 'k6';
 import {checkScenarioDescription, initializeScenarioFlags } from '../config/scenarios';
@@ -13,7 +17,7 @@ export const options = {
     thresholds: thresholds,
 };
 
-let customMetrics = 0;
+let customMetrics: Metrics;
 let isMetricRecorded = {};
 let scenarioInfoMetric = setScenarioData(options, isMetricRecorded);
 

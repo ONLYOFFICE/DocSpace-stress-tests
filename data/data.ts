@@ -9,8 +9,11 @@ export async function foldersAndFiles(
   countFolders: number | undefined,
   countFiles: number | undefined,
   basePath: string,
-  auth?: string
+  auth?: string | null | undefined
 ) {
+    if(!auth) {
+        return { arrayFiles: [], arrayFolders: [] };
+    }
     const configuration = new Configuration({apiKey: auth, basePath: basePath});
     const foldersApi = new FilesFoldersApi(configuration);
     const filesApi = new FilesFilesApi(configuration);

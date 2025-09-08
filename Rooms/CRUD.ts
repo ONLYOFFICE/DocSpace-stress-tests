@@ -11,8 +11,11 @@ import {
     FilesOperationsApi,
     Configuration
 } from '@onlyoffice/docspace-api-typescript';
+import {
+    Metrics
+} from "../config/metrics";
 
-export async function createRoom(authToken: string, trend: any[], environment: string, basePath: string){
+export async function createRoom(authToken: string, trend: Metrics, environment: string, basePath: string){
     const configuration = new Configuration({apiKey: authToken, basePath: basePath});
     const apiInstance = new FilesRoomsApi(configuration);
     //var tags = addTagsDefault(false, 'Create new room', `${path}files/rooms`),
@@ -23,7 +26,7 @@ export async function createRoom(authToken: string, trend: any[], environment: s
     return res.data.response?.id;
 }
 
-export async function getRoomInfo(id: number | undefined, authToken: string, trend: any[], environment: string, basePath: string){
+export async function getRoomInfo(id: number | undefined, authToken: string, trend: Metrics, environment: string, basePath: string){
     if(!id)
     {
         return;
@@ -36,7 +39,7 @@ export async function getRoomInfo(id: number | undefined, authToken: string, tre
     //trend[environment].add(res.timings.duration, { url: res.request.url, status: res.status, method: res.request.method,});
 }
 
-export async function renameRoom(id: number | undefined, authToken: string,trend: any[], environment: string, basePath: string){
+export async function renameRoom(id: number | undefined, authToken: string,trend: Metrics, environment: string, basePath: string){
     if(!id)
     {
         return;
@@ -51,7 +54,7 @@ export async function renameRoom(id: number | undefined, authToken: string,trend
     //trend[environment].add(res.timings.duration, { url: res.request.url, status: res.status, method: res.request.method,});
 }
 
-export async function removeRoom(id: number | undefined, authToken: string, trend: any[], environment: string, basePath: string) {
+export async function removeRoom(id: number | undefined, authToken: string, trend: Metrics, environment: string, basePath: string) {
     if(!id)
     {
         return;
@@ -65,7 +68,7 @@ export async function removeRoom(id: number | undefined, authToken: string, tren
     //trend[environment].add(res.timings.duration, { url: res.request.url, status: res.status, method: res.request.method,});
 }
 
-export async function archiveRoom(id: number | undefined, authToken: string, trend: any[], environment: string, basePath: string){
+export async function archiveRoom(id: number | undefined, authToken: string, trend: Metrics, environment: string, basePath: string){
     if(!id)
     {
         return;
@@ -78,7 +81,7 @@ export async function archiveRoom(id: number | undefined, authToken: string, tre
     //trend[environment].add(res.timings.duration, { url: res.request.url, status: res.status, method: res.request.method,});
 }
 
-export async function unarchiveRoom(id: number | undefined, authToken: string, trend: any[], environment: string, basePath: string){
+export async function unarchiveRoom(id: number | undefined, authToken: string, trend: Metrics, environment: string, basePath: string){
     if(!id)
     {
         return;
@@ -91,7 +94,7 @@ export async function unarchiveRoom(id: number | undefined, authToken: string, t
     //trend[environment].add(res.timings.duration, { url: res.request.url, status: res.status, method: res.request.method,});
 }
 
-export async function pinRoom(id: number, authToken: string, trend: any[], environment: string, basePath: string){
+export async function pinRoom(id: number, authToken: string, trend: Metrics, environment: string, basePath: string){
     const configuration = new Configuration({ apiKey: authToken, basePath: basePath });
     const apiInstance = new FilesRoomsApi(configuration);
     //addTagsDefault(false, 'Pin room', `${path}files/rooms/{id}/pin`)
@@ -100,7 +103,7 @@ export async function pinRoom(id: number, authToken: string, trend: any[], envir
     //trend[environment].add(res.timings.duration, { url: res.request.url, status: res.status, method: res.request.method,});
 }
 
-export async function unpinRoom(id: number, authToken: string, trend: any[], environment: string, basePath: string){
+export async function unpinRoom(id: number, authToken: string, trend: Metrics, environment: string, basePath: string){
     const configuration = new Configuration({ apiKey: authToken, basePath: basePath });
     const apiInstance = new FilesRoomsApi(configuration);
     //addTagsDefault(false, 'Unpin room', `${path}files/rooms/{id}/unpin`)
@@ -109,7 +112,7 @@ export async function unpinRoom(id: number, authToken: string, trend: any[], env
     //trend[environment].add(res.timings.duration, { url: res.request.url, status: res.status, method: res.request.method,});
 }
 
-export async function getRoomAcessRights(id: number, authToken: string, trend: any[], environment: string, basePath: string){
+export async function getRoomAcessRights(id: number, authToken: string, trend: Metrics, environment: string, basePath: string){
     const configuration = new Configuration({ apiKey: authToken, basePath: basePath });
     const apiInstance = new FilesRoomsApi(configuration);
     
@@ -119,7 +122,7 @@ export async function getRoomAcessRights(id: number, authToken: string, trend: a
     //trend[environment].add(res.timings.duration, { url: res.request.url, status: res.status, method: res.request.method,});
 }
 
-export async function RoomCRUD(authToken: string, trend: any[], environment: string, basePath: string) {
+export async function RoomCRUD(authToken: string, trend: Metrics, environment: string, basePath: string) {
     let folderId: number | undefined;
 
     await group('Create new room', async () => {
@@ -148,16 +151,14 @@ export async function RoomCRUD(authToken: string, trend: any[], environment: str
 
 }
 
-export function setupFunc(){
+export async function setupFunc(){
     let data = {};
     if(instances.parallel === true|| instances.parallel === "true") {
         data = setupParallel();
         return data;
     }
     else {
-        var authToken = auth(basePath);
-        data.params = setParams(authToken);
-        return data;
+        return await auth(basePath);
     }
 }
 

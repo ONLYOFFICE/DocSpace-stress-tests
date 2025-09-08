@@ -1,10 +1,15 @@
 import { FileCRUD, emptyTrash, setupFunc } from './CRUD';
 import { setScenarios } from '../config/scenarios';
 import { parallel, instances, basePath, setThresholds } from '../config/params';
-import { setMetrics, setScenarioData } from '../config/metrics';
+import {
+    isMetricRecorded,
+    setMetrics,
+    setScenarioData
+} from '../config/metrics';
 import exec from 'k6/execution';
 import { group } from 'k6';
 import { checkScenarioDescription, initializeScenarioFlags } from '../config/scenarios';
+
 
 const scenarios_data = setScenarios(instances)
 export const options = { 
@@ -12,20 +17,20 @@ export const options = {
     thresholds: setThresholds(scenarios_data),
 };
 
+
 let customMetrics = setMetrics(options);
-let isMetricRecorded = {};
-let scenarioInfoMetric = setScenarioData(options, isMetricRecorded);
+let isRecorded: isMetricRecorded = new isMetricRecorded();
+let scenarioInfoMetric = setScenarioData(options, isRecorded);
 
 export async function setup() {
     let data = await setupFunc();
-    isMetricRecorded = {};
-    initializeScenarioFlags(options.scenarios, isMetricRecorded);
+    initializeScenarioFlags(options.scenarios, isRecorded);
     return data;
 }
 
 export default async function (data) {
     let scenario = exec.scenario.name;
-    checkScenarioDescription(exec.scenario.iterationInInstance, isMetricRecorded, scenario, scenarioInfoMetric);
+    checkScenarioDescription(exec.scenario.iterationInInstance, isRecorded, scenario, scenarioInfoMetric);
 
     if(parallel === true || parallel === "true")
     {
