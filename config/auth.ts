@@ -5,21 +5,19 @@ import {
 import {
     AuthenticationApi,
     Configuration,
-    SettingsCommonSettingsApi
-} from '@onlyoffice/docspace-api-typescript';
-import {
+    CommonSettingsApi,
     SettingsDto
-} from "@onlyoffice/docspace-api-typescript/models/settings-dto";
+} from '@onlyoffice/docspace-api-typescript-k6';
 
 
-export async function auth(basePath: string, wizardData?: WizardData | undefined, authData?: AuthData | undefined) {
+export function auth(basePath: string, wizardData?: WizardData | undefined, authData?: AuthData | undefined) {
     const configuration = new Configuration({basePath: basePath});
-    const commonSettingsApi = new SettingsCommonSettingsApi(configuration);
-  let res = await commonSettingsApi.getSettings(true);
+    const commonSettingsApi = new CommonSettingsApi(configuration);
+  let res = commonSettingsApi.getPortalSettings(true);
   let response: SettingsDto | undefined = res.data.response;
   
   if (response?.wizardToken && wizardData) {
-      const completeWizard = await commonSettingsApi.completeWizard({
+      const completeWizard = commonSettingsApi.completeWizard({
           email: wizardData.Email,
           passwordHash: wizardData.PasswordHash
       }, {
@@ -38,7 +36,7 @@ export async function auth(basePath: string, wizardData?: WizardData | undefined
   }
 
   const authenticationApi = new AuthenticationApi(configuration);
-  const authResult = await authenticationApi.authenticateMe({
+  const authResult = authenticationApi.authenticateMe({
       password: authData?.Password,
       userName: authData?.UserName
   });

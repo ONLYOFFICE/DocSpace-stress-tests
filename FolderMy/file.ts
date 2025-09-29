@@ -40,13 +40,13 @@ let customMetrics = setMetrics(options);
 let isRecorded = new isMetricRecorded();
 let scenarioInfoMetric = setScenarioData(options, isRecorded);
 
-export async function setup() {
-    let data = await setupFunc();
+export function setup() {
+    let data = setupFunc();
     initializeScenarioFlags(options.scenarios, isRecorded);
     return data;
 }
 
-export default async function (data: SetupData) {
+export default function (data: SetupData) {
     if (!data.authToken || !data.idMy) {
         return;
     }
@@ -60,18 +60,18 @@ export default async function (data: SetupData) {
     //     {
     //         const scenarioName = exec.scenario.name;
     //         if(scenarioName === data.instances[i].tag){
-    //             await group(data.instances[i].tag, async () => {
+    //             group(data.instances[i].tag, () => {
     //                 await FileCRUD(data.instances[i].idMy, data.instances[i].params, customMetrics, scenarioName, data.instances[i].url);
     //             })
     //         }
     //     }
     // }
     // else{
-    await FileCRUD(data.idMy, data.authToken, customMetrics, exec.scenario.name, basePath);
+    FileCRUD(data.idMy, data.authToken, customMetrics, exec.scenario.name, basePath);
     // }
 };
 
-export async function teardown(data: {
+export function teardown(data: {
     authToken: string | null | undefined,
     idMy: number
 }) {
@@ -85,6 +85,6 @@ export async function teardown(data: {
     //     }
     // }
     // else{
-    await emptyTrash(data.authToken, basePath);
+    emptyTrash(data.authToken, basePath);
     //}
 }

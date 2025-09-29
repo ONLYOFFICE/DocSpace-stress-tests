@@ -35,7 +35,7 @@
 //     thumbFile(params, arrayFiles[exec.scenario.iterationInTest], customMetrics, exec.scenario.name);
 // };
 //
-// export async function teardown({params, arrayFiles}) {
+// export function teardown({params, arrayFiles}) {
 //     for(let i in arrayFiles){
 //         let res = getFile(arrayFiles[i], params, null, null);
 //         check(res, {'Thumbnail file': res => res.json().response.thumbnailStatus === 3});

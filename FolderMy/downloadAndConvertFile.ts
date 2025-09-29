@@ -37,7 +37,7 @@
 //     downloadAndConvert(authToken, arrayFiles[exec.scenario.iterationInTest], customMetrics, exec.scenario.name);
 // };
 //
-// export async function teardown(authToken: string, arrayFiles:number[]) {
+// export function teardown(authToken: string, arrayFiles:number[]) {
 //     for(const i in arrayFiles){
 //         await deleteFile(arrayFiles[i], authToken, null, null, basePath);
 //     }

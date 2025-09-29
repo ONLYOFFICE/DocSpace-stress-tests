@@ -18,18 +18,18 @@ let customMetrics = setMetrics(options);
 let isMetricRecorded = {};
 let scenarioInfoMetric = setScenarioData(options, isMetricRecorded);
 
-export async function setup() {
-    let data = await setupFunc();
+export function setup() {
+    let data = setupFunc();
     isMetricRecorded = {};
     initializeScenarioFlags(options.scenarios, isMetricRecorded);
     return data;
 }
 
-export default async function (authToken: string| null| undefined) {
+export default function (authToken: string| null| undefined) {
     if(!authToken) {
         return;
     }
     let scenario = exec.scenario.name;
     checkScenarioDescription(exec.scenario.iterationInInstance, isMetricRecorded, scenario, scenarioInfoMetric);
-    await RoomCRUD(authToken, customMetrics, exec.scenario.name, basePath);
+    RoomCRUD(authToken, customMetrics, exec.scenario.name, basePath);
 }

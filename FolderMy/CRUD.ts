@@ -25,10 +25,10 @@ import {
 
 import {
     Configuration,
-    FilesFilesApi,
-    FilesFoldersApi,
-    FilesOperationsApi
-} from '@onlyoffice/docspace-api-typescript';
+    FilesApi,
+    FoldersApi,
+    OperationsApi
+} from '@onlyoffice/docspace-api-typescript-k6';
 import {
     Metrics
 } from "../config/metrics";
@@ -37,15 +37,15 @@ import {
 /*
 Function get folder my id
 */
-export async function getFolderMyId(authToken: string | null | undefined, basePath: string)
+export function getFolderMyId(authToken: string | null | undefined, basePath: string)
 {
     if(!authToken) {
         return 0;
     }
     
     const configuration = new Configuration({apiKey: authToken, basePath: basePath});
-    const apiInstance = new FilesFoldersApi(configuration);
-    const res = await apiInstance.getMyFolder();
+    const apiInstance = new FoldersApi(configuration);
+    const res = apiInstance.getMyFolder();
     let id : number | undefined = undefined;
     if(check(res, {'Get folderMy': res => res.status === 200})){
         id = res.data.response?.current?.id;
@@ -58,10 +58,10 @@ Function creates folder
 id - id of folder my
 params - headers 
 */
-export async function createFolder(id: number, authToken: string, trend: Metrics, environment: string, basePath: string){
+export function createFolder(id: number, authToken: string, trend: Metrics, environment: string, basePath: string){
     const configuration = new Configuration({apiKey: authToken, basePath: basePath});
-    const apiInstance = new FilesFoldersApi(configuration);
-    const res = await apiInstance.createFolder(id, {
+    const apiInstance = new FoldersApi(configuration);
+    const res = apiInstance.createFolder(id, {
         title: faker.word.words(),
     });
     
@@ -79,15 +79,15 @@ Function get folder info
 id - id of folder
 params - headers
 */
-export async function getFolder(id: number | undefined, authToken: string, trend: Metrics, environment: string, basePath: string){
+export function getFolder(id: number | undefined, authToken: string, trend: Metrics, environment: string, basePath: string){
     if(!id)
     {
         return;
     }
     const configuration = new Configuration({apiKey: authToken, basePath: basePath});
-    const apiInstance = new FilesFoldersApi(configuration);
+    const apiInstance = new FoldersApi(configuration);
     //var tags = addTagsDefault(false, 'Get folder info', `${path}files/folder/{id}`);
-    const res = await apiInstance.getFolder(id);
+    const res = apiInstance.getFolder(id);
     check(res, {'Get folder info status': res => res.status === 200}, { property: 'Get folder info' });
    // trend[environment].add(res.timings.duration, { api: `${path}files/folder/{id}`, status: res.status, method: res.request.method, property: 'Get folder info' });
 }
@@ -97,15 +97,15 @@ Function update folder
 id - id of folder
 params - headers
 */
-export async function updateFolder(id: number | undefined, authToken: string, trend: Metrics, environment: string, basePath: string){
+export function updateFolder(id: number | undefined, authToken: string, trend: Metrics, environment: string, basePath: string){
     if(!id)
     {
         return;
     }
     const configuration = new Configuration({apiKey: authToken, basePath: basePath});
-    const apiInstance = new FilesFoldersApi(configuration);
+    const apiInstance = new FoldersApi(configuration);
     //var tags = addTagsDefault(false, 'Update folder title', `${path}files/folder/{id}`);
-    const res = await apiInstance.renameFolder(id, {
+    const res = apiInstance.renameFolder(id, {
         title: faker.word.words(),
     });
     check(res, {'Update folder status': res => res.status === 200}, { property: 'Update folder title' });
@@ -117,15 +117,15 @@ Function delete folder
 id - id of folder
 params - headers
 */
-export async function deleteFolder(id: number | undefined, authToken: string, trend: Metrics, environment: string, basePath: string){
+export function deleteFolder(id: number | undefined, authToken: string, trend: Metrics, environment: string, basePath: string){
     if(!id)
     {
         return;
     }
     const configuration = new Configuration({apiKey: authToken, basePath: basePath});
-    const apiInstance = new FilesFoldersApi(configuration);
+    const apiInstance = new FoldersApi(configuration);
     //var tags = addTagsDefault(false, 'Delete folder', `${path}files/folder/{id}`);
-    const res = await apiInstance.deleteFolder(id, {
+    const res = apiInstance.deleteFolder(id, {
          deleteAfter: false,
          immediately: true
     });
@@ -138,33 +138,33 @@ Function delete folder
 id - id of folder
 params - headers
 */
-export async function insertFileInFolder(id: number, authToken: string, trend: Metrics, environment: string, basePath: string){
+export function insertFileInFolder(id: number, authToken: string, trend: Metrics, environment: string, basePath: string){
     const fileTitle = faker.system.commonFileName('docx');
     const configuration = new Configuration({apiKey: authToken, basePath: basePath});
-    const apiInstance = new FilesFoldersApi(configuration);
+    const apiInstance = new FoldersApi(configuration);
     //var tags = addTagsDefault(false, 'Insert file in specified folder', `${basePath}files/folder/{id}/insert`);
-    const res = await apiInstance.insertFile(id, undefined, fileTitle, true, true);
+    const res = apiInstance.insertFile(id, undefined, fileTitle, true, true);
     check(res, { 'Insertion file status': res => res.status === 200 });
     //trend[environment].add(res.timings.duration, { api: res.request.url, status: res.status, method: res.request.method,});
 }
 
-export async function FolderCRUD(idMy: number, authToken: string, trend: Metrics, environment: string, basePath: string) {
+export function FolderCRUD(idMy: number, authToken: string, trend: Metrics, environment: string, basePath: string) {
     let folderId:number | undefined;
 
-    await group('Create folder', async () => {
-        folderId = await createFolder(idMy, authToken, trend, environment, basePath);
+    group('Create folder', () => {
+        folderId = createFolder(idMy, authToken, trend, environment, basePath);
     });
 
-    await group('Get folder info', async () => {
-        await getFolder(folderId, authToken, trend, environment, basePath);
+    group('Get folder info', () => {
+        getFolder(folderId, authToken, trend, environment, basePath);
     });
     
-    await group('Update folder title', async () => {
-        await updateFolder(folderId, authToken, trend, environment, basePath);
+    group('Update folder title', () => {
+        updateFolder(folderId, authToken, trend, environment, basePath);
     });
 
-    await group('Delete folder', async () => {
-        await deleteFolder(folderId, authToken, trend, environment, basePath);
+    group('Delete folder', () => {
+        deleteFolder(folderId, authToken, trend, environment, basePath);
     });
 
 }
@@ -175,13 +175,13 @@ Function create a file
 id - id of folder my
 params - headers 
 */
-export async function createFile(id: number, authToken: string, trend: Metrics, environment: string, basePath: string){
+export function createFile(id: number, authToken: string, trend: Metrics, environment: string, basePath: string){
     const configuration = new Configuration({apiKey: authToken, basePath: basePath});
-    const apiInstance = new FilesFilesApi(configuration);
+    const apiInstance = new FilesApi(configuration);
     
     //var tags =  addTagsDefault(false, 'Create file', `${path}files/{id}/file`);
     const fileTitle = faker.system.commonFileName('docx');
-    const res = await apiInstance.createFile(id, {title: fileTitle, enableExternalExt: true});
+    const res = apiInstance.createFile(id, {title: fileTitle, enableExternalExt: true});
     let result:number | undefined = 0;
     if(check(res, {'Creation file status': res => res.status === 200})){
         result = res.data.response?.id;
@@ -195,7 +195,7 @@ Function get file info
 id - id of file
 params - headers
 */
-export async function getFile(id: number | undefined,  authToken: string, trend: Metrics, environment: string, basePath: string){
+export function getFile(id: number | undefined,  authToken: string, trend: Metrics, environment: string, basePath: string){
     if(!id)
     {
         return;
@@ -205,8 +205,8 @@ export async function getFile(id: number | undefined,  authToken: string, trend:
     //     var tags = addTagsDefault(false, 'Get file info', `${path}files/file/{id}`);
     // }
     const configuration = new Configuration({apiKey: authToken, basePath: basePath});
-    const apiInstance = new FilesFilesApi(configuration);
-    const res = await apiInstance.getFileInfo(id);
+    const apiInstance = new FilesApi(configuration);
+    const res = apiInstance.getFileInfo(id);
     
     check(res, {'Get file info status': res => res.status === 200});
     //if(trend)
@@ -221,7 +221,7 @@ Function update file
 id - id of file
 params - headers
 */
-export async function updateFile(id: number | undefined, authToken: string, trend: Metrics, environment: string, basePath: string){
+export function updateFile(id: number | undefined, authToken: string, trend: Metrics, environment: string, basePath: string){
     if(!id)
     {
         return;
@@ -229,8 +229,8 @@ export async function updateFile(id: number | undefined, authToken: string, tren
     const fileTitle = faker.system.commonFileName('docx');
     //var tags =  addTagsDefault(false, 'Update file title', `${path}files/file/{id}`);
     const configuration = new Configuration({apiKey: authToken, basePath: basePath});
-    const apiInstance = new FilesFilesApi(configuration);
-    const res = await apiInstance.updateFile(id, { title: fileTitle });
+    const apiInstance = new FilesApi(configuration);
+    const res = apiInstance.updateFile(id, { title: fileTitle });
     check(res, {'Update file status': res => res.status === 200});
     //trend[environment].add(res.timings.duration, { api: `${path}files/file/{id}`, status: res.status, method: res.request.method, });
 
@@ -241,19 +241,19 @@ Function delete file
 id - id of folder
 params - headers
 */
-export async function deleteFile(id: number | undefined, authToken: string, trend: Metrics | null, environment: string | null, basePath: string){
+export function deleteFile(id: number | undefined, authToken: string, trend: Metrics | null, environment: string | null, basePath: string){
     if(!id)
     {
         return;
     }
     const configuration = new Configuration({apiKey: authToken, basePath: basePath});
-    const apiInstance = new FilesFilesApi(configuration);
+    const apiInstance = new FilesApi(configuration);
     // if(trend)
     // {
     //     var tags = addTagsDefault(false, 'Delete file', `${path}files/file/{id}`);
     // }
     //
-    const res = await apiInstance.deleteFile(id, {deleteAfter: false, immediately: true});
+    const res = apiInstance.deleteFile(id, {deleteAfter: false, immediately: true});
     check(res, { 'File delete status': res => res.status === 200 });
     //if(trend)
     //{
@@ -261,40 +261,40 @@ export async function deleteFile(id: number | undefined, authToken: string, tren
     //}
 }
 
-export async function FileCRUD(idMy: number,  authToken: string, trend: Metrics, environment: string, basePath: string){
+export function FileCRUD(idMy: number,  authToken: string, trend: Metrics, environment: string, basePath: string){
     let fileid: number | undefined;
 
-    await group('Create file', async () => {
-        fileid = await createFile(idMy, authToken, trend, environment, basePath);
+    group('Create file', () => {
+        fileid = createFile(idMy, authToken, trend, environment, basePath);
     });
 
-    await group('Get file info', async () => {
-        await getFile(fileid, authToken, trend, environment, basePath);
+    group('Get file info', () => {
+        getFile(fileid, authToken, trend, environment, basePath);
     });
 
-    await group('Update file title', async () => {
-        await updateFile(fileid, authToken, trend, environment, basePath);
+    group('Update file title', () => {
+        updateFile(fileid, authToken, trend, environment, basePath);
     });
 
-    await group('Delete file', async () => {
-        await deleteFile(fileid, authToken, trend, environment, basePath);
+    group('Delete file', () => {
+        deleteFile(fileid, authToken, trend, environment, basePath);
     });
 
 }
 
-export async function emptyTrash(authToken: string, basePath: string){
+export function emptyTrash(authToken: string, basePath: string){
     const configuration = new Configuration({apiKey: authToken, basePath: basePath});
-    const apiInstance = new FilesOperationsApi(configuration);
+    const apiInstance = new OperationsApi(configuration);
     //var tags =  { property: 'Empty trash folder', api: `${path}files/fileops/emptytrash`};
-    const res = await apiInstance.emptyTrash();
+    const res = apiInstance.emptyTrash();
     check(res, { 'Empty trash status': res => res.status === 200});
 }
 
-export async function openEdit(id: number, authToken: string, trend: Metrics, environment: string, basePath: string){
+export function openEdit(id: number, authToken: string, trend: Metrics, environment: string, basePath: string){
     const configuration = new Configuration({apiKey: authToken, basePath: basePath});
-    const apiInstance = new FilesFilesApi(configuration);
+    const apiInstance = new FilesApi(configuration);
     //var tags =   addTagsDefault(false, 'Open and edit file', `${path}files/file/{id}/openedit`);
-    const res = await apiInstance.openEdit(id);
+    const res = apiInstance.openEditFile(id);
     check(res, {'Open and edit file status': res => res.status === 200});
     //trend[environment].add(res.timings.duration, { api: `${path}files/file/{id}/openedit`, status: res.status, method: res.request.method, });
 }
@@ -308,33 +308,33 @@ export class SetupData {
     }
 }
 
-export async function setupFunc(){
+export function setupFunc(){
     // if(instances.parallel === true|| instances.parallel === "true") {
     //     return  await setupParallel();
     // }
     // else {
         const wizard = wizardData();
         const aData = authData();
-        const authToken = await auth(basePath, wizard, aData);
-        await foldersAndFiles(foldersCountFolderMy, filesCountFolderMy, basePath, authToken);
-        return new SetupData(authToken, await getFolderMyId(authToken, url));
+        const authToken = auth(basePath, wizard, aData);
+        foldersAndFiles(foldersCountFolderMy, filesCountFolderMy, basePath, authToken);
+        return new SetupData(authToken, getFolderMyId(authToken, url));
     // }
 }
 
-async function setupParallel(){
+function setupParallel(){
     for(let i in instances.instances){
         let url = instPath(instances.instances[i].url);
         const wizard = wizardData(instances.instances[i].email, instances.instances[i].password);
         const authdata = authData(instances.instances[i].email, instances.instances[i].password);
-        let authToken = await auth(url, wizard, authdata);
+        let authToken = auth(url, wizard, authdata);
         if(instances.instances[i].port) {
             instances.instances[i].url = instPath(`${instances.instances[i].url}:${instances.instances[i].port}`)
         }
         else {
             instances.instances[i].url = instPath(`${instances.instances[i].url}`);
         }
-        await foldersAndFiles(foldersCountFolderMy, filesCountFolderMy, instances.instances[i].url, authToken);
-        instances.instances[i].idMy = await getFolderMyId(authToken, instances.instances[i].url);
+        foldersAndFiles(foldersCountFolderMy, filesCountFolderMy, instances.instances[i].url, authToken);
+        instances.instances[i].idMy = getFolderMyId(authToken, instances.instances[i].url);
     }
     return instances;
 }

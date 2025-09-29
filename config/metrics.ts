@@ -25,7 +25,7 @@ export function setMetrics(options: scenariosOptions){
     
     for (let i = 0; i < options.scenarios?.list?.length; i++) {
         let scenario: Scenario = options.scenarios.list[i];
-        const key = scenario.executor;
+        const key = scenario.executor.replaceAll("-", "_");
         scenario.env['MY_SCENARIO'] = key;
         metrics[key] = new Trend(key, true);
 
@@ -43,7 +43,7 @@ export function setScenarioData(options: scenariosOptions, isRecorded: isMetricR
     }
     for (let i = 0; i < options.scenarios?.list?.length; i++) {
         let scenario: Scenario = options.scenarios.list[i];
-        const key = scenario.executor;
+        const key = scenario.executor.replaceAll("-", "_");
         scenario.env['MY_SCENARIO'] = key;
         let metricName = `${key}_description`;
         metrics[metricName] = new Gauge(metricName, true);

@@ -119,9 +119,9 @@
 //     sleep(65); 
 // };
 //
-// export async function teardown(data) {
+// export function teardown(data) {
 //     for (const id of createdFileIds) {
 //         await deleteFile(id, data.params, null, null, basePath);
 //     }
-//     await emptyTrash(data.params, basePath);
+//     ait emptyTrash(data.params, basePath);
 // }

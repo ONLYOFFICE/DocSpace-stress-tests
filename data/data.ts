@@ -1,11 +1,11 @@
 import { faker } from '@faker-js/faker';
 import {
     Configuration,
-    FilesFilesApi,
-    FilesFoldersApi
-} from "@onlyoffice/docspace-api-typescript";
+    FilesApi,
+    FoldersApi
+} from '@onlyoffice/docspace-api-typescript-k6';
 
-export async function foldersAndFiles(
+export function foldersAndFiles(
   countFolders: number | undefined,
   countFiles: number | undefined,
   basePath: string,
@@ -15,9 +15,9 @@ export async function foldersAndFiles(
         return { arrayFiles: [], arrayFolders: [] };
     }
     const configuration = new Configuration({apiKey: auth, basePath: basePath});
-    const foldersApi = new FilesFoldersApi(configuration);
-    const filesApi = new FilesFilesApi(configuration);
-    const myFolderId = (await foldersApi.getMyFolder()).data.response?.current?.id;
+    const foldersApi = new FoldersApi(configuration);
+    const filesApi = new FilesApi(configuration);
+    const myFolderId = (foldersApi.getMyFolder()).data.response?.current?.id;
     const arrayFiles: number[] = [];
     const arrayFolders: number[] = [];
 
@@ -27,7 +27,7 @@ export async function foldersAndFiles(
     
   if (countFolders) {
     for (let i = 0; i < countFolders; i++) {
-        const createFolderResponse = await foldersApi.createFolder(myFolderId, {
+        const createFolderResponse = foldersApi.createFolder(myFolderId, {
             title: faker.word.words(),
         });
         const folderId = createFolderResponse.data.response?.id;
@@ -40,7 +40,7 @@ export async function foldersAndFiles(
   if (countFiles) {
     for (let i = 0; i < countFiles; i++) {
         const fileTitle = faker.system.commonFileName('docx');
-        const createFileResponse = await filesApi.createFile(myFolderId, {title: fileTitle, enableExternalExt: true});
+        const createFileResponse = filesApi.createFile(myFolderId, {title: fileTitle, enableExternalExt: true});
         const fileId = createFileResponse.data.response?.id;
         if(fileId) {
             arrayFiles.push(fileId);
