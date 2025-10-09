@@ -14,7 +14,7 @@ export function foldersAndFiles(
     if(!auth) {
         return { arrayFiles: [], arrayFolders: [] };
     }
-    const configuration = new Configuration({apiKey: auth, basePath: basePath});
+    const configuration = new Configuration({accessToken: auth, basePath: basePath});
     const foldersApi = new FoldersApi(configuration);
     const filesApi = new FilesApi(configuration);
     const myFolderId = (foldersApi.getMyFolder()).data.response?.current?.id;

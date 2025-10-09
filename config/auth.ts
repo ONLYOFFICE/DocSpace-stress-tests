@@ -11,9 +11,17 @@ import {
 
 
 export function auth(basePath: string, wizardData?: WizardData | undefined, authData?: AuthData | undefined) {
+    
     const configuration = new Configuration({basePath: basePath});
     const commonSettingsApi = new CommonSettingsApi(configuration);
-  let res = commonSettingsApi.getPortalSettings(true);
+
+  let res;
+  try {
+    res = commonSettingsApi.getPortalSettings(true);
+  } catch (error) {
+    throw new Error(`Failed to get portal settings from ${basePath}: ${error}`);
+  }
+
   let response: SettingsDto | undefined = res.data.response;
   
   if (response?.wizardToken && wizardData) {

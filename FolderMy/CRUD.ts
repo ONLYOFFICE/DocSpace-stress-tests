@@ -43,7 +43,7 @@ export function getFolderMyId(authToken: string | null | undefined, basePath: st
         return 0;
     }
     
-    const configuration = new Configuration({apiKey: authToken, basePath: basePath});
+    const configuration = new Configuration({accessToken: authToken, basePath: basePath});
     const apiInstance = new FoldersApi(configuration);
     const res = apiInstance.getMyFolder();
     let id : number | undefined = undefined;
@@ -59,7 +59,7 @@ id - id of folder my
 params - headers 
 */
 export function createFolder(id: number, authToken: string, trend: Metrics, environment: string, basePath: string){
-    const configuration = new Configuration({apiKey: authToken, basePath: basePath});
+    const configuration = new Configuration({accessToken: authToken, basePath: basePath});
     const apiInstance = new FoldersApi(configuration);
     const res = apiInstance.createFolder(id, {
         title: faker.word.words(),
@@ -84,7 +84,7 @@ export function getFolder(id: number | undefined, authToken: string, trend: Metr
     {
         return;
     }
-    const configuration = new Configuration({apiKey: authToken, basePath: basePath});
+    const configuration = new Configuration({accessToken: authToken, basePath: basePath});
     const apiInstance = new FoldersApi(configuration);
     //var tags = addTagsDefault(false, 'Get folder info', `${path}files/folder/{id}`);
     const res = apiInstance.getFolder(id);
@@ -102,7 +102,7 @@ export function updateFolder(id: number | undefined, authToken: string, trend: M
     {
         return;
     }
-    const configuration = new Configuration({apiKey: authToken, basePath: basePath});
+    const configuration = new Configuration({accessToken: authToken, basePath: basePath});
     const apiInstance = new FoldersApi(configuration);
     //var tags = addTagsDefault(false, 'Update folder title', `${path}files/folder/{id}`);
     const res = apiInstance.renameFolder(id, {
@@ -122,7 +122,7 @@ export function deleteFolder(id: number | undefined, authToken: string, trend: M
     {
         return;
     }
-    const configuration = new Configuration({apiKey: authToken, basePath: basePath});
+    const configuration = new Configuration({accessToken: authToken, basePath: basePath});
     const apiInstance = new FoldersApi(configuration);
     //var tags = addTagsDefault(false, 'Delete folder', `${path}files/folder/{id}`);
     const res = apiInstance.deleteFolder(id, {
@@ -140,7 +140,7 @@ params - headers
 */
 export function insertFileInFolder(id: number, authToken: string, trend: Metrics, environment: string, basePath: string){
     const fileTitle = faker.system.commonFileName('docx');
-    const configuration = new Configuration({apiKey: authToken, basePath: basePath});
+    const configuration = new Configuration({accessToken: authToken, basePath: basePath});
     const apiInstance = new FoldersApi(configuration);
     //var tags = addTagsDefault(false, 'Insert file in specified folder', `${basePath}files/folder/{id}/insert`);
     const res = apiInstance.insertFile(id, undefined, fileTitle, true, true);
@@ -176,7 +176,7 @@ id - id of folder my
 params - headers 
 */
 export function createFile(id: number, authToken: string, trend: Metrics, environment: string, basePath: string){
-    const configuration = new Configuration({apiKey: authToken, basePath: basePath});
+    const configuration = new Configuration({accessToken: authToken, basePath: basePath});
     const apiInstance = new FilesApi(configuration);
     
     //var tags =  addTagsDefault(false, 'Create file', `${path}files/{id}/file`);
@@ -204,7 +204,7 @@ export function getFile(id: number | undefined,  authToken: string, trend: Metri
     // {
     //     var tags = addTagsDefault(false, 'Get file info', `${path}files/file/{id}`);
     // }
-    const configuration = new Configuration({apiKey: authToken, basePath: basePath});
+    const configuration = new Configuration({accessToken: authToken, basePath: basePath});
     const apiInstance = new FilesApi(configuration);
     const res = apiInstance.getFileInfo(id);
     
@@ -228,7 +228,7 @@ export function updateFile(id: number | undefined, authToken: string, trend: Met
     }
     const fileTitle = faker.system.commonFileName('docx');
     //var tags =  addTagsDefault(false, 'Update file title', `${path}files/file/{id}`);
-    const configuration = new Configuration({apiKey: authToken, basePath: basePath});
+    const configuration = new Configuration({accessToken: authToken, basePath: basePath});
     const apiInstance = new FilesApi(configuration);
     const res = apiInstance.updateFile(id, { title: fileTitle });
     check(res, {'Update file status': res => res.status === 200});
@@ -246,7 +246,7 @@ export function deleteFile(id: number | undefined, authToken: string, trend: Met
     {
         return;
     }
-    const configuration = new Configuration({apiKey: authToken, basePath: basePath});
+    const configuration = new Configuration({accessToken: authToken, basePath: basePath});
     const apiInstance = new FilesApi(configuration);
     // if(trend)
     // {
@@ -283,7 +283,7 @@ export function FileCRUD(idMy: number,  authToken: string, trend: Metrics, envir
 }
 
 export function emptyTrash(authToken: string, basePath: string){
-    const configuration = new Configuration({apiKey: authToken, basePath: basePath});
+    const configuration = new Configuration({accessToken: authToken, basePath: basePath});
     const apiInstance = new OperationsApi(configuration);
     //var tags =  { property: 'Empty trash folder', api: `${path}files/fileops/emptytrash`};
     const res = apiInstance.emptyTrash();
@@ -291,7 +291,7 @@ export function emptyTrash(authToken: string, basePath: string){
 }
 
 export function openEdit(id: number, authToken: string, trend: Metrics, environment: string, basePath: string){
-    const configuration = new Configuration({apiKey: authToken, basePath: basePath});
+    const configuration = new Configuration({accessToken: authToken, basePath: basePath});
     const apiInstance = new FilesApi(configuration);
     //var tags =   addTagsDefault(false, 'Open and edit file', `${path}files/file/{id}/openedit`);
     const res = apiInstance.openEditFile(id);

@@ -19,34 +19,41 @@ export class isMetricRecorded {
 
 let metrics: Metrics = new Metrics();
 export function setMetrics(options: scenariosOptions){
-    if (!options.scenarios?.list){
+    if (!options.scenarios){
         return metrics;
     }
-    
-    for (let i = 0; i < options.scenarios?.list?.length; i++) {
-        let scenario: Scenario = options.scenarios.list[i];
-        const key = scenario.executor.replaceAll("-", "_");
-        scenario.env['MY_SCENARIO'] = key;
-        metrics[key] = new Trend(key, true);
 
-        if (!options.thresholds[key]) {
-            options.thresholds[key] = [];
+    Object.keys(options.scenarios).forEach(scenarioName => {
+        const scenario = options.scenarios![scenarioName];
+        if (scenario && scenario.executor) {
+            const key = scenarioName;
+            scenario.env = scenario.env || {};
+            scenario.env['MY_SCENARIO'] = key;
+            metrics[key] = new Trend(key, true);
+
+            if (!options.thresholds[key]) {
+                options.thresholds[key] = [];
+            }
+            options.thresholds[key].push(thresholdsSet);
         }
-        options.thresholds[key].push(thresholdsSet);
-    }
+    });
     return metrics;
 }
 
 export function setScenarioData(options: scenariosOptions, isRecorded: isMetricRecorded){
-    if (!options.scenarios?.list){
+    if (!options.scenarios){
         return metrics;
     }
-    for (let i = 0; i < options.scenarios?.list?.length; i++) {
-        let scenario: Scenario = options.scenarios.list[i];
-        const key = scenario.executor.replaceAll("-", "_");
-        scenario.env['MY_SCENARIO'] = key;
-        let metricName = `${key}_description`;
-        metrics[metricName] = new Gauge(metricName, true);
-    }
+
+    Object.keys(options.scenarios).forEach(scenarioName => {
+        const scenario = options.scenarios![scenarioName];
+        if (scenario && scenario.executor) {
+            const key = scenarioName;
+            scenario.env = scenario.env || {};
+            scenario.env['MY_SCENARIO'] = key;
+            let metricName = `${key}_description`;
+            metrics[metricName] = new Gauge(metricName, true);
+        }
+    });
     return metrics;
 }

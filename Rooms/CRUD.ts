@@ -15,7 +15,7 @@ import {
 } from "../config/metrics";
 
 export function createRoom(authToken: string, trend: Metrics, environment: string, basePath: string){
-    const configuration = new Configuration({apiKey: authToken, basePath: basePath});
+    const configuration = new Configuration({accessToken: authToken, basePath: basePath});
     const apiInstance = new RoomsApi(configuration);
     //var tags = addTagsDefault(false, 'Create new room', `${path}files/rooms`),
     const res = apiInstance.createRoom({title: faker.word.words(), roomType: 6});
@@ -30,7 +30,7 @@ export function getRoomInfo(id: number | undefined, authToken: string, trend: Me
     {
         return;
     }
-    const configuration = new Configuration({apiKey: authToken, basePath: basePath});
+    const configuration = new Configuration({accessToken: authToken, basePath: basePath});
     const apiInstance = new RoomsApi(configuration);
     //var tags =addTagsDefault(false, 'Get room info', `${path}files/rooms/{id}`),
     const res = apiInstance.getRoomInfo(id);
@@ -43,7 +43,7 @@ export function renameRoom(id: number | undefined, authToken: string,trend: Metr
     {
         return;
     }
-    const configuration = new Configuration({apiKey: authToken, basePath: basePath});
+    const configuration = new Configuration({accessToken: authToken, basePath: basePath});
     const apiInstance = new RoomsApi(configuration);
     
     //addTagsDefault(false, 'Rename room', `${path}files/rooms/{id}`),
@@ -58,7 +58,7 @@ export function removeRoom(id: number | undefined, authToken: string, trend: Met
     {
         return;
     }
-    const configuration = new Configuration({ apiKey: authToken, basePath: basePath });
+    const configuration = new Configuration({ accessToken: authToken, basePath: basePath });
     const apiInstance = new RoomsApi(configuration);
     //addTagsDefault(false, 'Remove room', `${path}files/rooms/{id}`),
 
@@ -72,7 +72,7 @@ export function archiveRoom(id: number | undefined, authToken: string, trend: Me
     {
         return;
     }
-    const configuration = new Configuration({ apiKey: authToken, basePath: basePath });
+    const configuration = new Configuration({ accessToken: authToken, basePath: basePath });
     const apiInstance = new RoomsApi(configuration);
     //var tags = addTagsDefault(false, 'Archive room', `${path}files/rooms/{id}/archive`),
     const res = apiInstance.archiveRoom(id, {deleteAfter: false});
@@ -85,7 +85,7 @@ export function unarchiveRoom(id: number | undefined, authToken: string, trend: 
     {
         return;
     }
-    const configuration = new Configuration({ apiKey: authToken, basePath: basePath });
+    const configuration = new Configuration({ accessToken: authToken, basePath: basePath });
     const apiInstance = new RoomsApi(configuration);
     // addTagsDefault(false, 'Unarchive room', `${path}files/rooms/{id}/unarchive`),
     const res = apiInstance.unarchiveRoom(id, { deleteAfter: false });
@@ -94,7 +94,7 @@ export function unarchiveRoom(id: number | undefined, authToken: string, trend: 
 }
 
 export function pinRoom(id: number, authToken: string, trend: Metrics, environment: string, basePath: string){
-    const configuration = new Configuration({ apiKey: authToken, basePath: basePath });
+    const configuration = new Configuration({ accessToken: authToken, basePath: basePath });
     const apiInstance = new RoomsApi(configuration);
     //addTagsDefault(false, 'Pin room', `${path}files/rooms/{id}/pin`)
     const res = apiInstance.pinRoom(id);
@@ -103,7 +103,7 @@ export function pinRoom(id: number, authToken: string, trend: Metrics, environme
 }
 
 export function unpinRoom(id: number, authToken: string, trend: Metrics, environment: string, basePath: string){
-    const configuration = new Configuration({ apiKey: authToken, basePath: basePath });
+    const configuration = new Configuration({ accessToken: authToken, basePath: basePath });
     const apiInstance = new RoomsApi(configuration);
     //addTagsDefault(false, 'Unpin room', `${path}files/rooms/{id}/unpin`)
     const res = apiInstance.unpinRoom(id);
@@ -112,7 +112,7 @@ export function unpinRoom(id: number, authToken: string, trend: Metrics, environ
 }
 
 export function getRoomAcessRights(id: number, authToken: string, trend: Metrics, environment: string, basePath: string){
-    const configuration = new Configuration({ apiKey: authToken, basePath: basePath });
+    const configuration = new Configuration({ accessToken: authToken, basePath: basePath });
     const apiInstance = new RoomsApi(configuration);
     
     //addTagsDefault(false, 'Get room acess rights', `${path}files/rooms/{id}/share`)

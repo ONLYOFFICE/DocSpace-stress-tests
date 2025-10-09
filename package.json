@@ -1,6 +1,6 @@
 {
   "engines": {
-    "node": "18"
+    "node": "22"
   },
   "devDependencies": {
     "@babel/core": "7.28.4",
@@ -11,8 +11,7 @@
     "@babel/preset-typescript": "7.27.1",
     "@babel/runtime": "^7.28.4",
     "@faker-js/faker": "^10.0.0",
-    "@onlyoffice/docspace-api-typescript": "file:onlyoffice-docspace-api-typescript-3.1.0.tgz",
-    "@onlyoffice/docspace-api-typescript-k6": "file:onlyoffice-docspace-api-sdk-3.5.0-preview.1.tgz",
+    "@onlyoffice/docspace-api-typescript-k6": "file:onlyoffice-docspace-api-sdk-3.5.0.tgz",
     "@types/crypto-js": "4.2.2",
     "@types/element-resize-detector": "1.1.6",
     "@types/eslint": "9.6.1",
@@ -41,14 +40,17 @@
     "babel-loader": "10.0.0",
     "clean-webpack-plugin": "4.0.0",
     "copy-webpack-plugin": "^13.0.1",
+    "ts-loader": "^9.4.0",
     "ts-node": "10.9.2",
     "typescript": "5.9.2",
     "webpack": "5.101.3",
     "webpack-cli": "6.0.1",
-    "webpack-glob-entries": "^1.0.1",
-    "ts-loader": "^9.4.0"
+    "webpack-glob-entries": "^1.0.1"
   },
   "scripts": {
     "build": "webpack"
+  },
+  "dependencies": {
+    "url": "^0.11.4"
   }
 }

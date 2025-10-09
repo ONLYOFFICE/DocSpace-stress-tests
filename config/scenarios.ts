@@ -64,10 +64,7 @@ export class Scenario {
 }
 
 export class Scenarios {
-    list: Scenario[] = [];
-    startTime?: string;
-    env?: object;
-    stages?: object;
+    [scenarioName: string]: any; // Allow dynamic properties for scenario names
 }
 
 export class scenariosOptions {
@@ -77,40 +74,57 @@ export class scenariosOptions {
 
 export function setScenarios() {
     let scenarios: Scenarios = new Scenarios();
+    let scenarioList: Scenario[] = [];
 
     if (constVusScenarioSettings === true || constVusScenarioSettings === "true") {
-        scenarios.list.push(const_vus_scenario);
+        scenarioList.push(const_vus_scenario);
     }
     if (sharedIterationScenarioSettings === true || sharedIterationScenarioSettings === "true") {
-        scenarios.list.push(shared_iter_scenario);
+        scenarioList.push(shared_iter_scenario);
     }
     if (perVuScenarioSettings === true || perVuScenarioSettings === "true") {
-        scenarios.list.push(per_vu_scenario);
+        scenarioList.push(per_vu_scenario);
     }
     if (constArrivalRateScenarioSettings === true || constArrivalRateScenarioSettings === "true") {
-        scenarios.list.push(const_arrival_rate_scenario);
+        scenarioList.push(const_arrival_rate_scenario);
     }
     if (rampArrivalRateScenarioSettings === true || rampArrivalRateScenarioSettings === "true") {
-        scenarios.list.push(ramp_arrival_rate_scenario);
+        scenarioList.push(ramp_arrival_rate_scenario);
     }
     if (extControlledScenarioSettings === true || extControlledScenarioSettings === "true") {
-        scenarios.list.push(ext_controlled_scenario);
+        scenarioList.push(ext_controlled_scenario);
     }
     if (rampVusScenarioSettings === true || rampVusScenarioSettings === "true") {
-        scenarios.list.push(ramp_vus_scenario);
+        scenarioList.push(ramp_vus_scenario);
     }
 
-    // let scenariosParallel:Scenarios = new Scenarios();
-    // if (instances.parallel === true || instances.parallel === "true") {
-    //     for (let inst in instances.instances) {
-    //         for (let i = 0; i < scenarios.list.length; i++) {
-    //             let scenario = scenarios.list[i];
-    //             scenario.startTime = instances.instances[inst].startTime;
-    //             scenariosParallel.list.push(scenario);
-    //         }
-    //     }
-    // }
-    //return (instances.parallel === true || instances.parallel === "true") ? scenariosParallel : scenarios;
+    // Convert the list to k6-compatible format
+    for (let scenario of scenarioList) {
+        const scenarioName = scenario.executor.replaceAll("-", "_");
+        scenarios[scenarioName] = {
+            executor: scenario.executor,
+            vus: scenario.vus,
+            duration: scenario.duration,
+            iterations: scenario.iterations,
+            startTime: scenario.startTime,
+            preAllocatedVUs: scenario.preAllocatedVUs,
+            maxDuration: scenario.maxDuration,
+            gracefulStop: scenario.gracefulStop,
+            timeUnit: scenario.timeUnit,
+            rate: scenario.rate,
+            maxVUs: scenario.maxVUs,
+            startRate: scenario.startRate,
+            stages: scenario.stages,
+            env: scenario.env
+        };
+        // Remove undefined properties to avoid JSON serialization issues
+        Object.keys(scenarios[scenarioName]).forEach(key => {
+            if (scenarios[scenarioName][key] === undefined) {
+                delete scenarios[scenarioName][key];
+            }
+        });
+    }
+
     return scenarios;
 }
 
@@ -155,10 +169,9 @@ function getScenarioData() {
 // }
 
 export function initializeScenarioFlags(scenarios: Scenarios, metric: isMetricRecorded) {
-    for (let i = 0; i < scenarios.list.length; i++) {
-        metric[`${scenarios.list[i].executor}_description`] = false;
-    }
-
+    Object.keys(scenarios).forEach(scenarioName => {
+        metric[`${scenarioName}_description`] = false;
+    });
 }
 
 export function checkScenarioDescription(iteration: number, metric: isMetricRecorded, scenario:string, trend: Metrics) {

@@ -2,6 +2,7 @@ const path = require('path');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 const GlobEntries = require('webpack-glob-entries');
+const webpack = require('webpack');
 
 module.exports = {
     mode: 'production',
@@ -68,6 +69,132 @@ module.exports = {
                 from: path.resolve(__dirname, 'assets'),
                 noErrorOnMissing: true
             }],
+        }),
+        new webpack.BannerPlugin({
+            banner: `
+// k6/http compatibility fix and request logging
+const k6Http = require('k6/http');
+if (k6Http && !k6Http.default) {
+    k6Http.default = k6Http;
+
+    // Wrap request to fix SDK body passing
+    const originalRequest = k6Http.request;
+    k6Http.default.request = function(method, url, body, params) {
+      console.log(method);
+      console.log(url);
+      console.log(body);
+      console.log(params);
+        // SDK passes body in params.data, but k6 expects it as second parameter
+        let actualBody = body;
+        if (params && params.data) {
+            actualBody = params.data;
+            delete params.data;
+        }
+        return originalRequest(method, url, actualBody, params);
+    };
+}
+
+
+// URL polyfill for k6
+if (typeof URL === 'undefined') {
+    global.URL = class URL {
+        constructor(url, base) {
+            if (base) {
+                this.href = base + url;
+                this.pathname = url;
+                this._search = '';
+            } else {
+                this.href = url;
+                const parts = url.split('?');
+                this.pathname = parts[0];
+                this._search = parts[1] ? '?' + parts[1] : '';
+            }
+            this.searchParams = new URLSearchParams(this._search);
+            this.hash = '';
+        }
+
+        get search() {
+            return this._search;
+        }
+
+        set search(value) {
+            // Ensure search starts with ? if it has content
+            if (value && !value.startsWith('?')) {
+                value = '?' + value;
+            }
+            this._search = value;
+            // Pass search without ? to URLSearchParams
+            this.searchParams = new URLSearchParams(value);
+        }
+
+        toString() {
+            // Update _search from searchParams
+            const search = this.searchParams.toString();
+            this._search = search ? '?' + search : '';
+            return this.pathname + this._search;
+        }
+    };
+
+    global.URLSearchParams = class URLSearchParams {
+        constructor(search) {
+            this.params = {};
+            if (search && search.startsWith('?')) {
+                search = search.substring(1);
+            }
+            if (search) {
+                search.split('&').forEach(pair => {
+                    const [key, value] = pair.split('=');
+                    if (key) {
+                        this.params[decodeURIComponent(key)] = value ? decodeURIComponent(value) : '';
+                    }
+                });
+            }
+        }
+        set(key, value) {
+            this.params[key] = value;
+        }
+        get(key) {
+            return this.params[key];
+        }
+        has(key) {
+            return this.params.hasOwnProperty(key);
+        }
+        delete(key) {
+            delete this.params[key];
+        }
+        append(key, value) {
+            if (this.has(key)) {
+                const existing = this.params[key];
+                if (Array.isArray(existing)) {
+                    existing.push(value);
+                } else {
+                    this.params[key] = [existing, value];
+                }
+            } else {
+                this.params[key] = value;
+            }
+        }
+        toString() {
+            const pairs = [];
+            for (const key in this.params) {
+                if (this.params.hasOwnProperty(key)) {
+                    const value = this.params[key];
+                    if (Array.isArray(value)) {
+                        value.forEach(v => {
+                            pairs.push(encodeURIComponent(key) + '=' + encodeURIComponent(v));
+                        });
+                    } else {
+                        pairs.push(encodeURIComponent(key) + '=' + encodeURIComponent(value));
+                    }
+                }
+            }
+            return pairs.join('&');
+        }
+    };
+}
+`,
+            raw: true,
+            entryOnly: true
         }),
     ],
     optimization: {
