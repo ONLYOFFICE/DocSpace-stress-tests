@@ -58,7 +58,7 @@
   },
   "constVu": {
     "_comment": "Постоянное число виртуальных пользователей (VU) работает непрерывно заданное время. Подходит для нагрузочного теста: держать N пользователей активными на протяжении всего теста.",
-    "enable": true,
+    "enable": false,
     "executor": "constant-vus",
     "duration": "10m",
     "vus": 100,
@@ -117,17 +117,17 @@
   },
   "rampVus": {
     "_comment": "Число VU нарастает и убывает по стадиям (stages). Подходит для теста прогрева: плавно поднять нагрузку, подержать, плавно снять.",
-    "enable": false,
+    "enable": true,
     "executor": "ramping-vus",
-    "startVUs": 0,
+    "startVUs": 5,
     "stages": [
       {
-        "target": 10,
-        "duration": "20s"
+        "target": 100,
+        "duration": "10m"
       },
       {
-        "target": 0,
-        "duration": "10s"
+        "target": 50,
+        "duration": "5m"
       }
     ],
     "gracefulRampDown": "0s",

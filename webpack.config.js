@@ -81,19 +81,13 @@ module.exports = {
         }),
         new webpack.BannerPlugin({
             banner: `
-// k6/http compatibility fix and request logging
+// k6/http compatibility fix
 const k6Http = require('k6/http');
 if (k6Http && !k6Http.default) {
     k6Http.default = k6Http;
 
-    // Wrap request to fix SDK body passing
     const originalRequest = k6Http.request;
     k6Http.default.request = function(method, url, body, params) {
-      console.log(method);
-      console.log(url);
-      console.log(body);
-      console.log(params);
-        // SDK passes body in params.data, but k6 expects it as second parameter
         let actualBody = body;
         if (params && params.data) {
             actualBody = params.data;

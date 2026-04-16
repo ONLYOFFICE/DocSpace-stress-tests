@@ -49,7 +49,8 @@
     "webpack-glob-entries": "^1.0.1"
   },
   "scripts": {
-    "prebuild": "npx ts-node config/init/index.ts",
+    "clean:config": "node -e \"try{require('fs').unlinkSync('config/init/config.json')}catch(e){}\"",
+    "prebuild": "npm run clean:config && npx ts-node config/init/index.ts",
     "build": "webpack",
     "test": "npm run build && python menu.py",
     "test:files": "npm run build && k6 run dist/file.js",
