@@ -5,7 +5,7 @@ import {
     FoldersApi
 } from '@onlyoffice/docspace-api-typescript-k6';
 
-export function foldersAndFiles(
+export async function foldersAndFiles(
   countFolders: number | undefined,
   countFiles: number | undefined,
   basePath: string,
@@ -17,18 +17,20 @@ export function foldersAndFiles(
     const configuration = new Configuration({accessToken: auth, basePath: basePath});
     const foldersApi = new FoldersApi(configuration);
     const filesApi = new FilesApi(configuration);
-    const myFolderId = (foldersApi.getMyFolder()).data.response?.current?.id;
+    const myFolderRes = await foldersApi.getMyFolder();
+    const myFolderId = myFolderRes.data.response?.current?.id;
     const arrayFiles: number[] = [];
     const arrayFolders: number[] = [];
 
     if(!myFolderId){
         return { arrayFiles, arrayFolders };
     }
-    
+
   if (countFolders) {
     for (let i = 0; i < countFolders; i++) {
-        const createFolderResponse = foldersApi.createFolder(myFolderId, {
-            title: faker.word.words(),
+        const createFolderResponse = await foldersApi.createFolder({
+            folderId: myFolderId,
+            createFolder: { title: faker.word.words() }
         });
         const folderId = createFolderResponse.data.response?.id;
         if(folderId){
@@ -40,7 +42,10 @@ export function foldersAndFiles(
   if (countFiles) {
     for (let i = 0; i < countFiles; i++) {
         const fileTitle = faker.system.commonFileName('docx');
-        const createFileResponse = filesApi.createFile(myFolderId, {title: fileTitle, enableExternalExt: true});
+        const createFileResponse = await filesApi.createFile({
+            folderId: myFolderId,
+            createFileJsonElement: { title: fileTitle, enableExternalExt: true }
+        });
         const fileId = createFileResponse.data.response?.id;
         if(fileId) {
             arrayFiles.push(fileId);

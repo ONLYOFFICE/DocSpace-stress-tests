@@ -19,7 +19,7 @@ import {checkScenarioDescription, initializeScenarioFlags } from '../config/scen
 const scenarios_data = setScenarios();
 
 const thresholds = setThresholds(scenarios_data);
-export const options = { 
+export const options = {
     scenarios: scenarios_data,
     thresholds: thresholds,
 };
@@ -28,14 +28,14 @@ let customMetrics = setMetrics(options);
 let isMetricRecorded = {};
 let scenarioInfoMetric = setScenarioData(options, isMetricRecorded);
 
-export function setup() {
-    let data = setupFunc();
+export async function setup() {
+    let data = await setupFunc();
     isMetricRecorded = {};
     initializeScenarioFlags(options.scenarios, isMetricRecorded);
     return data;
 };
 
-export default function (data: SetupData) {
+export default async function (data: SetupData) {
     if(!data.authToken || !data.idMy){
         return;
     }
@@ -55,21 +55,21 @@ export default function (data: SetupData) {
     //     }
     // }
     // else {
-        FolderCRUD(data.idMy, data.authToken, customMetrics, scenario, basePath);
+        await FolderCRUD(data.idMy, data.authToken, customMetrics, scenario, basePath);
     //}
 }
 
-export function teardown(data: { authToken: string | null | undefined, idMy: number }) {
+export async function teardown(data: { authToken: string | null | undefined, idMy: number }) {
     if(!data.authToken){
         return;
     }
-    // if(parallel === true || parallel === "true") 
+    // if(parallel === true || parallel === "true")
     // {
     //     for(let i in data.instances){
     //         await emptyTrash(data.instances[i].params, data.instances[i].url);
     //     }
     // }
     // else{
-        emptyTrash(data.authToken, basePath);
+        await emptyTrash(data.authToken, basePath);
     //}
 }
