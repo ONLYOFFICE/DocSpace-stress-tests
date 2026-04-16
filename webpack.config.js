@@ -6,7 +6,10 @@ const webpack = require('webpack');
 
 module.exports = {
     mode: 'production',
-    entry: GlobEntries('./FolderMy/*.ts'), // Generates multiple entry for each test
+    entry: Object.assign(
+        GlobEntries('./FolderMy/*.ts'),
+        { 'room': './Rooms/room.ts' }
+    ), // Generates multiple entry for each test
     output: {
         path: path.join(__dirname, 'dist'),
         libraryTarget: 'commonjs',
@@ -14,6 +17,12 @@ module.exports = {
     },
     resolve: {
         extensions: ['.ts', '.js'],
+        alias: {
+            // Replace the entire axios package with a synchronous k6/http adapter.
+            // Axios v1.x uses async generators (for await, async function*) which
+            // k6's goja runtime cannot parse. Our adapter has no async syntax.
+            'axios': path.resolve(__dirname, 'k6-axios-adapter.ts'),
+        },
     },
     module: {
         rules: [

@@ -14,8 +14,16 @@ import {
     Metrics
 } from "../config/metrics";
 
+function makeConfig(authToken: string, basePath: string): Configuration {
+    return new Configuration({
+        accessToken: authToken,
+        basePath: basePath,
+        baseOptions: { headers: { 'Authorization': `Bearer ${authToken}` } }
+    });
+}
+
 export async function createRoom(authToken: string, trend: Metrics, environment: string, basePath: string){
-    const configuration = new Configuration({accessToken: authToken, basePath: basePath});
+    const configuration = makeConfig(authToken, basePath);
     const apiInstance = new RoomsApi(configuration);
     const res = await apiInstance.createRoom({
         createRoomRequestDto: { title: faker.word.words(), roomType: 6 }
@@ -30,7 +38,7 @@ export async function getRoomInfo(id: number | undefined, authToken: string, tre
     {
         return;
     }
-    const configuration = new Configuration({accessToken: authToken, basePath: basePath});
+    const configuration = makeConfig(authToken, basePath);
     const apiInstance = new RoomsApi(configuration);
     const res = await apiInstance.getRoomInfo({ id });
     check(res, {'Get room info status': res => res.status === 200});
@@ -41,7 +49,7 @@ export async function renameRoom(id: number | undefined, authToken: string,trend
     {
         return;
     }
-    const configuration = new Configuration({accessToken: authToken, basePath: basePath});
+    const configuration = makeConfig(authToken, basePath);
     const apiInstance = new RoomsApi(configuration);
 
     const roomTitle = faker.word.words();
@@ -54,7 +62,7 @@ export async function removeRoom(id: number | undefined, authToken: string, tren
     {
         return;
     }
-    const configuration = new Configuration({ accessToken: authToken, basePath: basePath });
+    const configuration = makeConfig(authToken, basePath);
     const apiInstance = new RoomsApi(configuration);
 
     const res = await apiInstance.deleteRoom({ id, deleteRoomRequest: { deleteAfter: false } });
@@ -66,7 +74,7 @@ export async function archiveRoom(id: number | undefined, authToken: string, tre
     {
         return;
     }
-    const configuration = new Configuration({ accessToken: authToken, basePath: basePath });
+    const configuration = makeConfig(authToken, basePath);
     const apiInstance = new RoomsApi(configuration);
     const res = await apiInstance.archiveRoom({ id, archiveRoomRequest: { deleteAfter: false } });
     check(res, { 'Room archive status': res => res.status === 200 });
@@ -77,28 +85,28 @@ export async function unarchiveRoom(id: number | undefined, authToken: string, t
     {
         return;
     }
-    const configuration = new Configuration({ accessToken: authToken, basePath: basePath });
+    const configuration = makeConfig(authToken, basePath);
     const apiInstance = new RoomsApi(configuration);
     const res = await apiInstance.unarchiveRoom({ id, archiveRoomRequest: { deleteAfter: false } });
     check(res, { 'Room unarchive status': res => res.status === 200 });
 }
 
 export async function pinRoom(id: number, authToken: string, trend: Metrics, environment: string, basePath: string){
-    const configuration = new Configuration({ accessToken: authToken, basePath: basePath });
+    const configuration = makeConfig(authToken, basePath);
     const apiInstance = new RoomsApi(configuration);
     const res = await apiInstance.pinRoom({ id });
     check(res, { 'Room pin status': res => res.status === 200 });
 }
 
 export async function unpinRoom(id: number, authToken: string, trend: Metrics, environment: string, basePath: string){
-    const configuration = new Configuration({ accessToken: authToken, basePath: basePath });
+    const configuration = makeConfig(authToken, basePath);
     const apiInstance = new RoomsApi(configuration);
     const res = await apiInstance.unpinRoom({ id });
     check(res, { 'Room unpin status': res => res.status === 200 });
 }
 
 export async function getRoomAcessRights(id: number, authToken: string, trend: Metrics, environment: string, basePath: string){
-    const configuration = new Configuration({ accessToken: authToken, basePath: basePath });
+    const configuration = makeConfig(authToken, basePath);
     const apiInstance = new RoomsApi(configuration);
 
     const res = await apiInstance.getRoomSecurityInfo({ id });
@@ -108,30 +116,12 @@ export async function getRoomAcessRights(id: number, authToken: string, trend: M
 export async function RoomCRUD(authToken: string, trend: Metrics, environment: string, basePath: string) {
     let folderId: number | undefined;
 
-    await group('Create new room', async () => {
-        folderId = await createRoom(authToken, trend, environment, basePath);
-    });
-
-    await group('Get room info', async () => {
-        await getRoomInfo(folderId, authToken, trend, environment, basePath);
-    });
-
-    await group('Rename room', async () => {
-       await renameRoom(folderId, authToken, trend, environment, basePath);
-    });
-
-    await group('Archive room', async () =>{
-        await archiveRoom(folderId, authToken, trend, environment, basePath);
-    });
-
-    await group('Unarchive room', async () => {
-        await unarchiveRoom(folderId, authToken, trend, environment, basePath);
-    });
-
-    await group('Remove room', async () => {
-        await removeRoom(folderId, authToken, trend, environment, basePath);
-    });
-
+    folderId = await group('Create new room', () => createRoom(authToken, trend, environment, basePath));
+    await group('Get room info', () => getRoomInfo(folderId, authToken, trend, environment, basePath));
+    await group('Rename room', () => renameRoom(folderId, authToken, trend, environment, basePath));
+    await group('Archive room', () => archiveRoom(folderId, authToken, trend, environment, basePath));
+    await group('Unarchive room', () => unarchiveRoom(folderId, authToken, trend, environment, basePath));
+    await group('Remove room', () => removeRoom(folderId, authToken, trend, environment, basePath));
 }
 
 export async function setupFunc(){

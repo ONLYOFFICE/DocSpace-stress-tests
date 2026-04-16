@@ -40,6 +40,7 @@
     "babel-loader": "10.0.0",
     "clean-webpack-plugin": "4.0.0",
     "copy-webpack-plugin": "^13.0.1",
+    "dotenv": "^17.4.2",
     "ts-loader": "^9.4.0",
     "ts-node": "10.9.2",
     "typescript": "5.9.2",
@@ -48,10 +49,17 @@
     "webpack-glob-entries": "^1.0.1"
   },
   "scripts": {
-    "build": "webpack"
+    "prebuild": "npx ts-node config/init/index.ts",
+    "build": "webpack",
+    "test": "npm run build && python menu.py",
+    "test:files": "npm run build && k6 run dist/file.js",
+    "test:folders": "npm run build && k6 run dist/folder.js",
+    "test:rooms": "npm run build && k6 run dist/room.js",
+    "config": "npx ts-node config/init/index.ts"
   },
   "dependencies": {
     "@onlyoffice/docspace-api-sdk": "file:onlyoffice-docspace-api-sdk-3.6.0.tgz",
+    "nconf": "^0.13.0",
     "url": "^0.11.4"
   }
 }

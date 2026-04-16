@@ -3,8 +3,14 @@ import {
     Scenarios
 } from "./scenarios";
 
-const data = JSON.parse(open("../config/init/config.json"));
-export const instances = JSON.parse(open("../config/init/instances.json"));
+let data: any;
+try { data = JSON.parse(open("../config/init/config.json")); }
+catch { data = JSON.parse(open("../config/init/config_default.json")); }
+
+let instances_raw: any;
+try { instances_raw = JSON.parse(open("../config/init/instances.json")); }
+catch { instances_raw = JSON.parse(open("../config/init/instances_default.json")); }
+export const instances = instances_raw;
 export const parallel = instances.parallel;
 /*------------------------------------------------------AUTH settings------------------------------------------------------*/
 const email = data.email;

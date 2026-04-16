@@ -33,6 +33,14 @@ import {
     Metrics
 } from "../config/metrics";
 
+function makeConfig(authToken: string, basePath: string): Configuration {
+    return new Configuration({
+        accessToken: authToken,
+        basePath: basePath,
+        baseOptions: { headers: { 'Authorization': `Bearer ${authToken}` } }
+    });
+}
+
 /*-------------------------------------------------FOLDER-------------------------------------------------*/
 /*
 Function get folder my id
@@ -43,7 +51,7 @@ export async function getFolderMyId(authToken: string | null | undefined, basePa
         return 0;
     }
 
-    const configuration = new Configuration({accessToken: authToken, basePath: basePath});
+    const configuration = makeConfig(authToken, basePath);
     const apiInstance = new FoldersApi(configuration);
     const res = await apiInstance.getMyFolder();
     let id : number | undefined = undefined;
@@ -59,7 +67,7 @@ id - id of folder my
 params - headers
 */
 export async function createFolder(id: number, authToken: string, trend: Metrics, environment: string, basePath: string){
-    const configuration = new Configuration({accessToken: authToken, basePath: basePath});
+    const configuration = makeConfig(authToken, basePath);
     const apiInstance = new FoldersApi(configuration);
     const res = await apiInstance.createFolder({
         folderId: id,
@@ -83,7 +91,7 @@ export async function getFolder(id: number | undefined, authToken: string, trend
     {
         return;
     }
-    const configuration = new Configuration({accessToken: authToken, basePath: basePath});
+    const configuration = makeConfig(authToken, basePath);
     const apiInstance = new FoldersApi(configuration);
     const res = await apiInstance.getFolder({ folderId: id });
     check(res, {'Get folder info status': res => res.status === 200}, { property: 'Get folder info' });
@@ -99,7 +107,7 @@ export async function updateFolder(id: number | undefined, authToken: string, tr
     {
         return;
     }
-    const configuration = new Configuration({accessToken: authToken, basePath: basePath});
+    const configuration = makeConfig(authToken, basePath);
     const apiInstance = new FoldersApi(configuration);
     const res = await apiInstance.renameFolder({
         folderId: id,
@@ -118,7 +126,7 @@ export async function deleteFolder(id: number | undefined, authToken: string, tr
     {
         return;
     }
-    const configuration = new Configuration({accessToken: authToken, basePath: basePath});
+    const configuration = makeConfig(authToken, basePath);
     const apiInstance = new FoldersApi(configuration);
     const res = await apiInstance.deleteFolder({
         folderId: id,
@@ -134,7 +142,7 @@ params - headers
 */
 export async function insertFileInFolder(id: number, authToken: string, trend: Metrics, environment: string, basePath: string){
     const fileTitle = faker.system.commonFileName('docx');
-    const configuration = new Configuration({accessToken: authToken, basePath: basePath});
+    const configuration = makeConfig(authToken, basePath);
     const apiInstance = new FoldersApi(configuration);
     const res = await apiInstance.insertFile({
         folderId: id,
@@ -148,22 +156,10 @@ export async function insertFileInFolder(id: number, authToken: string, trend: M
 export async function FolderCRUD(idMy: number, authToken: string, trend: Metrics, environment: string, basePath: string) {
     let folderId:number | undefined;
 
-    await group('Create folder', async () => {
-        folderId = await createFolder(idMy, authToken, trend, environment, basePath);
-    });
-
-    await group('Get folder info', async () => {
-        await getFolder(folderId, authToken, trend, environment, basePath);
-    });
-
-    await group('Update folder title', async () => {
-        await updateFolder(folderId, authToken, trend, environment, basePath);
-    });
-
-    await group('Delete folder', async () => {
-        await deleteFolder(folderId, authToken, trend, environment, basePath);
-    });
-
+    folderId = await group('Create folder', () => createFolder(idMy, authToken, trend, environment, basePath));
+    await group('Get folder info', () => getFolder(folderId, authToken, trend, environment, basePath));
+    await group('Update folder title', () => updateFolder(folderId, authToken, trend, environment, basePath));
+    await group('Delete folder', () => deleteFolder(folderId, authToken, trend, environment, basePath));
 }
 
 /*-------------------------------------------------FILE-------------------------------------------------*/
@@ -173,7 +169,7 @@ id - id of folder my
 params - headers
 */
 export async function createFile(id: number, authToken: string, trend: Metrics, environment: string, basePath: string){
-    const configuration = new Configuration({accessToken: authToken, basePath: basePath});
+    const configuration = makeConfig(authToken, basePath);
     const apiInstance = new FilesApi(configuration);
 
     const fileTitle = faker.system.commonFileName('docx');
@@ -198,7 +194,7 @@ export async function getFile(id: number | undefined,  authToken: string, trend:
     {
         return;
     }
-    const configuration = new Configuration({accessToken: authToken, basePath: basePath});
+    const configuration = makeConfig(authToken, basePath);
     const apiInstance = new FilesApi(configuration);
     const res = await apiInstance.getFileInfo({ fileId: id });
 
@@ -217,7 +213,7 @@ export async function updateFile(id: number | undefined, authToken: string, tren
         return;
     }
     const fileTitle = faker.system.commonFileName('docx');
-    const configuration = new Configuration({accessToken: authToken, basePath: basePath});
+    const configuration = makeConfig(authToken, basePath);
     const apiInstance = new FilesApi(configuration);
     const res = await apiInstance.updateFile({
         fileId: id,
@@ -236,7 +232,7 @@ export async function deleteFile(id: number | undefined, authToken: string, tren
     {
         return;
     }
-    const configuration = new Configuration({accessToken: authToken, basePath: basePath});
+    const configuration = makeConfig(authToken, basePath);
     const apiInstance = new FilesApi(configuration);
     const res = await apiInstance.deleteFile({
         fileId: id,
@@ -248,33 +244,21 @@ export async function deleteFile(id: number | undefined, authToken: string, tren
 export async function FileCRUD(idMy: number,  authToken: string, trend: Metrics, environment: string, basePath: string){
     let fileid: number | undefined;
 
-    await group('Create file', async () => {
-        fileid = await createFile(idMy, authToken, trend, environment, basePath);
-    });
-
-    await group('Get file info', async () => {
-        await getFile(fileid, authToken, trend, environment, basePath);
-    });
-
-    await group('Update file title', async () => {
-        await updateFile(fileid, authToken, trend, environment, basePath);
-    });
-
-    await group('Delete file', async () => {
-        await deleteFile(fileid, authToken, trend, environment, basePath);
-    });
-
+    fileid = await group('Create file', () => createFile(idMy, authToken, trend, environment, basePath));
+    await group('Get file info', () => getFile(fileid, authToken, trend, environment, basePath));
+    await group('Update file title', () => updateFile(fileid, authToken, trend, environment, basePath));
+    await group('Delete file', () => deleteFile(fileid, authToken, trend, environment, basePath));
 }
 
 export async function emptyTrash(authToken: string, basePath: string){
-    const configuration = new Configuration({accessToken: authToken, basePath: basePath});
+    const configuration = makeConfig(authToken, basePath);
     const apiInstance = new OperationsApi(configuration);
     const res = await apiInstance.emptyTrash();
     check(res, { 'Empty trash status': res => res.status === 200});
 }
 
 export async function openEdit(id: number, authToken: string, trend: Metrics, environment: string, basePath: string){
-    const configuration = new Configuration({accessToken: authToken, basePath: basePath});
+    const configuration = makeConfig(authToken, basePath);
     const apiInstance = new FilesApi(configuration);
     const res = await apiInstance.openEditFile({ fileId: id });
     check(res, {'Open and edit file status': res => res.status === 200});

@@ -1,13 +1,19 @@
+import config from '../index';
 import nconf    from 'nconf';
 import path    from 'path';
 
 const nconfConfig = new nconf.Provider();
-nconfConfig.argv().env().file('config', path.join(process.cwd(), "config", "init", "config.json"));
+nconfConfig
+    .argv()
+    .env()
+    .file('config', path.join(process.cwd(), "config", "init", "config.json"))
+    .file('defaults', path.join(process.cwd(), "config", "init", "config_default.json"));
 
 export function saveConfigArguments() {
-    nconfConfig.set('email', nconfConfig.get('email'));
-    nconfConfig.set('password', nconfConfig.get('password'));
-    nconfConfig.set('url', nconfConfig.get('url'));
+    // Priority: CLI arg > config.json > .env (config.*) > hardcoded default
+    nconfConfig.set('email',    nconfConfig.get('email')    || config.LOCAL_PORTAL_EMAIL);
+    nconfConfig.set('password', nconfConfig.get('password') || config.LOCAL_PORTAL_PASSWORD);
+    nconfConfig.set('url',      nconfConfig.get('url')      || config.LOCAL_PORTAL_DOMAIN);
     nconfConfig.set('filehandlerFiles', nconfConfig.get('filehandlerFiles'));
     nconfConfig.set('filesMy', nconfConfig.get('filesMy'));
     nconfConfig.set('foldersMy', nconfConfig.get('foldersMy'));
@@ -48,16 +54,16 @@ export function saveConfigArguments() {
         nconfConfig.set('rampVus', nconfConfig.get('rampVus'));
     }
 
-    nconfConfig.set('k6_influxdb_organization', nconfConfig.get('k6_influxdb_organization'));
-    nconfConfig.set('k6_influxdb_bucket', nconfConfig.get('k6_influxdb_bucket'));
-    nconfConfig.set('k6_influxdb_token', nconfConfig.get('k6_influxdb_token'));
-    nconfConfig.set('k6_influxdb_addr', nconfConfig.get('k6_influxdb_addr'));
-    nconfConfig.set('k6_elasticsearch_cloud_id', nconfConfig.get('k6_elasticsearch_cloud_id'));
-    nconfConfig.set('k6_elasticsearch_user', nconfConfig.get('k6_elasticsearch_user'));
-    nconfConfig.set('k6_elasticsearch_password', nconfConfig.get('k6_elasticsearch_password'));
-    nconfConfig.set('k6_prometheus_rw_server_url', nconfConfig.get('k6_prometheus_rw_server_url'));
-    nconfConfig.set('k6_prometheus_rw_username', nconfConfig.get('k6_prometheus_rw_username'));
-    nconfConfig.set('k6_prometheus_rw_password', nconfConfig.get('k6_prometheus_rw_password'));
+    nconfConfig.set('k6_influxdb_organization', nconfConfig.get('k6_influxdb_organization') || config.K6_INFLUXDB_ORGANIZATION);
+    nconfConfig.set('k6_influxdb_bucket',       nconfConfig.get('k6_influxdb_bucket')       || config.K6_INFLUXDB_BUCKET);
+    nconfConfig.set('k6_influxdb_token',        nconfConfig.get('k6_influxdb_token')        || config.K6_INFLUXDB_TOKEN);
+    nconfConfig.set('k6_influxdb_addr',         nconfConfig.get('k6_influxdb_addr')         || config.K6_INFLUXDB_ADDR);
+    nconfConfig.set('k6_elasticsearch_cloud_id',  nconfConfig.get('k6_elasticsearch_cloud_id')  || config.K6_ELASTICSEARCH_CLOUD_ID);
+    nconfConfig.set('k6_elasticsearch_user',      nconfConfig.get('k6_elasticsearch_user')      || config.K6_ELASTICSEARCH_USER);
+    nconfConfig.set('k6_elasticsearch_password',  nconfConfig.get('k6_elasticsearch_password')  || config.K6_ELASTICSEARCH_PASSWORD);
+    nconfConfig.set('k6_prometheus_rw_server_url', nconfConfig.get('k6_prometheus_rw_server_url') || config.K6_PROMETHEUS_RW_SERVER_URL);
+    nconfConfig.set('k6_prometheus_rw_username',   nconfConfig.get('k6_prometheus_rw_username')   || config.K6_PROMETHEUS_RW_USERNAME);
+    nconfConfig.set('k6_prometheus_rw_password',   nconfConfig.get('k6_prometheus_rw_password')   || config.K6_PROMETHEUS_RW_PASSWORD);
 
     nconfConfig.set('shared_iter_scenario_thresholds', parseArgumentAsArray(nconfConfig.get('shared_iter_scenario_thresholds')));
     nconfConfig.set('per_vu_scenario_thresholds', parseArgumentAsArray(nconfConfig.get('per_vu_scenario_thresholds')));

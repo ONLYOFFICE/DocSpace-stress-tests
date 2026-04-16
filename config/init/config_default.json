@@ -1,29 +1,45 @@
 {
-  "email": "test@onlyoffice.com",
-  "password": "1111111",
-  "url": "http://localhost:8092",
+  "email": "",
+  "password": "",
+  "url": "",
   "filesMy": 0,
   "foldersMy": 0,
   "filehandlerFiles": 1000,
-  "k6_influxdb_organization": "influxdb-organization-name",
-  "k6_influxdb_bucket": "influxdb-bucket-name",
-  "k6_influxdb_token": "influxdb-token",
-  "k6_influxdb_addr": "influxdb-http-address",
-  "k6_elasticsearch_cloud_id": "your-cloud-id-here",
-  "k6_elasticsearch_user": "your-user-here",
-  "k6_elasticsearch_password": "your-password-here",
-  "k6_prometheus_rw_server_url": "your-server-url-here",
-  "k6_prometheus_rw_username": "your-user-name-here",
-  "k6_prometheus_rw_password": "your-password-here",
-  "shared_iter_scenario_thresholds": ["p(95)<1000"],
-  "per_vu_scenario_thresholds": ["p(95)<1000"],
-  "const_vus_scenario_thresholds": ["p(95)<1000"],
-  "const_arrival_rate_scenario_thresholds": ["p(95)<1000"],
-  "ramp_arrival_rate_scenario_thresholds": ["p(95)<1000"],
-  "ext_controlled_scenario_thresholds": ["p(95)<1000"],
-  "ramp_vus_scenario_thresholds": ["p(95)<1000"],
+  "k6_influxdb_organization": "",
+  "k6_influxdb_bucket": "",
+  "k6_influxdb_token": "",
+  "k6_influxdb_addr": "",
+  "k6_elasticsearch_cloud_id": "",
+  "k6_elasticsearch_user": "",
+  "k6_elasticsearch_password": "",
+  "k6_prometheus_rw_server_url": "",
+  "k6_prometheus_rw_username": "",
+  "k6_prometheus_rw_password": "",
+  "shared_iter_scenario_thresholds": [
+    "p(95)<1000"
+  ],
+  "per_vu_scenario_thresholds": [
+    "p(95)<1000"
+  ],
+  "const_vus_scenario_thresholds": [
+    "p(95)<1000"
+  ],
+  "const_arrival_rate_scenario_thresholds": [
+    "p(95)<1000"
+  ],
+  "ramp_arrival_rate_scenario_thresholds": [
+    "p(95)<1000"
+  ],
+  "ext_controlled_scenario_thresholds": [
+    "p(95)<1000"
+  ],
+  "ramp_vus_scenario_thresholds": [
+    "p(95)<1000"
+  ],
   "sharedIter": {
+    "_comment": "Все VU делят между собой N итераций суммарно. Подходит для smoke-теста: быстро проверить что N запросов проходят без ошибок.",
     "enable": false,
+    "executor": "shared-iterations",
     "iterations": 10,
     "vus": 10,
     "maxDuration": null,
@@ -31,7 +47,9 @@
     "gracefulStop": null
   },
   "pervuIter": {
+    "_comment": "Каждый VU делает ровно N итераций независимо. Подходит для проверки поведения под фиксированной нагрузкой: 100 пользователей по 20 итераций = 2000 запросов.",
     "enable": false,
+    "executor": "per-vu-iterations",
     "iterations": 20,
     "vus": 100,
     "maxDuration": "5m",
@@ -39,14 +57,18 @@
     "gracefulStop": null
   },
   "constVu": {
-    "enable": false,
-    "duration": "10s",
-    "vus": 10,
+    "_comment": "Постоянное число виртуальных пользователей (VU) работает непрерывно заданное время. Подходит для нагрузочного теста: держать N пользователей активными на протяжении всего теста.",
+    "enable": true,
+    "executor": "constant-vus",
+    "duration": "10m",
+    "vus": 100,
     "startTime": null,
     "gracefulStop": null
   },
   "constArrival": {
+    "_comment": "Фиксированный RPS (rate запросов в timeUnit). k6 сам масштабирует VU чтобы поддерживать заданный темп. Подходит для теста стабильности под конкретной нагрузкой, например 30 req/s.",
     "enable": false,
+    "executor": "constant-arrival-rate",
     "duration": "30s",
     "preAllocatedVUs": 30,
     "rate": 30,
@@ -56,7 +78,9 @@
     "gracefulStop": null
   },
   "rampArrival": {
+    "_comment": "RPS нарастает по стадиям (stages). Классический стресс-тест: нагрузка растёт до пикового значения, держится, затем спадает. Показывает точку деградации сервера.",
     "enable": false,
+    "executor": "ramping-arrival-rate",
     "preAllocatedVUs": 50,
     "stages": [
       {
@@ -83,24 +107,28 @@
     "gracefulStop": null
   },
   "extControl": {
+    "_comment": "Управление нагрузкой снаружи через k6 REST API в реальном времени. Позволяет вручную менять число VU во время прогона теста.",
     "enable": false,
+    "executor": "externally-controlled",
     "duration": "3m",
     "maxVus": 50,
     "vus": 10,
     "startTime": null
   },
   "rampVus": {
+    "_comment": "Число VU нарастает и убывает по стадиям (stages). Подходит для теста прогрева: плавно поднять нагрузку, подержать, плавно снять.",
     "enable": false,
+    "executor": "ramping-vus",
     "startVUs": 0,
-    "stages" : [
-    {
-      "target": 10,
-      "duration": "20s"
-    },
-    {
-      "target": 0,
-      "duration": "10s"
-    }
+    "stages": [
+      {
+        "target": 10,
+        "duration": "20s"
+      },
+      {
+        "target": 0,
+        "duration": "10s"
+      }
     ],
     "gracefulRampDown": "0s",
     "startTime": null

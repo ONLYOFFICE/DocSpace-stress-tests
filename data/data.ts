@@ -14,7 +14,11 @@ export async function foldersAndFiles(
     if(!auth) {
         return { arrayFiles: [], arrayFolders: [] };
     }
-    const configuration = new Configuration({accessToken: auth, basePath: basePath});
+    const configuration = new Configuration({
+        accessToken: auth,
+        basePath: basePath,
+        baseOptions: { headers: { 'Authorization': `Bearer ${auth}` } }
+    });
     const foldersApi = new FoldersApi(configuration);
     const filesApi = new FilesApi(configuration);
     const myFolderRes = await foldersApi.getMyFolder();

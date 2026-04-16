@@ -1,11 +1,11 @@
 {
   "compilerOptions": {
     "baseUrl": "./", 
-    "target": "es2023",
-    
+    "target": "ESNext",
+
     "moduleResolution": "node",
     "module": "commonjs",
-    "lib": ["es2023"],
+    "lib": ["ESNext"],
     "noEmit": true,
     "allowJs": true,
     "removeComments": false,
@@ -26,10 +26,15 @@
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "types": ["node"]
   },
   "include": [
-    "FolderMy/**/*"
+    "FolderMy/**/*",
+    "Rooms/**/*",
+    "config/**/*",
+    "data/**/*"
   ],
   "exclude": [
     "node_modules",
