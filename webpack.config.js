@@ -1,15 +1,15 @@
 const path = require('path');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
-const GlobEntries = require('webpack-glob-entries');
 const webpack = require('webpack');
 
 module.exports = {
     mode: 'production',
-    entry: Object.assign(
-        GlobEntries('./FolderMy/*.ts'),
-        { 'room': './Rooms/room.ts' }
-    ), // Generates multiple entry for each test
+    entry: {
+        'file':   './scenarios/Files/file.ts',
+        'folder': './scenarios/Folders/folder.ts',
+        'room':   './scenarios/Rooms/room.ts',
+    }, // Generates multiple entry for each test
     output: {
         path: path.join(__dirname, 'dist'),
         libraryTarget: 'commonjs',

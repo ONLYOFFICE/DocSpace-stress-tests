@@ -63,24 +63,9 @@ export function wizardData(emailInst?: string | undefined, passwordInst?: string
 export const url = `${data.url}`;
 export const basePath = `${url}`;
 
-export function instPath(basePath:string)
-{
-    return `${basePath}`;
-}
-
-export function  folderMy(basePath:string){
-    return `${basePath}files/@my`;
-}
-
-
-export function rooms(basePath:string){
-    return `${basePath}files/rooms`;
-}
-
 /*------------------------------------------------Starting data for the test------------------------------------------------*/
 export const filesCountFolderMy = data.filesMy;
 export const foldersCountFolderMy = data.foldersMy;
-export const filehandlerDownloadFilesCount = data.filehandlerFiles;
 
 /*-------------------------------------------------------TEST SETTINGS-------------------------------------------------------*/
 
@@ -143,34 +128,5 @@ export const ramp_vus_scenario = new Scenario(data.rampVus);
 
 
 export function setThresholds(scenarios:Scenarios) {
-    const thresholds = {};
-
-    // for (let i = 0; i < scenarios.list.length; i++) {
-    //     const scenario = scenarios.list[i];
-    //     const scenarioName = scenario.executor;
-    //     const threshold = data[`${scenarioName}_thresholds`];
-    //    
-    //     // if (threshold && scenario) {
-    //     //     if (!scenario.tags) {
-    //     //         scenario.tags = {
-    //     //             scenario: scenarioName
-    //     //         };
-    //     //     }
-    //     //    
-    //     //     thresholds[`http_req_duration{scenario:${scenario.tags.scenario}}`] = threshold;
-    //     // } else if ((parallel === "true" || parallel === true) && scenario) 
-    //     // {
-    //     //     for (var i1 in instances.instances) {
-    //     //         if (scenarioName === instances.instances[i1].tag) {
-    //     //             if (!scenario.tags) {
-    //     //                 scenario.tags = {scenario: scenarioName};
-    //     //             }
-    //     //             thresholds[`http_req_duration{scenario:${scenario.tags.scenario}}`] = instances.instances[i].thresholds;
-    //     //         }
-    //     //     }
-    //     // }
-    // }
-    //});
-
-    return thresholds;
+    return {};
 }

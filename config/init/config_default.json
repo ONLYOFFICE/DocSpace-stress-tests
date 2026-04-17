@@ -37,7 +37,7 @@
     "p(95)<1000"
   ],
   "sharedIter": {
-    "_comment": "Все VU делят между собой N итераций суммарно. Подходит для smoke-теста: быстро проверить что N запросов проходят без ошибок.",
+    "_comment": "All VUs share N iterations in total. Good for smoke tests: quickly verify that N requests complete without errors.",
     "enable": false,
     "executor": "shared-iterations",
     "iterations": 10,
@@ -47,7 +47,7 @@
     "gracefulStop": null
   },
   "pervuIter": {
-    "_comment": "Каждый VU делает ровно N итераций независимо. Подходит для проверки поведения под фиксированной нагрузкой: 100 пользователей по 20 итераций = 2000 запросов.",
+    "_comment": "Each VU runs exactly N iterations independently. Good for fixed load testing: 100 users × 20 iterations = 2000 requests.",
     "enable": false,
     "executor": "per-vu-iterations",
     "iterations": 20,
@@ -57,7 +57,7 @@
     "gracefulStop": null
   },
   "constVu": {
-    "_comment": "Постоянное число виртуальных пользователей (VU) работает непрерывно заданное время. Подходит для нагрузочного теста: держать N пользователей активными на протяжении всего теста.",
+    "_comment": "A fixed number of VUs runs continuously for the specified duration. Good for load tests: keep N users active throughout the test.",
     "enable": false,
     "executor": "constant-vus",
     "duration": "10m",
@@ -66,7 +66,7 @@
     "gracefulStop": null
   },
   "constArrival": {
-    "_comment": "Фиксированный RPS (rate запросов в timeUnit). k6 сам масштабирует VU чтобы поддерживать заданный темп. Подходит для теста стабильности под конкретной нагрузкой, например 30 req/s.",
+    "_comment": "Fixed request rate (RPS per timeUnit). k6 automatically scales VUs to maintain the target rate. Good for stability tests at a specific throughput, e.g. 30 req/s.",
     "enable": false,
     "executor": "constant-arrival-rate",
     "duration": "30s",
@@ -78,7 +78,7 @@
     "gracefulStop": null
   },
   "rampArrival": {
-    "_comment": "RPS нарастает по стадиям (stages). Классический стресс-тест: нагрузка растёт до пикового значения, держится, затем спадает. Показывает точку деградации сервера.",
+    "_comment": "Request rate ramps up through stages. Classic stress test: load increases to peak, holds, then ramps down. Reveals the server degradation point.",
     "enable": false,
     "executor": "ramping-arrival-rate",
     "preAllocatedVUs": 50,
@@ -107,7 +107,7 @@
     "gracefulStop": null
   },
   "extControl": {
-    "_comment": "Управление нагрузкой снаружи через k6 REST API в реальном времени. Позволяет вручную менять число VU во время прогона теста.",
+    "_comment": "Load is controlled externally via the k6 REST API in real time. Allows manually adjusting the number of VUs during a test run.",
     "enable": false,
     "executor": "externally-controlled",
     "duration": "3m",
@@ -116,8 +116,8 @@
     "startTime": null
   },
   "rampVus": {
-    "_comment": "Число VU нарастает и убывает по стадиям (stages). Подходит для теста прогрева: плавно поднять нагрузку, подержать, плавно снять.",
-    "enable": true,
+    "_comment": "VU count ramps up and down through stages. Good for warmup tests: gradually increase load, hold, then gradually decrease.",
+    "enable": false,
     "executor": "ramping-vus",
     "startVUs": 5,
     "stages": [

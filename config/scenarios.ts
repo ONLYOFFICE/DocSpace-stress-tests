@@ -1,5 +1,3 @@
-import exec   from 'k6/execution';
-
 import {
     constVusScenarioSettings,
     sharedIterationScenarioSettings,
@@ -14,8 +12,7 @@ import {
     const_arrival_rate_scenario,
     ramp_arrival_rate_scenario,
     ext_controlled_scenario,
-    ramp_vus_scenario,
-    setThresholds
+    ramp_vus_scenario
 } from './params';
 import {
     isMetricRecorded,
@@ -128,46 +125,6 @@ export function setScenarios() {
     return scenarios;
 }
 
-function getScenarioData() {
-    const tag = exec.vu.metrics.tags['scenario'];
-    if(exec.test?.options?.scenarios) {
-        return exec.test?.options?.scenarios[`${tag}`];
-    }
-}
-
-// export function addTagsDefault(def: boolean, property: string, api?: string | undefined) {
-//     let tags = {};
-//     let scenarioData = getScenarioData();
-//     if (def) {
-//         tags = {
-//             scenario_executor: scenarioData?.executor,
-//             scenario_startTime: scenarioData?.startTime,
-//             scenario_gracefulStop: scenarioData?.gracefulStop,
-//             scenario_exec: scenarioData?.exec,
-//             scenario_vus: scenarioData?.vus,
-//             scenario_duration: scenarioData?.duration,
-//             scenario_iterations: scenarioData?.iterations,
-//             scenario_maxDuration: scenarioData?.maxDuration,
-//             scenario_stages: scenarioData?.stages,
-//             scenario_gracefulRampDown: scenarioData?.gracefulRampDown,
-//             scenario_startVUs: scenarioData?.startVUs,
-//             scenario_preAllocatedVUs: scenarioData?.preAllocatedVUs,
-//             scenario_rate: scenarioData?.rate,
-//             scenario_maxVUs: scenarioData.maxVUs,
-//             scenario_timeUnit: scenarioData.timeUnit,
-//             scenario_startRate: scenarioData.startRate,
-//             property: property,
-//         };
-//         return tags;
-//     } else {
-//         tags = {
-//             property: property,
-//             api: api,
-//         };
-//         return tags;
-//     }
-// }
-
 export function initializeScenarioFlags(scenarios: Scenarios, metric: isMetricRecorded) {
     Object.keys(scenarios).forEach(scenarioName => {
         metric[`${scenarioName}_description`] = false;
@@ -176,8 +133,6 @@ export function initializeScenarioFlags(scenarios: Scenarios, metric: isMetricRe
 
 export function checkScenarioDescription(iteration: number, metric: isMetricRecorded, scenario:string, trend: Metrics) {
     if (iteration === 0 && !metric[`${scenario}_description`]) {
-        let scenarioMetric = trend[`${scenario}_description`];
-        //scenarioMetric.add(1, addTagsDefault(true, ''));
         metric[`${scenario}_description`] = true;
     }
 }
